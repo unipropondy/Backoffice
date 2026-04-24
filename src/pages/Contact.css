@@ -1,0 +1,228 @@
+.kitchen_container {
+  margin: 0;
+  padding: 8px 20px;
+  margin-top: -20px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* SUCCESS POPUP */
+.success-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #fe6e00;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  z-index: 9999;
+}
+
+.kitchen_title {
+  margin: 0;
+}
+
+/* HEADER FILTER */
+.active-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+}
+
+.active-header select {
+  width: 70px;
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+.active-header input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+}
+
+/* HEADER */
+.kitchen_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.kitchen-right-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;        /* 🔥 space between New & dropdown */
+}
+
+.kitchen-btn-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.kitchen-btn-right select {
+  height: 38px;
+  border-radius: 6px;
+}
+
+.kitchen_new_btn {
+  background: var(--primary-dark);
+  color: white;
+  padding: 6px 14px;
+  border: none;
+  height: 38px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.kitchen_new_btn:hover {
+  transform: scale(1.05);
+}
+
+/* TABLE */
+.kitchen_table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* 🔥 HEADER SMALL */
+.kitchen_table th {
+  background: var(--primary);
+  border: 1px solid var(--border);
+  color: white;
+  padding: 3px 6px !important;
+  height: 25px;
+  text-align: center;
+  font-size: 13px;
+}
+.kitchen_field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+input[type="checkbox"] {
+  accent-color: #ff6a00;   /* 🟧 orange */
+}
+.kitchen_field input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #ff6a00;  /* optional color */
+}
+/* 🔥 ROW SMALL (FIXED HERE) */
+.kitchen_table td {
+  border: 1px solid var(--border);
+  padding: 2px 6px !important;   /* 🔥 reduced */
+  text-align: left;
+  font-size: 14px;
+  height: 22px;                  /* 🔥 reduced */
+  line-height: 14px;
+}
+
+/* REMOVE EXTRA HEIGHT */
+.kitchen_table tr {
+  height: auto;
+}
+
+/* CHECKBOX */
+.kitchen_table input[type="checkbox"] {
+  width: 13px;
+  height: 40px;
+  margin: 0;
+}
+
+/* DROPDOWN */
+.kitchen_table th select {
+  width: 80px;
+  height: 40px;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+/* MODAL */
+.kitchen_modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.kitchen_modal_box {
+  background: var(--bg-card);
+  padding: 50px;
+  border-radius: 10px;
+  width: 500px;
+}
+
+/* FORM */
+.kitchen_form_grid {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.kitchen_form_grid input,
+.kitchen_form_grid select {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+/* FOOTER */
+.kitchen_modal_footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* BUTTONS */
+.kitchen_save_btn,
+.kitchen_cancel_btn {
+  background: var(--bg-muted);
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+}
+
+/* FIELD */
+.kitchen_field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.kitchen_field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+}
+
+/* SPINNER */
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #ddd;
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

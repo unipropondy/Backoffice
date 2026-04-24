@@ -1,0 +1,130 @@
+.settle-cashier-container{
+width:600px;            /* smaller container */
+margin:auto;
+background: var(--bg-card);
+padding:10px;
+border: 1px solid var(--border);
+font-family:Segoe UI;
+font-size:12px;
+position:relative;   /* important for button positioning */
+}
+ 
+.settle-top-row{
+display:flex;
+gap:6px;
+margin-bottom:6px;
+}
+ 
+.settle-top-row select,
+.settle-top-row input{
+height:24px;
+font-size:11px;
+padding:2px 4px;
+}
+ 
+.settle-main-grid{
+display:flex;
+gap:10px;
+}
+ 
+.settle-left-panel{
+width:50%;
+}
+ 
+.settle-right-panel{
+width:50%;
+}
+ 
+/* SUMMARY TABLE */
+ 
+.settle-summary-table{
+width:100%;
+border-collapse:collapse;
+table-layout:fixed;
+}
+ 
+.settle-summary-table td{
+border: 1px solid var(--border);
+padding:4px;
+}
+ 
+.settle-summary-table td:first-child{
+width:65%;
+text-align:left;
+background: var(--primary);
+font-size:12px;
+}
+ 
+.settle-summary-table td:last-child{
+width:35%;
+text-align:right;
+}
+ 
+.settle-summary-table input{
+width:100%;
+height:20px;
+text-align:right;
+font-size:11px;
+padding:2px;
+box-sizing:border-box;
+}
+ 
+.settle-bold{
+font-weight:bold;
+}
+ 
+/* COMMON TABLE */
+ 
+.settle-table{
+width:100%;
+border-collapse:collapse;
+margin-top:6px;
+font-size:11px;
+}
+ 
+.settle-table th{
+background: var(--primary);
+color: white;
+border: 1px solid var(--border);
+padding:4px;
+text-align:center;
+}
+ 
+.settle-table td{
+border: 1px solid var(--border);
+padding:4px;
+text-align:center;
+}
+ 
+.settle-table input{
+width:60px;
+height:20px;
+font-size:11px;
+}
+ 
+.settle-sales-box{
+margin-top:10px;
+}
+ 
+.settle-total-box{
+margin-top:6px;
+}
+ 
+.settle-total-box input{
+height:22px;
+font-size:11px;
+}
+ 
+/* CLOSE BUTTON RIGHT BOTTOM */
+ 
+.settle-close-btn{
+position:absolute;
+right:10px;
+bottom:10px;
+padding:5px 12px;
+background: var(--primary);
+color: white;
+border:none;
+cursor:pointer;
+font-size:11px;
+}

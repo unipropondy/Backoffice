@@ -1,0 +1,210 @@
+/* MAIN CONTAINER */
+.discount-container1 {
+  padding: 30px 20px;
+   max-height: 100vh;
+ font-family: Arial, sans-serif;
+}
+ 
+/* HEADER */
+.discount-header1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;   /* 🔥 IMPORTANT */
+  padding-bottom: 0;  /* 🔥 IMPORTANT */
+}
+.discount-title1 {
+  font-size: 22px;
+  font-weight: bold;
+   margin-top: 0;   /* 🔥 removes top gap */
+  margin-bottom: 5px; /* control gap below */
+}
+ 
+/* BUTTON */
+.discount-new-btn1 {
+   background: var(--primary-dark);
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+ 
+.discount-new-btn1:hover {
+   background: var(--primary-dark);
+}
+ 
+/* TABLE */
+.discount-table1 {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0;   /* 🔥 REMOVE GAP */
+ 
+}
+ 
+.discount-table1 th {
+   background: var(--bg-muted);
+  color: white;
+  padding: 10px;
+  text-align: center;
+}
+ 
+.discount-table1 td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+ 
+.discount-table1 tr:hover {
+  background: var(--primary);
+}
+ 
+/* MODAL */
+.discount-overlay1 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+ 
+/* FORM */
+/* FORM BOX */
+.discount-form-box1 {
+  background: var(--primary);
+  padding: 20px;
+  width: 500px;
+  border-radius: 8px;
+}
+ 
+/* ROW */
+.discount-form-row1 {
+  display: grid;
+  grid-template-columns: 140px 1fr 100px 1fr; /* 🔥 reduced from 120px */
+  gap: 8px; /* slightly tighter */
+  align-items: center;
+  margin-bottom: 10px;
+ 
+}
+ 
+/* INPUT */
+.discount-form-row1 input[type="text"],
+.discount-form-row1 input[type="date"],
+.discount-form-row1 input {
+  padding: 6px;
+  width: 100%;
+  max-width: 160px;
+}
+ 
+/* LABEL */
+.discount-form-row1 label1 {
+  font-size: 14px;
+}
+ 
+ 
+ 
+.discount-form-row1 input:nth-child(4) {
+  margin-left: -15px;  /* 🔥 pulls input box left */
+}
+ 
+.discount-form-row1 label:nth-child(3) {
+  margin-left: 10px;  /* 👉 right move */
+}
+/* CHECKBOX FIX */
+/* ADD THIS */
+.discount-form-row1 input[type="checkbox"] {
+  transform: scale(1.2);
+  position: relative;
+  left: -52px;   /* 🔥 controlled shift */
+}
+/* COLOR BOX */
+.discount-color-box1 {
+  width: 80px;
+  height: 40px;
+  border: 1px solid var(--border);
+}
+ 
+/* COLOR ACTIONS */
+.discount-color-actions1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+ 
+/* BUTTONS */
+.discount-btn-row1 {
+  position: absolute;   /* 🔥 move out of normal flow */
+  top: 15px;            /* 🔥 top space */
+  right: 15px;          /* 🔥 right corner */
+ 
+  display: flex;
+  gap: 10px;            /* 🔥 spacing between buttons */
+}
+ 
+.discount-form-box1 {
+  position: relative;   /* 🔥 parent reference */
+}
+.discount-save-btn1 {
+  background: green;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+}
+ 
+.discount-exit-btn1 {
+  background: crimson;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+}
+ 
+/* PREVIEW BOX */
+.discount-preview-box1 {
+  width: 130px;
+  height: 70px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: bold;
+  background: var(--primary);
+}
+ 
+/* BUTTON STYLE (LIKE YOUR IMAGE) */
+.discount-color-btn1 {
+  background: linear-gradient(#cfe3f5, #9fc2e6);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #7aa7d9;
+}
+ 
+/* BUTTON GROUP */
+.discount-color-btns1 {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #7aa7d9;
+}
+ 
+.discount-custom-picker1 {
+  position: absolute;
+  top: 40%;   /* 🔥 move UP (reduce value) */
+  left: 62%;  /* 🔥 move LEFT (reduce value) */
+  z-index: 1000;
+  background: var(--bg-card);
+  padding: 10px;
+  border: 1px solid var(--border);
+}
+ 
+.discount-table1 td:nth-child(1) {
+  text-align: left;
+  padding-left: 10px; /* 🔥 spacing from left */
+}
+ 
