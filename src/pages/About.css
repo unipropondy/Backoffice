@@ -129,8 +129,7 @@ cursor:pointer;
 .cat-modal-grid{
 display:grid;
 grid-template-columns:1fr 420px;
-gap:175px;
-margin-top:50px;
+gap:25px;   /* ✅ FIXED */
 }
 
 /* Left Form */

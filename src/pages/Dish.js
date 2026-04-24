@@ -786,7 +786,7 @@ const totalRows = filteredData.length;
               <div className="dish-form-row1">
                 <label>Dish Group</label>
                 <select name="DishGroupId" value={dish.DishGroupId} onChange={handleChange}>
-                  <option value="">-- Select Dish Group --</option>
+                  <option value="">Select Dish Group</option>
                   {dishGroups.map((g) => (
                     <option key={g.DishGroupId} value={g.DishGroupId}>
                       {g.DishGroupName}
@@ -815,20 +815,20 @@ const totalRows = filteredData.length;
                 <input name="QuantityOnHand" value={dish.QuantityOnHand} onChange={handleChange} />
               </div>
 
-              <div className="dish-form-row1">
+              {/* <div className="dish-form-row1">
                 <label>Other Language</label>
                 <input name="NameInOtherLanguage" value={dish.NameInOtherLanguage} onChange={handleChange} />
-              </div>
+              </div> */}
 
-              <div className="dish-form-row1">
-                <label>Active</label>
-                <input type="checkbox" name="IsActive" checked={dish.IsActive} onChange={handleChange} />
+              <div className="dish-form-row">
+                
               </div>
 
             </div>  
  
                 {/* CHECKBOX GRID */}
                 <div className="dish-check-grid1">
+                  <label><input type="checkbox" name="IsActive" checked={dish.IsActive} onChange={handleChange} /> Active</label>
                   <label><input type="checkbox" name="iskitchenPrint" checked={dish.iskitchenPrint} onChange={handleChange} /> kitchen</label>
                   <label><input type="checkbox" name="isDiscountAllowed" checked={dish.isDiscountAllowed} onChange={handleChange} /> Discount Allowed</label>
                   <label><input type="checkbox" name="IsTaxAllowed" checked={dish.IsTaxAllowed} onChange={handleChange} /> Tax</label>

@@ -357,25 +357,41 @@ const paginatedData = filteredData.slice(
   (currentPage - 1) * rowsPerPage,
   currentPage * rowsPerPage
 );
-
-const toggleActive = async (row) => {
+const toggleField = async (row, fieldName) => {
   try {
-    const updatedValue = !row.isActive;
+    const updatedValue = !row[fieldName];
 
-    await axios.put(`${BASE_URL}/category/${row.CategoryId}`, {
-      ...row,
-      isActive: updatedValue ? 1 : 0
+    const data = new FormData();
+
+    // 🔥 send all fields (backend expects this)
+    Object.keys(row).forEach((key) => {
+      if (typeof row[key] === "boolean") {
+        data.append(key, row[key] ? 1 : 0);
+      } else {
+        data.append(key, row[key] ?? "");
+      }
     });
 
+    // 🔥 override changed field
+    data.set(fieldName, updatedValue ? 1 : 0);
+
+    await axios.post(`${BASE_URL}/category`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
+
+    // UI update
     setEntries((prev) =>
       prev.map((item) =>
         item.CategoryId === row.CategoryId
-          ? { ...item, isActive: updatedValue }
+          ? { ...item, [fieldName]: updatedValue }
           : item
       )
     );
 
   } catch (err) {
+    console.log("ERROR:", err.response?.data || err.message);
     alert("Update failed");
   }
 };
@@ -960,46 +976,46 @@ Cancel
 <td>{row.SortCode}</td>
 <td onClick={(e) => e.stopPropagation()}>
   <input
-    type="checkbox"
-    checked={row.isActive}
-    onChange={() => toggleActive(row)}
-  />
+  type="checkbox"
+  checked={row.isActive}
+  onChange={() => toggleField(row, "isActive")}
+/>
+</td>
+<td onClick={(e) => e.stopPropagation()}>
+ <input
+  type="checkbox"
+  checked={row.isDiscountAllowed}
+  onChange={() => toggleField(row, "isDiscountAllowed")}
+/>
 </td>
 <td onClick={(e) => e.stopPropagation()}>
   <input
-    type="checkbox"
-    checked={row.isDiscountAllowed}
-    readOnly
-  />
+  type="checkbox"
+  checked={row.isKitchenPrint}
+  onChange={() => toggleField(row, "isKitchenPrint")}
+/>
 </td>
 <td onClick={(e) => e.stopPropagation()}>
-  <input
-    type="checkbox"
-    checked={row.isKitchenPrint}
-    readOnly
-  />
-</td>
-<td onClick={(e) => e.stopPropagation()}>
-  <input
-    type="checkbox"
-    checked={row.isTaxAllowed}
-    readOnly
-  />
+ <input
+  type="checkbox"
+  checked={row.isTaxAllowed}
+  onChange={() => toggleField(row, "isTaxAllowed")}
+/>
 </td>
 {/* <td>{row.NameInOtherLanguage ? "Yes":"No"}</td> */}
 <td onClick={(e) => e.stopPropagation()}>
   <input
-    type="checkbox"
-    checked={row.isServiceCharge}
-    readOnly
-  />
+  type="checkbox"
+  checked={row.isServiceCharge}
+  onChange={() => toggleField(row, "isServiceCharge")}
+/>
 </td>
 <td onClick={(e) => e.stopPropagation()}>
   <input
-    type="checkbox"
-    checked={row.isMemberSalesAllowed}
-    readOnly
-  />
+  type="checkbox"
+  checked={row.isMemberSalesAllowed}
+  onChange={() => toggleField(row, "isMemberSalesAllowed")}
+/>
 </td>
 </tr>
 ))
