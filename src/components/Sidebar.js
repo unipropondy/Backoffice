@@ -74,7 +74,7 @@ function Sidebar({ open, setOpen }) {
       </div>
 
       <div className={`sid-sidebar ${open ? "open" : "close"}`}>
-       <Link className="sid-menu" to="/Home" onClick={() => setOpen(false)}>
+       <Link className="sid-menu" to="/Home">
           <FaHome className="sid-icon" /> Home
         </Link>
 
@@ -83,35 +83,33 @@ function Sidebar({ open, setOpen }) {
          <FaDatabase className="sid-icon" /> Master
       </div>
 
-      {ShowMaster && (
-      <div className="sid-submenu-container">
-        <Link className="sid-menu" to="/Contact" onClick={() => setOpen(false)}>
-              <FaUtensils className="sid-icon" /> Kitchen
-            </Link>
-
-            <Link className="sid-menu" to="/About" onClick={() => setOpen(false)}>
-              <FaList className="sid-icon" /> Category
-            </Link>
-
-            <Link className="sid-menu" to="/DishGroup" onClick={() => setOpen(false)}>
-              <FaLayerGroup className="sid-icon" /> Dish Group
-            </Link>
-
-            <Link className="sid-menu" to="/Dish" onClick={() => setOpen(false)}>
-              <FaHamburger className="sid-icon" /> Dish
-            </Link>
-      </div>
-      )}
-
-       
-
-    <Link className="sid-menu" to="/Modifier" onClick={() => setOpen(false)}>
-      <FaSlidersH className="sid-icon" /> Modifier
+     {ShowMaster && (
+  <div className="sid-submenu-container">
+    <Link className="sid-menu" to="/Contact">
+      <FaUtensils className="sid-icon" /> Kitchen
     </Link>
 
-      <Link className="sid-menu" to="/Member" onClick={() => setOpen(false)}>
-      <FaUsers className="sid-icon" /> Member
+    <Link className="sid-menu" to="/About">
+      <FaList className="sid-icon" /> Category
     </Link>
+
+    <Link className="sid-menu" to="/DishGroup">
+      <FaLayerGroup className="sid-icon" /> Dish Group
+    </Link>
+
+    <Link className="sid-menu" to="/Dish">
+      <FaHamburger className="sid-icon" /> Dish
+    </Link>
+  </div>
+)}
+
+<Link className="sid-menu" to="/Modifier">
+  <FaSlidersH className="sid-icon" /> Modifier
+</Link>
+
+<Link className="sid-menu" to="/Member">
+  <FaUsers className="sid-icon" /> Member
+</Link>
 
      <div className="sid-menu" onClick={() => setShowReport(!ShowReport)}>
          <FaFileAlt className="sid-icon" /> Report
@@ -119,15 +117,17 @@ function Sidebar({ open, setOpen }) {
 
     {ShowReport && (
     <div className="sid-submenu-container">
-      <Link className="sid-menu" to="/Settlement" onClick={() => setOpen(false)}>
+      <Link className="sid-menu" to="/Settlement">
             <FaMoneyBill className="sid-icon" /> Settlement
           </Link>
 
-          <Link className="sid-menu" to="/SalesReport" onClick={() => setOpen(false)}>
+          {/* <Link className="sid-menu" to="/SalesReport" onClick={() => setOpen(false)}> */}
+          <Link className="sid-menu" to="/SalesReport">
             <FaChartBar className="sid-icon" /> Sales Report
           </Link>
 
-          <Link className="sid-menu" to="/SltReport" onClick={() => setOpen(false)}>
+          {/* <Link className="sid-menu" to="/SltReport" onClick={() => setOpen(false)}> */}
+          <Link className="sid-menu" to="/SltReport">
             <FaChartBar className="sid-icon" /> Slt.. Report
           </Link>
     </div>
@@ -142,10 +142,12 @@ function Sidebar({ open, setOpen }) {
         <Link className="sid-menu" to="/VendorMaster">
           <FaBox className="sid-icon" /> VendorMaster
         </Link>
-        <Link className="sid-menu" to="/Inventory" onClick={() => setOpen(false)}>
+        
+        <Link className="sid-menu" to="/Inventory">
               <FaBox className="sid-icon" /> Inventory
        </Link>
-       <Link className="sid-menu" to="/StockPage" onClick={() => setOpen(false)}>
+       {/* <Link className="sid-menu" to="/StockPage" onClick={() => setOpen(false)}> */}
+        <Link className="sid-menu" to="/StockPage">
               <FaBox className="sid-icon" /> Stock Transaction
        </Link>
        

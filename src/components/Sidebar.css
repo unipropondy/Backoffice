@@ -40,7 +40,7 @@
 }
 
 /* Orange dot accent next to brand name */
-.sid-company-name::before {
+/* .sid-company-name::before {
   content: '';
   display: inline-block;
   width: 8px;
@@ -50,7 +50,7 @@
   margin-right: 8px;
   vertical-align: middle;
   margin-bottom: 1px;
-}
+} */
 
 /* Topbar Right */
 .sid-topbar-right {
