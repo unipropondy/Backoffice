@@ -15,7 +15,7 @@ import { MdListAlt, MdEmail } from "react-icons/md";
 import ChangePassword from "./ChangePassword";
 import { FaKey } from "react-icons/fa";
 import { FaClock } from "react-icons/fa";
-import TimeEntry from "./TimeEntry";
+// import TimeEntry from "./TimeEntry";
 
 
 
@@ -27,9 +27,11 @@ function Sidebar({ open, setOpen }) {
    const [ShowSecurity, setShowSecurity] = useState(false);
    const [ShowReport, setShowReport] = useState(false);
    const [ShowMaster, setShowMaster] = useState(false);
+ const user = JSON.parse(localStorage.getItem("user"));
+const username = user?.FirstName;
 
    const [showChangePwd, setShowChangePwd] = useState(false);
-   const [showTimeEntry, setShowTimeEntry] = useState(false);
+  //  const [showTimeEntry, setShowTimeEntry] = useState(false);
 
   const handleLogout = () => {
     navigate("/"); // ✅ back to login page
@@ -46,15 +48,19 @@ function Sidebar({ open, setOpen }) {
         Unipro Softwares SG Pte Ltd
       </div>
 
+     <div className="sid-topbar-center">
+  <span>Welcome, {username || "User"} 👋</span>
+</div>
+
       <div className="sid-topbar-right">
 
           {/* 👇 NEW TIME ENTRY ICON */}
-         <button 
+         {/* <button 
           className="sid-icon-btn"
           onClick={() => setShowTimeEntry(true)}
         >
           <FaClock />
-        </button>
+        </button> */}
           
        <button 
           className="sid-icon-btn"
@@ -276,7 +282,7 @@ function Sidebar({ open, setOpen }) {
     </div>
   )}
 
-  {showTimeEntry && (
+  {/* {showTimeEntry && (
     <div
       style={{
         position: "fixed",
@@ -298,14 +304,14 @@ function Sidebar({ open, setOpen }) {
           borderRadius: "10px",
           width: "480px",
 
-          /* 🔥 IMPORTANT FIX */
-          maxHeight: "90vh",     // limit height
-          overflowY: "auto",     // scroll if needed
+         
+          maxHeight: "90vh",     
+          overflowY: "auto",     
 
           position: "relative"
         }}
       >
-        {/* CLOSE BUTTON */}
+        
         <button
           onClick={() => setShowTimeEntry(false)}
           style={{
@@ -324,11 +330,11 @@ function Sidebar({ open, setOpen }) {
           X
         </button>
 
-        {/* CONTENT */}
+       
         <TimeEntry />
       </div>
     </div>
-  )}
+  )} */}
     </>
   );
 }

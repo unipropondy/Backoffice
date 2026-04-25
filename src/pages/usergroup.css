@@ -1,6 +1,6 @@
 .usergroup-container1 {
   width: 80%;
-  margin: 30px 100px;
+  margin: 0 100px;
   font-family: Arial;
 }
  
@@ -49,9 +49,9 @@
 }
  
 /* HOVER */
-.usergroup-styled-table1 tr:hover {
+/* .usergroup-styled-table1 tr:hover {
   background: var(--primary);
-}
+} */
 /* MODAL */
 .usergroup-form-overlay1 {
   position: fixed;

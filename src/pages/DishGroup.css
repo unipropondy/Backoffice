@@ -425,13 +425,25 @@ outline:none;
 .dg-category-row input:focus{
 border: 2px solid var(--primary);   /* nice focus color */
 }
+.dg-category-row button {
+  width: 60px;                 /* 🔥 size increase */
+  height: 42px;                /* 🔥 same as input height */
+  border-radius: 12px;         /* 🔥 smooth rounded */
+  border: none;
 
-.dg-category-row button{
-width:15px;
-height:30px;
-border-radius:2px;
-cursor:pointer;
-margin-top:17px;   
+  background: #ff6a00;         /* 🟧 ORANGE */
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  margin-top: 17px;
+
+  box-shadow: 0 4px 10px rgba(255,106,0,0.3); /* 🔥 glow */
 }
 
 .modifier-grid {

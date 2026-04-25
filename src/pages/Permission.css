@@ -1,5 +1,5 @@
 body{
-  background: var(--primary);
+  /* background: var(--primary); */
   font-family:Segoe UI, sans-serif;
   margin:0;
 }
@@ -7,9 +7,10 @@ body{
 /* 🔥 FULL SCREEN CONTAINER */
 .permission-container{
   width:100%;
-  min-height:100vh;
+  max-height: 400px;       /* 🔥 exact screen */
+  overflow-y: auto;     /* 🔥 no scroll */
   margin:0;
-  background: var(--primary);
+  /* background: var(--primary); */
   padding:25px 30px;
   border-radius:0;
   box-shadow:none;
@@ -79,7 +80,7 @@ body{
 /* select */
 .permission-group-box select{
   width:100%;
-  height:30px;
+  height:38px;
   font-size:13px;
   padding:4px 8px;
   border: 1px solid var(--border);
@@ -171,9 +172,9 @@ color: white;
   border-bottom:1px solid #e5e7eb;
 }
  
-.permission-table-row:hover{
+/* .permission-table-row:hover{
   background: var(--primary);
-}
+} */
  
 /* checkbox */
 .permission-checkbox{

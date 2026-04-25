@@ -54,7 +54,6 @@ isServiceCharge:"No",
 isMemberSalesAllowed:"No"
 });
 
-
 // ✅ API GET
 const fetchDishGroup = async () => {
 try{
@@ -208,7 +207,7 @@ if (row.ImageData) {
         res.data.map(x => Number(x.KitchenTypeCode))
       );
       });
-
+         
         // setEditingIndex(index);
         setEditingIndex(null);
         setShowModal(true);
@@ -294,6 +293,8 @@ if (row.ImageData) {
       isServiceCharge:"No",
       isMemberSalesAllowed:"No"
     });
+   setSelectedKitchens([]);   // ✅ RESET
+setSelectedModifiers([]);  // ✅ RESET
 
     setEditingIndex(null);
     setShowModal(true);
@@ -388,7 +389,9 @@ if (row.ImageData) {
       </div>
 
       <div className="dg-field">
-      <label>Dish Group Name</label>
+         <label>
+     Dish Group Name <span className="required">*</span>
+    </label>
       <input
       type="text"
       name="DishGroupName"
@@ -431,16 +434,24 @@ if (row.ImageData) {
 
       <div className="dg-category-row">
       <div className="dg-field">
-      <label>Category</label>
-      <input
-      type="text"
-      name="CategoryId"
-      placeholder="Category"
-      value={
-          categoryList.find(c => c.CategoryId === form.CategoryId)?.CategoryName || ""
+      <label>
+     Category <span className="required">*</span>
+    </label>
+     <select
+        name="CategoryId"
+        value={form.CategoryId}
+        onChange={(e) =>
+          setForm({ ...form, CategoryId: e.target.value })
         }
-        readOnly
-      />
+      >
+        <option value="">Select Category</option>
+
+        {categoryList.map((cat) => (
+          <option key={cat.CategoryId} value={cat.CategoryId}>
+            {cat.CategoryName}
+          </option>
+        ))}
+      </select>
       </div>
 
       <button

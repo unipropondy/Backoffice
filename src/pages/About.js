@@ -488,7 +488,9 @@ return(
     </div>
 
     <div className="cat-form-row">
-      <label>Category Name</label>
+       <label>
+     Category Name <span className="required">*</span>
+    </label>
       <input type="text" name="CategoryName" value={form.CategoryName} onChange={handleChange} />
     </div>
 

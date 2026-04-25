@@ -236,7 +236,7 @@ useEffect(() => {
               <th>Total</th>
               <th>Tax</th>
               <th>Gst Amt</th>
-              <th>Action</th>
+              {/* <th>Action</th> */}
             </tr>
           </thead>
 
@@ -257,9 +257,9 @@ useEffect(() => {
             <td>{entry.total}</td>
             <td>0</td>
             <td>0</td>
-            <td>
+            {/* <td>
               <button className="trans-small-add" onClick={addRow}>+</button>
-            </td>
+            </td> */}
           </tr>
           )}
 
@@ -283,7 +283,7 @@ useEffect(() => {
                   <td>{row.total}</td>
                   <td>0</td>
                   <td>0</td>
-                  <td></td>
+                  {/* <td></td> */}
                 </tr>
               ))
             )}

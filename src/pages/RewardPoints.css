@@ -1,6 +1,6 @@
 .rp-page1 {
-  font-family: Arial;
-  padding: 30px;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
 }
  
 /* MAIN BOX */

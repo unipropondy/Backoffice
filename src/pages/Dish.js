@@ -94,6 +94,13 @@ import { BASE_URL } from "../config/api";
 
   const [selecteddishModifiers, setSelecteddishModifiers] = useState([]);
   const [selecteddishKitchens, setSelecteddishKitchens] = useState([]);
+
+  useEffect(() => {
+  if (showModal && !dish.DishId) {
+    setSelecteddishKitchens([]);
+    setSelecteddishModifiers([]);
+  }
+}, [showModal]);
  
   const colorPickerRef = useRef(null);
   const textColorPickerRef = useRef(null);
@@ -231,6 +238,9 @@ setExistingImage(null);
   const handleCancel = () => {
     setShowModal(false);
     setEditIndex(null);
+
+      setSelecteddishKitchens([]);   // 🔥 ADD THIS
+  setSelecteddishModifiers([]);  // 🔥 ADD THIS
   };
 
   const handleToggle = async (row, field, value) => {
@@ -268,15 +278,17 @@ setExistingImage(null);
  
   const openNewDish = async () => {
   try {
-    const res = await axios.get(`${BASE_URL}/dish/nextcode`);
+    // const res = await axios.get(`${BASE_URL}/dish/nextcode`);
 
     setDish({
       ...emptyDish,
-      DishCode: res.data.code   // 🔥 AUTO CODE SHOW
+       DishCode: ""    // 🔥 AUTO CODE SHOW
     });
 
     setSelecteddishKitchens([]);
     setSelecteddishModifiers([]);
+     setDishImage(null);        // 🔥 ADD THIS
+    setExistingImage(null); 
     setEditIndex(null);
     setShowModal(true);
 
@@ -763,12 +775,16 @@ const totalRows = filteredData.length;
                <div className="dish-form-grid">
 
               <div className="dish-form-row1">
-                <label>Dish Code</label>
-                <input name="DishCode" value={dish.DishCode} disabled />
+                <label>
+                Dish Code <span className="required">*</span>
+                </label>
+                <input name="DishCode" value={dish.DishCode} onChange={handleChange} />
               </div>
 
               <div className="dish-form-row1">
-                <label>Name</label>
+                <label>
+                Name <span className="required">*</span>
+                </label>
                 <input name="Name" value={dish.Name} onChange={handleChange} />
               </div>
 
@@ -784,7 +800,10 @@ const totalRows = filteredData.length;
               </div>
 
               <div className="dish-form-row1">
-                <label>Dish Group</label>
+                {/* <label>Dish Group</label> */}
+                <label>
+                Dish Group <span className="required">*</span>
+                </label>
                 <select name="DishGroupId" value={dish.DishGroupId} onChange={handleChange}>
                   <option value="">Select Dish Group</option>
                   {dishGroups.map((g) => (
@@ -796,7 +815,10 @@ const totalRows = filteredData.length;
               </div>
 
               <div className="dish-form-row1">
-                <label>Price</label>
+                {/* <label>Price</label> */}
+                <label>
+               Price <span className="required">*</span>
+                </label>
                 <input name="CurrentCost" value={dish.CurrentCost} onChange={handleChange} />
               </div>
 

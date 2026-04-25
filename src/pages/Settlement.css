@@ -51,7 +51,8 @@ padding:4px;
 .settle-summary-table td:first-child{
 width:65%;
 text-align:left;
-background: var(--primary);
+background: var(--bg-card);
+ color: #111;
 font-size:12px;
 }
  

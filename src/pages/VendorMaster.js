@@ -170,10 +170,12 @@ function VendorMaster() {
  
       {successMsg && <div className="vendor-top-msg1">{successMsg}</div>}
  
-      <h1 className="vendor-title1">Vendor</h1>
- 
-      <div className="vendor-btn-right1">
-        <button className="vendor-new-btn1" onClick={handleNew}>New</button>
+     <div className="vendor-header1">
+        <h1 className="vendor-title1">Vendor</h1>
+
+        <button className="vendor-new-btn1" onClick={handleNew}>
+          New
+        </button>
       </div>
  
       {/* MODAL */}

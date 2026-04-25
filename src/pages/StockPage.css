@@ -84,9 +84,9 @@
   border: 1px solid var(--border);
 }
 
-.stock-table tr:hover {
+/* .stock-table tr:hover {
   background: var(--primary);
-}
+} */
 
 /* Buttons */
 .stock-edit-btn {

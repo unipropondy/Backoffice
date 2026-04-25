@@ -31,6 +31,33 @@
   border-radius: 5px;
   cursor: pointer;
 }
+
+.edit_btn,
+.delete_btn {
+  padding: 3px 8px;     /* 🔥 reduced */
+  font-size: 11px;      /* 🔥 small text */
+  border-radius: 10px;  /* smooth rounded */
+  border: none;
+  cursor: pointer;
+
+  min-width: 60px;      /* 🔥 equal width */
+  height: 28px;         /* 🔥 fixed small height */
+}
+
+.edit_btn {
+  background: #ff6a00;
+  color: white;
+}
+
+.delete_btn {
+  background: #ff6a00;
+  color: white;
+}
+.user_table td:last-child {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
  
 /* TABLE */
 .user_table {

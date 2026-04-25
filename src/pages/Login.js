@@ -111,9 +111,12 @@ function Login() {
               </div>
             </div>
 
-            <button type="submit" className="login-btn">
-              <FiLogIn className="btn-icon" /> Sign In
-            </button>
+         <button type="submit" className="login-btn">
+          <span className="icon-box">
+            <FiLogIn />
+          </span>
+          Sign In
+        </button>
           </form>
 
         </div>

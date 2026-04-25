@@ -10,10 +10,10 @@
 
 /* HEADER */
 .trans-header-box {
-  border: 1px solid var(--border);
+  background: #f9fafb; 
   padding: 10px;
   margin-bottom: 10px;
-  background: var(--primary);
+  /* background: var(--primary); */
 }
 
 .trans-header-row {
@@ -29,7 +29,7 @@
 }
 
 .trans-box {
-  background: var(--primary);
+  /* background: var(--primary); */
   border: 1px solid var(--border);
   height: 24px;
   padding: 2px 5px;

@@ -81,7 +81,7 @@ const loadData = async (type) => {
             className="stock-new-btn"
             onClick={() => navigate("/StockEntryPage")}
           >
-            + New
+            New
           </button>
 
           <select className="stock-select">

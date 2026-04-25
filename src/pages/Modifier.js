@@ -151,12 +151,12 @@ console.log("ITEM:", item); // debug
 
         <thead>
           <tr>
-            <th>ModifierCode</th>
-            <th>ModifierName</th>
-            <th>isActive</th>
-            <th>SortCode</th>
-            <th>isPriceAffect</th>
-            <th>isOpenModifier</th>
+            <th>Modifier Code</th>
+            <th>Modifier Name</th>
+            <th>Active</th>
+            <th>Sort Code</th>
+            <th>Price Affect</th>
+            <th>Open Modifier</th>
             <th>Action</th>
           </tr>
         </thead>

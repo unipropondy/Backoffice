@@ -1,6 +1,6 @@
 .modifier-container {
   position: relative;
-  top: 10px;
+  top: -15px;
 }
 
 .modifier-header {
@@ -23,14 +23,14 @@
 
 .modifier-new-btn {
   float: right;
-  padding: 8px 16px;
+  padding: 5px 5px;
   background: var(--primary);
   color: white;
   border: none;
   cursor: pointer;
   margin-bottom: 10px;
   border-radius: var(--radius-md);
-  font-weight: 600;
+  font-weight: 500;
   box-shadow: var(--shadow-orange);
   transition: all 0.2s ease;
 }

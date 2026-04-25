@@ -1,6 +1,6 @@
 /* MAIN CONTAINER */
 .discount-container1 {
-  padding: 30px 20px;
+   padding: 0 20px; 
    max-height: 100vh;
  font-family: Arial, sans-serif;
 }
@@ -75,9 +75,9 @@
 /* FORM */
 /* FORM BOX */
 .discount-form-box1 {
-  background: var(--primary);
+  background: rgb(253, 247, 236);
   padding: 20px;
-  width: 500px;
+  width: 600px;
   border-radius: 8px;
 }
  

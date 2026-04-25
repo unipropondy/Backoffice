@@ -93,10 +93,10 @@ function Contact() {
   const handleSubmit = async (e) => {
   e.preventDefault();
 
-  if (!form.kitchen_code || !form.kitchen_name) {
-    alert("Enter kitchen code and name");
-    return;
-  }
+ if (!form.kitchen_name.trim()) {
+  alert("Kitchen Name must be entered ❗");
+  return;
+}
 
   try {
     setLoading(true); // 🔥 START LOADING
@@ -279,7 +279,9 @@ const handleSelectAll = async (checked) => {
   </div>
 
   <div className="kitchen_field">
-    <label>Kitchen Name</label>
+    <label>
+  Kitchen Name <span className="required">*</span>
+</label>
     <input
       type="text"
       name="kitchen_name"
