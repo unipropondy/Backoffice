@@ -813,7 +813,7 @@ app.get("/dishgroup", async (req, res) => {
                   from ImageList I
                   where  C.ImageId = I.ImageId) ImageData
       FROM DishGroupMaster C
-     ORDER BY C.DishGroupCode DESC
+     ORDER BY CAST(C.DishGroupCode AS INT) DESC
     `);
 
  const data = result.recordset.map(row => {

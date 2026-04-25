@@ -2,7 +2,7 @@
 .picklist-page{
   width:100%;
   min-height:100vh;
-  background: var(--primary);
+  /* background: var(--primary); */
   font-family:"Segoe UI",sans-serif;
  
   display:flex;
@@ -73,9 +73,9 @@ color: white;
 }
  
 /* HOVER */
-.picklist-table tr:hover{
+/* .picklist-table tr:hover{
   background: var(--primary);
-}
+} */
  
 /* ================= MODAL ================= */
 .picklist-modal-overlay{

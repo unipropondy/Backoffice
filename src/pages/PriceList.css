@@ -2,7 +2,7 @@
 body {
   margin: 0;
   font-family: "Segoe UI", sans-serif;
-  background: var(--primary);
+  /* background: var(--primary); */
   padding: 25px 10px;
 }
  
@@ -64,9 +64,9 @@ body {
   text-align: center;
 } */
  
-.PriceList-table tr:hover {
+/* .PriceList-table tr:hover {
   background: var(--primary);
-}
+} */
  
 .PriceList-active-row {
   background: var(--primary);
@@ -148,7 +148,8 @@ background: var(--primary-dark);
  
 /* 🔥 MODAL BOX FIX */
 .PriceList-modal-box {
-  background: var(--primary);
+  /* background: #fff; */
+   background: #ffffffcc;
   padding: 25px;
   border-radius: 10px;
   width: 350px;

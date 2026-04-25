@@ -1,11 +1,12 @@
 .pm-container {
   padding: 30px;
-  background: var(--primary);
+  /* background: var(--primary); */
   /* min-height: 100vh; */
 }
 
 .pm-form {
-  background: var(--primary);
+  /* background: var(--primary); */
+   background: #ffffff;
   padding: 25px;
   border-radius: 15px;
 }

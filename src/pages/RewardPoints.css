@@ -5,9 +5,9 @@
  
 /* MAIN BOX */
 .rp-mainBox1 {
-  width: 750px;
-  margin: 40px auto;
-  background: var(--primary);
+  width: 900px;        /* 🔥 fixed width */
+  margin: 20px auto;   /* center */
+  background: #ffffff;
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 20px;
@@ -88,10 +88,24 @@
 }
  
 .rp-btn1 {
-  padding: 6px 14px;
-  margin: 5px;
-  border: none;
+  background: #ff6a00;
   color: white;
+
+  height: 32px;          /* 🔥 reduce height */
+  min-width: 30px;       /* 🔥 smaller width */
+
+  padding: 0 12px;       /* 🔥 less padding */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;    /* slightly smaller curve */
+  border: none;
+
+  font-size: 13px;       /* 🔥 small text */
+  font-weight: 500;
+
   cursor: pointer;
 }
  
@@ -115,7 +129,7 @@
  
 /* 🔥 ADD THIS ONLY (no other changes) */
 .rp-mainBox1 {
-  position: relative;   /* needed for absolute positioning */
+  position: relative;   
 }
  
 /* 🔥 UPDATE BUTTON POSITION */
