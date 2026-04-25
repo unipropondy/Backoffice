@@ -1394,7 +1394,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
         .input("isFavourite", sql.Bit, Number(d.isFavourite) === 1)
         .input("isMultiPrice", sql.Bit, Number(d.isMultiPrice) === 1)
         .input("isOpenitem", sql.Bit, Number(d.isOpenitem) === 1)
-        .input("CreatedDate", sql.DateTime, new Date())
+        .input("CreatedOn", sql.DateTime, new Date())
 
         .query(`
           INSERT INTO DishMaster (
@@ -1403,7 +1403,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
             NameInOtherLanguage, IsActive, iskitchenPrint,
             isDiscountAllowed, IsTaxAllowed, IsStockDish,
             isFOC, isServiceCharge, isFavourite, isMultiPrice, isOpenitem,
-            ImageId, KitchenType, SubkitchenType,CreatedDate
+            ImageId, KitchenType, SubkitchenType,CreatedOn
           )
           VALUES (
             @DishId, @DishCode, @Name, @ShortName, @Description,
@@ -1411,7 +1411,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
             @NameInOtherLanguage, @IsActive, @iskitchenPrint,
             @isDiscountAllowed, @IsTaxAllowed, @IsStockDish,
             @isFOC, @isServiceCharge, @isFavourite, @isMultiPrice, @isOpenitem,
-            @ImageId, @KitchenType, @SubkitchenType,@CreatedDate
+            @ImageId, @KitchenType, @SubkitchenType,@CreatedOn
           )
         `);
     }
