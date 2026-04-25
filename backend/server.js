@@ -1227,7 +1227,7 @@ app.get("/dish", async (req, res) => {
                                                               from ImageList I
                                                               where  D.ImageId = I.ImageId) ImageData
                                                FROM DishMaster D
-                                                ORDER BY D.CreatedDate DESC`);
+                                                ORDER BY D.CreatedOn DESC`);
     const data = result.recordset.map(row => {
   let imageBase64 = null;
 
