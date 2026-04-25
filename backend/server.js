@@ -1227,7 +1227,7 @@ app.get("/dish", async (req, res) => {
                                                               from ImageList I
                                                               where  D.ImageId = I.ImageId) ImageData
                                                FROM DishMaster D
-                                                ORDER BY DishCode DESC`);
+                                                ORDER BY D.CreatedDate DESC`);
     const data = result.recordset.map(row => {
   let imageBase64 = null;
 
@@ -1394,6 +1394,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
         .input("isFavourite", sql.Bit, Number(d.isFavourite) === 1)
         .input("isMultiPrice", sql.Bit, Number(d.isMultiPrice) === 1)
         .input("isOpenitem", sql.Bit, Number(d.isOpenitem) === 1)
+        .input("CreatedDate", sql.DateTime, new Date())
 
         .query(`
           INSERT INTO DishMaster (
@@ -1402,7 +1403,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
             NameInOtherLanguage, IsActive, iskitchenPrint,
             isDiscountAllowed, IsTaxAllowed, IsStockDish,
             isFOC, isServiceCharge, isFavourite, isMultiPrice, isOpenitem,
-            ImageId, KitchenType, SubkitchenType
+            ImageId, KitchenType, SubkitchenType,CreatedDate
           )
           VALUES (
             @DishId, @DishCode, @Name, @ShortName, @Description,
@@ -1410,7 +1411,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
             @NameInOtherLanguage, @IsActive, @iskitchenPrint,
             @isDiscountAllowed, @IsTaxAllowed, @IsStockDish,
             @isFOC, @isServiceCharge, @isFavourite, @isMultiPrice, @isOpenitem,
-            @ImageId, @KitchenType, @SubkitchenType
+            @ImageId, @KitchenType, @SubkitchenType,@CreatedDate
           )
         `);
     }
