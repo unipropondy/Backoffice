@@ -1227,7 +1227,7 @@ app.get("/dish", async (req, res) => {
                                                               from ImageList I
                                                               where  D.ImageId = I.ImageId) ImageData
                                                FROM DishMaster D
-                                                ORDER BY TRY_CAST(D.DishCode AS INT) DESC`);
+                                                ORDER BY DishCode DESC`);
     const data = result.recordset.map(row => {
   let imageBase64 = null;
 
@@ -1247,39 +1247,43 @@ res.json(data);
   }
 });
 
-app.get("/dish/nextcode", async (req, res) => {
-  try {
-    const pool = await poolPromise;
+// app.get("/dish/nextcode", async (req, res) => {
+//   try {
+//     const pool = await poolPromise;
 
-    const result = await pool.request().query(`
-      SELECT 
-        ISNULL(MAX(TRY_CAST(DishCode AS INT)), 0) + 1 AS NewCode
-      FROM DishMaster
-    `);
+//     const result = await pool.request().query(`
+//       SELECT 
+//         ISNULL(MAX(TRY_CAST(DishCode AS INT)), 0) + 1 AS NewCode
+//       FROM DishMaster
+//     `);
 
-    res.json({ code: String(result.recordset[0].NewCode) });
+//     res.json({ code: String(result.recordset[0].NewCode) });
 
-  } catch (err) {
-    console.log("DISH NEXTCODE ERROR:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
+//   } catch (err) {
+//     console.log("DISH NEXTCODE ERROR:", err);
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
 app.post("/dish", upload.single("image"), async (req, res) => {
   try {
     const pool = await poolPromise;
    const d = req.body;
 
+       if (!d.DishCode || d.DishCode.trim() === "") {
+      return res.status(400).send("DishCode required ❗");
+    }
+
     const dishId = d.DishId ? d.DishId : uuidv4();
 
     // 🔥 AUTO GENERATE DISH CODE (ADD HERE)
-const codeResult = await pool.request().query(`
-  SELECT 
-    ISNULL(MAX(TRY_CAST(DishCode AS INT)), 0) + 1 AS NewCode
-  FROM DishMaster
-`);
+// const codeResult = await pool.request().query(`
+//   SELECT 
+//     ISNULL(MAX(TRY_CAST(DishCode AS INT)), 0) + 1 AS NewCode
+//   FROM DishMaster
+// `);
 
-const newDishCode = codeResult.recordset[0].NewCode;
+// const newDishCode = codeResult.recordset[0].NewCode;
 
     let imageId = null;
 
@@ -1365,7 +1369,7 @@ const newDishCode = codeResult.recordset[0].NewCode;
       // 🆕 INSERT (ALL COLUMNS)
       await pool.request()
         .input("DishId", sql.UniqueIdentifier, dishId)
-        .input("DishCode", sql.VarChar(20), String(newDishCode))
+        .input("DishCode", sql.VarChar(20), d.DishCode || "")
         .input("Name", sql.NVarChar, d.Name || "")
         .input("ShortName", sql.NVarChar, d.ShortName || "")
         .input("Description", sql.NVarChar, d.Description || "")
