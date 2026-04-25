@@ -5,7 +5,7 @@ const { sql, poolPromise } = require("../db");
 // ================= GET =================
 router.get("/", async (req, res) => {
   const pool = await poolPromise;
-  const result = await pool.request().query("SELECT * FROM Paymode ORDER BY Position");
+  const result = await pool.request().query("SELECT * FROM Paymode ORDER BY Paymode ASC;");
   res.json(result.recordset);
 });
  
