@@ -10,15 +10,14 @@ router.get("/", async (req, res) => {
     const pool = await poolPromise;
 
     const result = await pool.request().query(`
-      SELECT 
-       *
-      FROM CustomerMaster
+      SELECT TOP 10 * FROM dbo.CustomerMaster
       ORDER BY Name
     `);
 
     res.json(result.recordset);
 
   } catch (err) {
+    console.log("BACKEND ERROR ❌", err);   // 🔥 MUST ADD
     res.status(500).json({ error: err.message });
   }
 });
@@ -32,7 +31,7 @@ router.get("/:id", async (req, res) => {
     const result = await pool.request()
       .input("CustomerId", sql.UniqueIdentifier, req.params.id)
       .query(`
-        SELECT * FROM CustomerMaster
+        SELECT TOP 10 * FROM dbo.CustomerMaster
         WHERE CustomerId = @CustomerId
       `);
 
