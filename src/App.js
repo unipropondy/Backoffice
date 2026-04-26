@@ -12,7 +12,7 @@ import Inventory from "./pages/Inventory";
 import Settlement from "./pages/Settlement";
 import SalesReport from "./pages/SalesReport";
 import SltReport from "./pages/SltReport";
-import Member from "./pages/Member";
+import CustomerList from "./pages/CustomerList";
 import UserGroup from "./pages/usergroup";
 import UserMaster from "./pages/usermaster";
 import Permission from "./pages/Permission";
@@ -33,6 +33,7 @@ import HappyHours from "./pages/HappyHours";
 import POSPermission from "./pages/POSPermission";
 import StockPage from "./pages/StockPage";
 import StockEntryPage from "./pages/StockEntryPage";
+import Member from "./pages/Member";
 
 
 // import { LoaderProvider } from "./context/LoaderContext";
@@ -63,12 +64,13 @@ function Layout() {
           <Route path="/Settlement" element={<Settlement />} />
           <Route path="/SalesReport" element={<SalesReport />} />
           <Route path="/SltReport" element={<SltReport />} />
-          <Route path="/Member" element={<Member />} />
+          <Route path="/CustomerList" element={<CustomerList />} />
           <Route path="/usergroup" element={<UserGroup />} />
           <Route path="/usermaster" element={<UserMaster />} />
           <Route path="/Permission" element={<Permission />} />
           <Route path="/RewardPoints" element={<RewardPoints />} />
           <Route path="/Vendormaster" element={<VendorMaster />} />
+          <Route path="/Member" element={<Member />} />
           <Route path="/Paymode" element={<Paymode />} />
           <Route path="/PickList" element={<PickList />} />
           <Route path="/Terminal" element={<Terminal />} />

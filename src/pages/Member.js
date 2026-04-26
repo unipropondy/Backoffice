@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import "./Member.css";
 import { BASE_URL } from "../config/api";
+import { useNavigate } from "react-router-dom";
 
 function Customer() {
 
@@ -30,6 +31,8 @@ function Customer() {
 
   const [mealList, setMealList] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
+
+   const navigate = useNavigate();
 
   // 🔥 ADD HERE
 useEffect(() => {
@@ -147,9 +150,15 @@ await fetchCustomers(); // 🔥 ADD THIS
       <div className="mem-header-bar">
   <div className="mem-page-title">Customer Master</div>
 
+  <div className="mem-header-actions">
   <button className="mem-save-btn" onClick={handleSave}>
     Save
   </button>
+
+   <button className="mem-exit-btn" onClick={() => navigate("/CustomerList")}>
+    Exit
+  </button>
+</div>
 </div>
 
       {/* FORM */}

@@ -128,6 +128,10 @@ app.use("/api/stock", stockRoutes);
 const transstockRoutes = require("./routes/transstockRoutes");
 app.use("/api/transstockRoutes", transstockRoutes);
 
+const customerMasterRoutes = require("./routes/customerMaster");
+
+app.use("/api/customer", customerMasterRoutes);
+
 /* ------------------- GET ALL KITCHENS ------------------- */
 app.get("/kitchen", async (req, res) => {
   try {

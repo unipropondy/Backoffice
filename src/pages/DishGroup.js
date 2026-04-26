@@ -164,6 +164,40 @@ const handleSubmit = async (e) => {
   }
 };
 
+const handleToggle = async (row, field, value) => {
+  const oldValue = row[field];
+
+  // UI update
+  setEntries((prev) =>
+    prev.map((item) =>
+      item.DishGroupId === row.DishGroupId
+        ? { ...item, [field]: value }
+        : item
+    )
+  );
+
+  try {
+    await axios.post(`${BASE_URL}/dishgroup`, {
+      ...row,
+      [field]: value ? 1 : 0,
+    });
+
+    fetchDishGroup();
+
+  } catch (err) {
+    console.error("Toggle Error ❌", err);
+
+    // rollback
+    setEntries((prev) =>
+      prev.map((item) =>
+        item.DishGroupId === row.DishGroupId
+          ? { ...item, [field]: oldValue }
+          : item
+      )
+    );
+  }
+};
+
   const handleEdit = (row) => {
   // const row = entries[index];
 
@@ -764,9 +798,36 @@ Cancel
 <td>{row.DishGroupCode}</td>
 <td>{row.DishGroupName}</td>
 
-<td>{row.isActive ? "Yes" : "No"}</td>
-<td>{row.isKitchenPrint ? "Yes" : "No"}</td>
-<td>{row.isDiscountAllowed ? "Yes" : "No"}</td>
+<td onClick={(e) => e.stopPropagation()}>
+  <input
+    type="checkbox"
+    checked={!!row.isActive}
+    onChange={(e) => {
+      e.stopPropagation();
+      handleToggle(row, "isActive", e.target.checked);
+    }}
+  />
+</td>
+<td onClick={(e) => e.stopPropagation()}>
+  <input
+    type="checkbox"
+    checked={!!row.isKitchenPrint}
+    onChange={(e) => {
+      e.stopPropagation();
+      handleToggle(row, "isKitchenPrint", e.target.checked);
+    }}
+  />
+</td>
+<td onClick={(e) => e.stopPropagation()}>
+  <input
+    type="checkbox"
+    checked={!!row.isDiscountAllowed}
+    onChange={(e) => {
+      e.stopPropagation();
+      handleToggle(row, "isDiscountAllowed", e.target.checked);
+    }}
+  />
+</td>
 
 <td>{row.SortCode}</td>
 <td>{row.KitchenSortCode}</td>

@@ -138,10 +138,26 @@ import { BASE_URL } from "../config/api";
  
   const handleSave = async () => {
 
-    if (!dish.DishGroupId || dish.DishGroupId === "") {
+  if (!dish.DishCode) {
+   alert("Dish Code must be entered. ");
+  return;
+}
+
+  if (!dish.Name) {
+   alert("Name must be entered. ");
+  return;
+}
+
+  if (!dish.CurrentCost) {
+   alert("Price must be entered. ");
+  return;
+}
+
+  if (!dish.DishGroupId || dish.DishGroupId === "") {
   alert("Dish Group must be entered. ❗");
   return;
 }
+
   try {
      setLoading(true);
       console.log("SAVE CLICKED");
@@ -244,32 +260,33 @@ setExistingImage(null);
   };
 
   const handleToggle = async (row, field, value) => {
-  console.log("TOGGLE CLICK 👉", field, value);  // debug
+  const oldValue = row[field];
+
+  // ✅ UI update
+  setEntries((prev) =>
+    prev.map((item) =>
+      item.DishId === row.DishId
+        ? { ...item, [field]: value }
+        : item
+    )
+  );
 
   try {
-    // ✅ UI update first
-    setEntries((prev) =>
-      prev.map((item) =>
-        item.DishId === row.DishId
-          ? { ...item, [field]: value }
-          : item
-      )
-    );
-
-    // ✅ API call (IMPORTANT FIX)
-    await axios.patch(`${BASE_URL}/dish/toggle/${row.DishId}`, {
-      field: field,
-      value: value ? 1 : 0,   // 🔥 MUST BE 1 / 0
+    await axios.post(`${BASE_URL}/dish`, {
+      ...row,
+      [field]: value ? 1 : 0,
     });
 
-  } catch (err) {
-    console.error("Toggle error ❌", err.response?.data || err.message);
+    fetchDish(); // 🔥 refresh
 
-    // ❌ rollback only if error
+  } catch (err) {
+    console.error("ERROR ❌", err);
+
+    // rollback
     setEntries((prev) =>
       prev.map((item) =>
         item.DishId === row.DishId
-          ? { ...item, [field]: !value }
+          ? { ...item, [field]: oldValue }
           : item
       )
     );
@@ -696,38 +713,37 @@ const totalRows = filteredData.length;
                   <td>{d.SordCode}</td>
                   <td>{d.UnitCost}</td>
                   <td>{d.QuantityOnHand}</td>
-                 <td>
+                 <td onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={!!d.IsActive}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        handleToggle(d, "IsActive", e.target.checked);
+                      }}
+                    />
+                  </td>
+
+                 <td onClick={(e) => e.stopPropagation()}>
                   <input
                     type="checkbox"
-                    checked={d.IsActive}
-                    onClick={(e) => {
-                      e.stopPropagation();                 // prevent row click
-                      handleToggle(d, "IsActive", !d.IsActive); // toggle value
+                    checked={!!d.iskitchenPrint}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleToggle(d, "iskitchenPrint", e.target.checked);
                     }}
                   />
                 </td>
-
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={d.iskitchenPrint}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleToggle(d, "iskitchenPrint", !d.iskitchenPrint);
-                      }}
-                    />
-                  </td>
-
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={d.isDiscountAllowed}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleToggle(d, "isDiscountAllowed", !d.isDiscountAllowed);
-                      }}
-                    />
-                  </td>
+                <td onClick={(e) => e.stopPropagation()}>
+                  <input
+                    type="checkbox"
+                    checked={!!d.isDiscountAllowed}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleToggle(d, "isDiscountAllowed", e.target.checked);
+                    }}
+                  />
+                </td>
                   {/* <td>{d.IsTaxAllowed ? "Yes" : "No"}</td> */}
                   {/* <td>{d.IsStockDish ? "Yes" : "No"}</td> */}
                   {/* <td>{d.isFOC ? "Yes" : "No"}</td> */}

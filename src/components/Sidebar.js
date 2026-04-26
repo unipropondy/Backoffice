@@ -113,8 +113,8 @@ const username = user?.FirstName;
   <FaSlidersH className="sid-icon" /> Modifier
 </Link>
 
-<Link className="sid-menu" to="/Member">
-  <FaUsers className="sid-icon" /> Member
+<Link className="sid-menu" to="/CustomerList ">
+  <FaUsers className="sid-icon" /> Customer
 </Link>
 
      <div className="sid-menu" onClick={() => setShowReport(!ShowReport)}>

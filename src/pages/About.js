@@ -178,9 +178,14 @@ e.preventDefault();
   console.log("IMAGE TYPE:", typeof image);
   console.log("IMAGE VALUE:", image);
 
-if(!form.CategoryCode || !form.CategoryName){
-alert("Please fill Category Code and Category Name");
-return;
+if (!form.CategoryCode) {
+  alert("Please enter Category Code");
+  return;
+}
+
+if (!form.CategoryName) {
+  alert("Please enter Category Name");
+  return;
 }
 
 
