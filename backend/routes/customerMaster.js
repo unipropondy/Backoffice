@@ -38,7 +38,8 @@ router.get("/:id", async (req, res) => {
 
     res.json(result.recordset[0] || {});
 
-  } catch (err) {
+  }  catch (err) {
+    console.log("BACKEND ERROR ❌", err);   // 🔥 ADD HERE
     res.status(500).json({ error: err.message });
   }
 });
