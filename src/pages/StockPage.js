@@ -79,7 +79,15 @@ const loadData = async (type) => {
         <div className="stock-right">
           <button
             className="stock-new-btn"
-            onClick={() => navigate("/StockEntryPage")}
+           onClick={() => {
+            if (activeTab === "PURINV") {
+              navigate("/StockEntryPurInv");
+            } else if (activeTab === "PURORD") {
+              navigate("/StockEntryPage");
+            } else if (activeTab === "PURRET") {
+              navigate("/StockEntryPurRet"); // later create pannalaam
+            }
+          }}
           >
             New
           </button>
@@ -121,7 +129,15 @@ const loadData = async (type) => {
                   <td>
                     <button
                       className="stock-edit-btn"
-                      onClick={() => navigate(`/StockEntryPage/${item.TranNo}`)}
+                      onClick={() => {
+                    if (item.TranType === "PURINV") {
+                      navigate(`/StockEntryPurInv/${item.TranNo}`);
+                    } else if (item.TranType === "PURORD") {
+                      navigate(`/StockEntryPage/${item.TranNo}`);
+                    } else if (item.TranType === "PURRET") {
+                      navigate(`/StockEntryPurRet/${item.TranNo}`);
+                    }
+                  }}
                     >
                       Edit
                     </button>

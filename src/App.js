@@ -34,7 +34,8 @@ import POSPermission from "./pages/POSPermission";
 import StockPage from "./pages/StockPage";
 import StockEntryPage from "./pages/StockEntryPage";
 import Member from "./pages/Member";
-
+import StockEntryPurInv from "./pages/StockEntryPurInv";
+import StockEntryPurRet from "./pages/StockEntryPurRet";
 
 // import { LoaderProvider } from "./context/LoaderContext";
 
@@ -84,8 +85,18 @@ function Layout() {
           <Route path="/HappyHours" element={<HappyHours show={true} />} />
           <Route path="/POSPermission" element={<POSPermission show={true} />} />
           <Route path="/StockPage" element={<StockPage show={true} />} />
-          <Route path="/StockEntryPage" element={<StockEntryPage />} />
-          <Route path="/StockEntryPage/:tranNo" element={<StockEntryPage />} />
+              {/* 🔥 PURCHASE ORDER */}
+        <Route path="/StockEntryPage" element={<StockEntryPage />} />
+        <Route path="/StockEntryPage/:tranNo" element={<StockEntryPage />} />
+            {/* 🔥 PURCHASE INVOICE */}
+        <Route path="/StockEntryPurInv" element={<StockEntryPurInv />} />
+        <Route path="/StockEntryPurInv/:tranNo" element={<StockEntryPurInv />} />
+
+        {/* 🔥 PURCHASE RETURN */}
+        <Route path="/StockEntryPurRet" element={<StockEntryPurRet />} />
+        <Route path="/StockEntryPurRet/:tranNo" element={<StockEntryPurRet />} />
+
+      
         </Routes>
       </div>
     </>
