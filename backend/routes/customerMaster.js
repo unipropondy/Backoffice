@@ -53,7 +53,11 @@ router.get("/:id", async (req, res) => {
 
   } catch (err) {
     console.log("BACKEND ERROR ❌", err);
-    res.status(500).json({ error: err.message });
+    // res.status(500).json({ error: err.message });
+    res.status(500).json({
+  error: err.message,
+  stack: err.stack   // 🔥 ADD THIS
+});
   }
 });
 
