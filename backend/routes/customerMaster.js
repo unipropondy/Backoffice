@@ -1,14 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const sql = require("mssql");
-const { poolPromise } = require("../db"); // 🔥 FIX
+const { sql, poolPromise } = require("../db");
 
+
+// ================= GET ALL =================
 router.get("/", async (req, res) => {
   try {
     const pool = await poolPromise;
 
+    console.log("POOL TYPE 👉", pool.constructor.name);
+    console.log("POOL OBJECT 👉", pool);
+
     const result = await pool.request().query(`
-      SELECT TOP 10 
+      SELECT 
         CustomerId,
         CustomerCode,
         Name,
@@ -23,12 +27,11 @@ router.get("/", async (req, res) => {
     res.json(result.recordset);
 
   } catch (err) {
-    console.log("BACKEND ERROR ❌", err);
-    res.status(500).json({
-      error: err.message,
-      stack: err.stack
-    });
+    console.error("❌ GET ERROR:", err);
+    res.status(500).json({ error: err.message });
   }
 });
+
+
 
 module.exports = router;

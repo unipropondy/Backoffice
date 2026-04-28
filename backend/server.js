@@ -79,7 +79,7 @@ app.use("/api/terminal", terminalRoutes);
 
 const customerRoutes = require("./routes/Customer");
 
-app.use("/api/customer", customerRoutes);
+app.use("/api/customermember", customerRoutes);
 
 // 🔥 FireCourse Route connect
 const firecourseRoutes = require("./routes/firecourse");
@@ -130,7 +130,7 @@ app.use("/api/transstockRoutes", transstockRoutes);
 
 const customerMasterRoutes = require("./routes/customerMaster");
 
-app.use("/api/customer", customerMasterRoutes);
+app.use("/api/customermaster", customerMasterRoutes);
 
 /* ------------------- GET ALL KITCHENS ------------------- */
 app.get("/kitchen", async (req, res) => {

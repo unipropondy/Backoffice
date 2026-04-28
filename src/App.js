@@ -72,6 +72,7 @@ function Layout() {
           <Route path="/RewardPoints" element={<RewardPoints />} />
           <Route path="/Vendormaster" element={<VendorMaster />} />
           <Route path="/Member" element={<Member />} />
+           <Route path="/Member/:id" element={<Member />} />
           <Route path="/Paymode" element={<Paymode />} />
           <Route path="/PickList" element={<PickList />} />
           <Route path="/Terminal" element={<Terminal />} />

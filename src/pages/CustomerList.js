@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { BASE_URL } from "../config/api";
+import { BASE_URL } from "../config/api";  
 import { useNavigate } from "react-router-dom";
 import "./CustomerList.css";
-
+// export const BASE_URL = "http://localhost:5000";
 function CustomerList() {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);   // 🔥 loading state
-  const [error, setError] = useState("");         // 🔥 error state
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
@@ -16,44 +16,38 @@ function CustomerList() {
   }, []);
 
   const fetchCustomers = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/customer`);
+  try {
+    console.log("BASE URL 👉", BASE_URL);
 
-      console.log("API DATA 👉", res.data);
+    const res = await axios.get(`${BASE_URL}/api/customermaster`);
 
-      setData(res.data);
-      setLoading(false);
+    console.log("API DATA 👉", res.data);
 
-    } catch (err) {
-      console.log("ERROR ❌", err.response?.data || err.message);
+    setData(res.data);
+    setLoading(false);
 
-      setError("Failed to load data");
-      setLoading(false);
-    }
-  };
+  } catch (err) {
+    console.log("FULL ERROR ❌", err);
+    console.log("SERVER 👉", err.response?.data);
+
+    setError(err.response?.data?.error || "Failed to load data");
+    setLoading(false);
+  }
+};
 
   return (
     <div className="list-container">
 
-      {/* Header */}
       <div className="list-header">
         <h2>Customer List</h2>
-
-        <button onClick={() => navigate("/Member")}>
-          New
-        </button>
+        <button onClick={() => navigate("/Member")}>New</button>
       </div>
 
-      {/* Loading */}
       {loading && <p>Loading...</p>}
-
-      {/* Error */}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* Table */}
       {!loading && !error && (
         <table className="list-table">
-
           <thead>
             <tr>
               <th>Code</th>
@@ -66,7 +60,7 @@ function CustomerList() {
           </thead>
 
           <tbody>
-            {data && data.length > 0 ? (
+            {data.length > 0 ? (
               data.map((row) => (
                 <tr
                   key={row.CustomerId}
@@ -82,16 +76,12 @@ function CustomerList() {
               ))
             ) : (
               <tr>
-                <td colSpan="6" style={{ textAlign: "center" }}>
-                  No Data Found
-                </td>
+                <td colSpan="6">No Data Found</td>
               </tr>
             )}
           </tbody>
-
         </table>
       )}
-
     </div>
   );
 }

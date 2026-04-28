@@ -2,30 +2,33 @@ import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import "./Member.css";
 import { BASE_URL } from "../config/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function Customer() {
+  const { id } = useParams(); 
+  console.log("PARAM ID 👉", id);
 
   const [form, setForm] = useState({
-    code: "",
-    contactPerson: "",
-    companyName: "",
-    ic: "",
-    email: "",
-    phone: "",
-    homePhone: "",
-    dob: "",
-    category: "Standard",
-    classification: "Regular",
-    homeAddress: "",
-    officeAddress: "",
-    city: "Singapore",
-    postalCode: "",
-    invoiceDate: "",
-    mealRate: 0,
-    memberMeal: false,
-    noSales: false,
-  });
+  id: "",   // ✅ ADD THIS LINE
+  code: "",
+  contactPerson: "",
+  companyName: "",
+  ic: "",
+  email: "",
+  phone: "",
+  homePhone: "",
+  dob: "",
+  category: "Standard",
+  classification: "Regular",
+  homeAddress: "",
+  officeAddress: "",
+  city: "Singapore",
+  postalCode: "",
+  invoiceDate: "",
+  mealRate: 0,
+  memberMeal: false,
+  noSales: false,
+});
 
   const [activeTab, setActiveTab] = useState("meal");
 
@@ -34,11 +37,33 @@ function Customer() {
 
    const navigate = useNavigate();
 
+   const fetchNewCode = async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/api/customermember/newcode`);
+
+    console.log("AUTO NEW CODE 👉", res.data);
+
+    setForm(prev => ({
+      ...prev,
+      id: "",
+      code: res.data.code
+    }));
+
+  } catch (err) {
+    console.log("NEW CODE ERROR ❌", err);
+  }
+};
+
   // 🔥 ADD HERE
 useEffect(() => {
-  fetchCustomers();
-}, []);
-
+  if (id) {
+    // 🔵 EDIT MODE
+    fetchCustomerById(id);
+  } else {
+    // 🟢 NEW MODE
+    fetchNewCode();
+  }
+}, [id]);
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm({ ...form, [name]: type === "checkbox" ? checked : value });
@@ -74,23 +99,25 @@ useEffect(() => {
 };
 
 // 🔥 ADD HERE
-const fetchCustomers = async () => {
+const fetchCustomerById = async (id) => {
   try {
-    const res = await axios.get(`${BASE_URL}/api/customer`);
+    const res = await axios.get(`${BASE_URL}/api/customermember/${id}`);
 
-    console.log("GET DATA:", res.data);
+    const data = res.data;
 
-    if (res.data && res.data.length > 0) {
-      const data = res.data[0];
+    console.log("EDIT DATA 👉", data);
 
+    if (data) {
       setForm({
+        id: data.CustomerId || "",
         code: data.CustomerCode || "",
         contactPerson: data.ContactPerson || "",
         companyName: data.Name || "",
         email: data.EmailId1 || "",
         phone: data.Address1_Telephone1 || "",
+        city: data.Address1_City || "Singapore",
+
         homeAddress: "",
-        city: data.Address1_City || "",
         postalCode: "",
         dob: "",
         category: "Standard",
@@ -105,10 +132,9 @@ const fetchCustomers = async () => {
     }
 
   } catch (err) {
-    console.log(err);
+    console.log("FETCH ERROR ❌", err);
   }
 };
-
   const icInputRef = useRef();
   const photoInputRef = useRef();
 
@@ -117,30 +143,38 @@ const [icFile, setIcFile] = useState(null);
 
   // ✅ SAVE
  const handleSave = async () => {
-   console.log("BUTTON CLICKED"); 
-  const res = await axios.post(`${BASE_URL}/api/customer`, {
-    Name: form.companyName,
-    ContactPerson: form.contactPerson,
-    EmailId1: form.email,
-    Address1_Line1: form.homeAddress,
-    Address1_City: form.city,
-    Address1_PostalCode: form.postalCode,
-    Address1_Telephone1: form.phone,
-    DOB: form.dob,
-    Anniversary: null,
-    CreatedBy: null,
-    meals: mealList
-  });
+  try {
 
-  console.log("API RESPONSE:", res.data);
+    const userId = localStorage.getItem("userId");
 
-  // 🔥 THIS IS THE MAIN FIX
-  setForm(prev => ({
-    ...prev,
-    code: res.data.CustomerCode
-  }));
-await fetchCustomers(); // 🔥 ADD THIS
-  alert("Saved");
+     console.log("USER ID 👉", userId);
+
+    const res = await axios.post(`${BASE_URL}/api/customermember`, {
+     CustomerId: form.id ? form.id : null,   // 🔥 FIX
+      Name: form.companyName,
+      ContactPerson: form.contactPerson,
+      EmailId1: form.email,
+      Address1_Line1: form.homeAddress,
+      Address1_City: form.city,
+      Address1_PostalCode: form.postalCode,
+      Address1_Telephone1: form.phone,
+      DOB: form.dob ? form.dob : null,        // 🔥 FIX
+      Anniversary: null,
+      CreatedBy: userId
+    });
+
+    setForm(prev => ({
+      ...prev,
+      id: res.data.CustomerId,       // 🔥 UPDATE ID
+      code: res.data.CustomerCode
+    }));
+
+    alert("Saved Successfully");
+
+  } catch (err) {
+    console.log("ERROR ❌", err.response?.data);
+    alert(err.response?.data?.error);
+  }
 };
 
   return (
@@ -178,7 +212,7 @@ await fetchCustomers(); // 🔥 ADD THIS
           </tr>
 
           <tr>
-            <td>Contact Person</td>
+            <td>Contact Name*</td>
             <td>
               <input name="contactPerson" value={form.contactPerson} onChange={handleChange} />
             </td>
@@ -258,7 +292,7 @@ await fetchCustomers(); // 🔥 ADD THIS
           </tr>
 
           <tr>
-            <td>Phone</td>
+            <td>Phone No.*</td>
             <td>
               <input name="homePhone" value={form.homePhone} onChange={handleChange} />
             </td>
