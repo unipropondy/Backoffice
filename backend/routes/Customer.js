@@ -421,7 +421,7 @@ console.log("TYPE CreatedBy 👉", typeof createdByValue);
     .input("RouteId", sql.UniqueIdentifier,
       isValidGuid(req.body.RouteId) ? req.body.RouteId : null)
 
-    .input("MealRates", sql.Int, toInt(req.body.MealRates))
+  
     .input(
   "OpeningBalance",
   sql.Int,
@@ -437,8 +437,8 @@ console.log("TYPE CreatedBy 👉", typeof createdByValue);
     .input("RedeemPoints", sql.Decimal(18,2), toDecimal(RedeemPoints))
 
     .input("MealRates", sql.Int, toInt(req.body.MealRates))
-    .input("MemberMealAllowed", sql.Int, toInt(req.body.MemberMealAllowed))
-    .input("Nosales", sql.Int, toInt(req.body.Nosales))
+    // .input("MemberMealAllowed", sql.Int, toInt(req.body.MemberMealAllowed))
+    // .input("Nosales", sql.Int, toInt(req.body.Nosales))
 
     .query(`
     INSERT INTO dbo.CustomerMaster (
