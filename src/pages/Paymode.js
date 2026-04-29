@@ -7,6 +7,8 @@ function Paymode() {
   const [mode, setMode] = useState("list");
   const [data, setData] = useState([]);
   const [editId, setEditId] = useState(null);
+
+  const [loading, setLoading] = useState(false);
  
   const [form, setForm] = useState({
     position: "",
@@ -42,18 +44,21 @@ function Paymode() {
  
   // ================= IMAGE =================
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setForm({
-          ...form,
-          imagePreview: reader.result
-        });
-      };
-      reader.readAsDataURL(file);
-    }
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    setForm(prev => ({
+      ...prev,
+      imagePreview: reader.result
+    }));
   };
+
+  reader.readAsDataURL(file);
+};
  
   // ================= EDIT =================
   const handleEdit = (item) => {
@@ -63,7 +68,7 @@ function Paymode() {
       description: item.Description,
       active: item.Active === true || item.Active === 1,
       entertainment: item.isEntertainment === true || item.isEntertainment === 1,
-      imagePreview: item.PaymodeImage || null
+  imagePreview: item.PaymodeImage || null
     });
  
     setEditId(item.Position);
@@ -71,58 +76,42 @@ function Paymode() {
   };
  
   // ================= SAVE =================
-  const handleSave = async () => {
- 
-    if (!form.position || !form.paymode) {
-      alert("Fill required fields");
-      return;
+ const handleSave = async () => {
+
+  if (!form.position || !form.paymode) {
+    alert("Fill required fields");
+    return;
+  }
+
+  try {
+    setLoading(true);   // 🔥 START LOADING
+
+    const payload = {
+      position: Number(form.position),
+      paymode: form.paymode,
+      description: form.description,
+      active: form.active,
+      entertainment: form.entertainment,
+      image: form.imagePreview
+    };
+
+    if (editId !== null) {
+      await axios.put(`${BASE_URL}/api/paymode/${editId}`, payload);
+    } else {
+      await axios.post(`${BASE_URL}/api/paymode`, payload);
     }
- 
-    try {
-      const payload = {
-        position: Number(form.position),   // 🔥 FIX
-        paymode: form.paymode,
-        description: form.description,
-        active: form.active,
-        entertainment: form.entertainment,
-        image: form.imagePreview
-      };
- 
-      console.log("EDIT ID 👉", editId);
-      console.log("PAYLOAD 👉", payload);
- 
-      if (editId !== null) {
-        await axios.put(
-          `${BASE_URL}/api/paymode/${editId}`,
-          payload
-        );
-      } else {
-        await axios.post(
-          `${BASE_URL}/api/paymode`,
-          payload
-        );
-      }
- 
-      fetchData();
-      setMode("list");
-      setEditId(null);
- 
-      // RESET FORM
-      setForm({
-        position: "",
-        paymode: "",
-        description: "",
-        active: true,
-        entertainment: false,
-        imagePreview: null
-      });
- 
-    } catch (err) {
-      console.log(err);
-      alert(err.response?.data || "Save failed");
-    }
-  };
- 
+
+    await fetchData();   // 🔥 wait for data
+
+    setMode("list");
+    setEditId(null);
+
+  } catch (err) {
+    alert("Save failed");
+  } finally {
+    setLoading(false);   // 🔥 ALWAYS STOP (important)
+  }
+};
   return (
     <div className="payment-page1">
  
@@ -139,9 +128,19 @@ function Paymode() {
             <button
               className="payment-btn1 payment-new1"
               onClick={() => {
-                setMode("form");
-                setEditId(null);
-              }}
+  setMode("form");
+  setEditId(null);
+
+  // 🔥 IMPORTANT - FORM CLEAR
+  setForm({
+    position: "",
+    paymode: "",
+    description: "",
+    active: true,
+    entertainment: false,
+    imagePreview: null
+  });
+}}
             >
               New
             </button>
@@ -236,9 +235,15 @@ function Paymode() {
               {/* IMAGE BOX */}
               <div className="payment-imageBox1">
                 {form.imagePreview ? (
-                  <img src={form.imagePreview} alt="preview" />
+                  <img
+                    src={form.imagePreview}
+                    alt="preview"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                    }}
+                  />
                 ) : (
-                  <span></span>
+                  <span>preview</span>
                 )}
               </div>
  
@@ -278,7 +283,9 @@ function Paymode() {
  
               <button
                 className="payment-btn1 payment-exit1"
-                onClick={() => setMode("list")}
+               onClick={() => {
+  window.location.reload();   // 🔥 page refresh
+}}
               >
                 Cancel
               </button>
