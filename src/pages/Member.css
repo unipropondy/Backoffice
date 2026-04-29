@@ -357,3 +357,24 @@
   margin: 0;
   accent-color: var(--primary);
 }
+
+.input-with-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-with-btn input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.input-with-btn button {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background: #eee;
+  cursor: pointer;
+}

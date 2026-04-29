@@ -28,6 +28,16 @@ function Customer() {
   mealRate: 0,
   memberMeal: false,
   noSales: false,
+  cardNo: "",
+  tagId: "",
+  paidAmount: 0,
+  servicePercent: 0,
+  serviceValue: 0,
+  fromDate: "",
+  toDate: "",
+  currentBalance: 0,
+  lastTopupDate: "",
+  cash: 0,
 });
 
   const [activeTab, setActiveTab] = useState("meal");
@@ -127,7 +137,13 @@ const fetchCustomerById = async (id) => {
         invoiceDate: "",
         mealRate: 0,
         memberMeal: false,
-        noSales: false
+        noSales: false,
+         fromDate: data.FromDate ? data.FromDate.split("T")[0] : "",
+        toDate: data.ToDate ? data.ToDate.split("T")[0] : "",
+        lastTopupDate: data.InvoiceDate ? data.InvoiceDate.split("T")[0] : "",
+        currentBalance: data.TotalPoints || 0,
+        cash: data.RedeemPoints || 0,
+        cardNo: data.CardNo || ""
       });
     }
 
@@ -147,33 +163,54 @@ const [icFile, setIcFile] = useState(null);
 
     const userId = localStorage.getItem("userId");
 
-     console.log("USER ID 👉", userId);
+    console.log("SENDING 👉", form);
 
     const res = await axios.post(`${BASE_URL}/api/customermember`, {
-     CustomerId: form.id ? form.id : null,   // 🔥 FIX
+      CustomerId: form.id || null,
+
       Name: form.companyName,
       ContactPerson: form.contactPerson,
       EmailId1: form.email,
+
       Address1_Line1: form.homeAddress,
       Address1_City: form.city,
       Address1_PostalCode: form.postalCode,
       Address1_Telephone1: form.phone,
-      DOB: form.dob ? form.dob : null,        // 🔥 FIX
-      Anniversary: null,
-      CreatedBy: userId
+
+      DOB: form.dob || null,
+
+      // 🔥 ADD THIS BLOCK (VERY IMPORTANT)
+      CategoryCode: 1,
+      ClassificationCode: 1,
+      Address1_TypeCode: 1,
+      StatusCode: 1,
+
+      // 🔥 VALUE CARD
+      FromDate: form.fromDate || null,
+      ToDate: form.toDate || null,
+      InvoiceDate: form.lastTopupDate || null,
+
+      OpeningBalance: form.paidAmount || 0,
+      TotalPoints: form.currentBalance || 0,
+      RedeemPoints: form.cash || 0,
+
+      CardNo: form.cardNo || "",
+
+      CreatedBy: userId || "00000000-0000-0000-0000-000000000001"
     });
 
     setForm(prev => ({
       ...prev,
-      id: res.data.CustomerId,       // 🔥 UPDATE ID
+      id: res.data.CustomerId,
       code: res.data.CustomerCode
     }));
 
     alert("Saved Successfully");
 
   } catch (err) {
-    console.log("ERROR ❌", err.response?.data);
-    alert(err.response?.data?.error);
+    console.log("ERROR FULL ❌", err);
+    console.log("ERROR DATA ❌", err.response?.data);
+    alert(err.response?.data?.error || "Save failed");
   }
 };
 
@@ -457,29 +494,48 @@ const [icFile, setIcFile] = useState(null);
           <div className="mem-form-row">
             <label>Card Number</label>
             <div className="input-with-btn">
-              <input />
-              <button>...</button>
+              <input 
+                name="cardNo"
+                value={form.cardNo}
+                onChange={handleChange}
+              />
             </div>
           </div>
 
           <div className="mem-form-row">
             <label>Tag ID</label>
-            <input />
+            <input 
+              name="tagId"
+              value={form.tagId}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="mem-form-row">
             <label>Paid Amount</label>
-            <input className="mem-amount" value="0.00" />
+            <input 
+              name="paidAmount"
+              value={form.paidAmount}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="mem-form-row">
             <label>Service %</label>
-            <input />
+            <input 
+              name="servicePercent"
+              value={form.servicePercent}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="mem-form-row">
             <label>Service Value</label>
-            <input value="0.00" />
+            <input 
+              name="serviceValue"
+              value={form.serviceValue}
+              onChange={handleChange}
+            />
           </div>
 
         </div>
@@ -489,39 +545,56 @@ const [icFile, setIcFile] = useState(null);
 
           <div className="mem-form-row">
             <label>From Date</label>
-            <div className="mem-date-group">
-              <input placeholder="DD" />
-              <span>-</span>
-              <input placeholder="MM" />
-              <span>-</span>
-              <input placeholder="YYYY" />
+            <div className="input-with-btn">
+              <input
+                type="date"
+                name="fromDate"
+                value={form.fromDate}
+                onChange={handleChange}
+              />
+              {/* <button type="button">📅</button> */}
             </div>
           </div>
 
           <div className="mem-form-row">
-            <label>To Date</label>
-            <div className="mem-date-group">
-              <input placeholder="DD" />
-              <span>-</span>
-              <input placeholder="MM" />
-              <span>-</span>
-              <input placeholder="YYYY" />
-            </div>
+          <label>To Date</label>
+          <div className="input-with-btn">
+            <input
+              type="date"
+              name="toDate"
+              value={form.toDate}
+              onChange={handleChange}
+            />
+            {/* <button type="button">📅</button> */}
           </div>
+        </div>
+
+         <div className="mem-form-row">
+          <label>Current Balance</label>
+          <input
+            name="currentBalance"
+            value={form.currentBalance}
+            onChange={handleChange}
+          />
+        </div>
 
           <div className="mem-form-row">
-            <label>Current Balance</label>
-            <input value="0.00" />
-          </div>
-
-          <div className="mem-form-row">
-            <label>Last Top Up Date</label>
-            <input />
-          </div>
+          <label>Last Top Up Date</label>
+          <input
+            type="date"
+            name="lastTopupDate"
+            value={form.lastTopupDate}
+            onChange={handleChange}
+          />
+        </div>
 
           <div className="mem-form-row">
             <label>CASH</label>
-            <input value="0.00" />
+            <input 
+            name="cash"
+            value={form.cash}
+            onChange={handleChange}
+          />
           </div>
 
         </div>
