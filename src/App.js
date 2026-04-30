@@ -36,6 +36,7 @@ import StockEntryPage from "./pages/StockEntryPage";
 import Member from "./pages/Member";
 import StockEntryPurInv from "./pages/StockEntryPurInv";
 import StockEntryPurRet from "./pages/StockEntryPurRet";
+import Server from "./pages/server";
 
 // import { LoaderProvider } from "./context/LoaderContext";
 
@@ -96,6 +97,7 @@ function Layout() {
         {/* 🔥 PURCHASE RETURN */}
         <Route path="/StockEntryPurRet" element={<StockEntryPurRet />} />
         <Route path="/StockEntryPurRet/:tranNo" element={<StockEntryPurRet />} />
+        <Route path="/server" element={<Server />} />
 
       
         </Routes>

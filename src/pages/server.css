@@ -1,0 +1,94 @@
+/* 📦 Container */
+.container {
+  padding: 20px;
+  font-family: Arial;
+}
+
+/* ➕ Add Button */
+.add-btn {
+  background: #007bff;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+/* 📊 Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.table th {
+  background: #f2f2f2;
+}
+
+/* ✏ Edit Button */
+.edit-btn {
+  background: orange;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* 🔲 Modal Background */
+.ser_modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 📦 Modal Box */
+.ser_modal_content {
+  background: white;
+  padding: 25px;
+  width: 320px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* 🔤 Input */
+.ser_modal_content input[type="text"] {
+  width: 90%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* 💾 Save Button */
+.save-btn {
+  background: #28a745;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  margin-right: 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* ❌ Cancel Button */
+.cancel-btn {
+  background: #dc3545;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

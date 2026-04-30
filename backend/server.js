@@ -132,6 +132,9 @@ const customerMasterRoutes = require("./routes/customerMaster");
 
 app.use("/api/customermaster", customerMasterRoutes);
 
+const serverRoutes = require("./routes/server");
+app.use("/api/server", serverRoutes);
+
 /* ------------------- GET ALL KITCHENS ------------------- */
 app.get("/kitchen", async (req, res) => {
   try {
