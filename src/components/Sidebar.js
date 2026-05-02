@@ -15,9 +15,8 @@ import { MdListAlt, MdEmail } from "react-icons/md";
 import ChangePassword from "./ChangePassword";
 import { FaKey } from "react-icons/fa";
 import { FaClock } from "react-icons/fa";
+import { FaBuilding } from "react-icons/fa"; 
 // import TimeEntry from "./TimeEntry";
-
-
 
 function Sidebar({ open, setOpen }) {
   const navigate = useNavigate();
@@ -132,8 +131,8 @@ const username = user?.FirstName;
             <FaChartBar className="sid-icon" /> Sales Report
           </Link>
 
-          {/* <Link className="sid-menu" to="/SltReport" onClick={() => setOpen(false)}> */}
-          <Link className="sid-menu" to="/SltReport">
+          
+          <Link className="sid-menu" to="/DayEndReport">
             <FaChartBar className="sid-icon" /> Slt.. Report
           </Link>
     </div>
@@ -197,8 +196,8 @@ const username = user?.FirstName;
           <Link className="sid-menu" to="/POSPermission">
             <FaShieldAlt className="sid-icon" /> POSPermission
           </Link>
-          <Link className="sid-menu" to="/server">
-            <FaUsers className="sid-icon" /> Server
+           <Link className="sid-menu" to="/ServiceMaster">
+            <FaBarcode  className="sid-icon" /> Service Master
           </Link>
         </div>
         )}
@@ -210,6 +209,12 @@ const username = user?.FirstName;
 
         {showSetup && (
         <div className="sid-submenu-container">
+          <Link className="sid-menu" to="/Organization">
+            <FaBuilding  className="sid-icon" /> Organization
+          </Link>
+           <Link className="sid-menu" to="/TableMaster">
+            <FaBarcode  className="sid-icon" /> Table Master
+          </Link>
            <Link className="sid-menu" to="/Terminal">
             <BsTerminal  className="sid-icon" /> Terminal
           </Link>
@@ -236,8 +241,7 @@ const username = user?.FirstName;
           </Link>
           <Link className="sid-menu" to="/CancelRemarkModal">
             <FaBan  className="sid-icon" /> CancelRemarkModal
-          </Link>
-          
+          </Link>  
         </div>
         )}
   

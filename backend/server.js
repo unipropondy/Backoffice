@@ -132,8 +132,22 @@ const customerMasterRoutes = require("./routes/customerMaster");
 
 app.use("/api/customermaster", customerMasterRoutes);
 
-const serverRoutes = require("./routes/server");
-app.use("/api/server", serverRoutes);
+const Serviceroutes = require("./routes/Serviceroutes");
+
+// ✅ FINAL ROUTE
+app.use("/api/services", Serviceroutes);
+
+const TableRoutes = require("./routes/TableRoutes");
+
+// ✅ FINAL ROUTE
+app.use("/api/tablemaster", TableRoutes);
+
+const organizationRoutes = require("./routes/organizationRoutes");
+ 
+app.use("/api/organization", organizationRoutes);
+
+const dayEndReportRoutes = require("./routes/dayendreportroutes");
+app.use("/api/dayendreport", dayEndReportRoutes);
 
 /* ------------------- GET ALL KITCHENS ------------------- */
 app.get("/kitchen", async (req, res) => {
@@ -1833,7 +1847,10 @@ app.delete("/modifiermaster/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 //=======================================end modifier
+
+
 /* ------------------- SERVER ------------------- */
 app.get("/", (req, res) => {
   res.send("Backend is running 🚀");

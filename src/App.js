@@ -11,7 +11,7 @@ import Modifier from "./pages/Modifier";
 import Inventory from "./pages/Inventory";
 import Settlement from "./pages/Settlement";
 import SalesReport from "./pages/SalesReport";
-import SltReport from "./pages/SltReport";
+import DayEndReport from "./pages/DayEndReport";
 import CustomerList from "./pages/CustomerList";
 import UserGroup from "./pages/usergroup";
 import UserMaster from "./pages/usermaster";
@@ -36,7 +36,10 @@ import StockEntryPage from "./pages/StockEntryPage";
 import Member from "./pages/Member";
 import StockEntryPurInv from "./pages/StockEntryPurInv";
 import StockEntryPurRet from "./pages/StockEntryPurRet";
-import Server from "./pages/server";
+import ServiceMaster from "./pages/ServiceMaster";
+import TableMaster from "./pages/tablemaster";
+import Organization from "./pages/Organization";
+
 
 // import { LoaderProvider } from "./context/LoaderContext";
 
@@ -65,7 +68,7 @@ function Layout() {
           <Route path="/Inventory" element={<Inventory />} />
           <Route path="/Settlement" element={<Settlement />} />
           <Route path="/SalesReport" element={<SalesReport />} />
-          <Route path="/SltReport" element={<SltReport />} />
+          <Route path="/DayEndReport" element={<DayEndReport />} />
           <Route path="/CustomerList" element={<CustomerList />} />
           <Route path="/usergroup" element={<UserGroup />} />
           <Route path="/usermaster" element={<UserMaster />} />
@@ -97,10 +100,10 @@ function Layout() {
         {/* 🔥 PURCHASE RETURN */}
         <Route path="/StockEntryPurRet" element={<StockEntryPurRet />} />
         <Route path="/StockEntryPurRet/:tranNo" element={<StockEntryPurRet />} />
-        <Route path="/server" element={<Server />} />
-
-      
-        </Routes>
+        <Route path="/ServiceMaster" element={<ServiceMaster />} />
+       <Route path="/tablemaster" element={<TableMaster />} />
+       <Route path="/Organization" element={<Organization />} />
+       </Routes>
       </div>
     </>
   );
