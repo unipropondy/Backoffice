@@ -132,10 +132,9 @@ const customerMasterRoutes = require("./routes/customerMaster");
 
 app.use("/api/customermaster", customerMasterRoutes);
 
-const Serviceroutes = require("./routes/Serviceroutes");
+const serviceRoutes = require("./routes/serviceRoutes");
 
-// ✅ FINAL ROUTE
-app.use("/api/services", Serviceroutes);
+app.use("/api/services", serviceRoutes);
 
 const TableRoutes = require("./routes/TableRoutes");
 
