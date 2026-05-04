@@ -126,7 +126,7 @@ const username = user?.FirstName;
             <FaMoneyBill className="sid-icon" /> Settlement
           </Link>
 
-          {/* <Link className="sid-menu" to="/SalesReport" onClick={() => setOpen(false)}> */}
+       
           <Link className="sid-menu" to="/SalesReport">
             <FaChartBar className="sid-icon" /> Sales Report
           </Link>

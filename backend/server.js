@@ -132,10 +132,6 @@ const customerMasterRoutes = require("./routes/customerMaster");
 
 app.use("/api/customermaster", customerMasterRoutes);
 
-const serviceRoutes = require("./routes/serviceRoutes");
-
-app.use("/api/services", serviceRoutes);
-
 const TableRoutes = require("./routes/TableRoutes");
 
 // ✅ FINAL ROUTE
@@ -147,6 +143,13 @@ app.use("/api/organization", organizationRoutes);
 
 const dayEndReportRoutes = require("./routes/dayendreportroutes");
 app.use("/api/dayendreport", dayEndReportRoutes);
+
+
+const salesReportRoutes = require("./routes/salesReportRoutes");
+app.use("/api/reports", salesReportRoutes);
+
+const serverMasterRoutes = require("./routes/serverMasterRoutes");
+app.use("/api/server", serverMasterRoutes);
 
 /* ------------------- GET ALL KITCHENS ------------------- */
 app.get("/kitchen", async (req, res) => {

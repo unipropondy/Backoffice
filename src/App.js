@@ -36,7 +36,7 @@ import StockEntryPage from "./pages/StockEntryPage";
 import Member from "./pages/Member";
 import StockEntryPurInv from "./pages/StockEntryPurInv";
 import StockEntryPurRet from "./pages/StockEntryPurRet";
-import ServiceMaster from "./pages/ServiceMaster";
+import ServerMaster from "./pages/ServerMaster";
 import TableMaster from "./pages/tablemaster";
 import Organization from "./pages/Organization";
 
@@ -100,7 +100,7 @@ function Layout() {
         {/* 🔥 PURCHASE RETURN */}
         <Route path="/StockEntryPurRet" element={<StockEntryPurRet />} />
         <Route path="/StockEntryPurRet/:tranNo" element={<StockEntryPurRet />} />
-        <Route path="/ServiceMaster" element={<ServiceMaster />} />
+        <Route path="/ServerMaster" element={<ServerMaster />} />
        <Route path="/tablemaster" element={<TableMaster />} />
        <Route path="/Organization" element={<Organization />} />
        </Routes>

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./ServiceMaster.css";
+import "./CancelRemarkModal.css";
 import { BASE_URL } from "../config/api";
 
 const API = `${BASE_URL}`;
 
-export default function ServiceMaster() {
+export default function CancelRemarkModal() {
   const [data, setData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -71,7 +71,7 @@ export default function ServiceMaster() {
 
       {/* HEADER */}
       <div className="service-header">
-        <h2>Service Master</h2>
+        <h2>Cancel Remark Modal</h2>
 
         <button
           className="new-btn"
@@ -185,3 +185,4 @@ export default function ServiceMaster() {
     </div>
   );
 }
+
