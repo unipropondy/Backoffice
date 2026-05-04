@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const sql = require("mssql");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
 const { poolPromise } = require("../db");
 
 
@@ -525,7 +525,10 @@ router.get("/sales-pdf", async (req, res) => {
       fullAddress = fullAddress ? `${fullAddress} - ${company.Address1_PostalCode}` : company.Address1_PostalCode;
     }
 
-    const browser = await puppeteer.launch({ headless: "new" });
+   const browser = await puppeteer.launch({
+  headless: true,
+  args: ["--no-sandbox", "--disable-setuid-sandbox"]
+});
     const page = await browser.newPage();
 
     const path = require('path');
