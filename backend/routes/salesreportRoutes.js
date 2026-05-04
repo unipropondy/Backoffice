@@ -1,9 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const sql = require("mssql");
-const puppeteer = require("puppeteer-core");
-const { poolPromise } = require("../db");
-
+const { sql, poolPromise } = require("../db");
 
 // ✅ Get company details from database
 const getCompanyDetails = async () => {
