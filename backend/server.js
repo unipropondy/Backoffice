@@ -35,9 +35,7 @@ const inventoryRoutes = require("./routes/inventory");
 
 app.use("/inventory", inventoryRoutes);
 
-const settlementRoutes = require("./routes/settlementRoutes");
 
-app.use("/settlement", settlementRoutes);
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 
