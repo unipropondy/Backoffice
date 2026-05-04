@@ -17,7 +17,7 @@ export default function CancelRemarkModal() {
 
   // 🔥 GET
   const fetchData = async () => {
-    const res = await axios.get(`${API}/api/services`);
+    const res = await axios.get(`${API}/api/cancelRemarks`);
     setData(Array.isArray(res.data) ? res.data : []);
   };
 
@@ -41,9 +41,9 @@ export default function CancelRemarkModal() {
 
     try {
       if (editId) {
-        await axios.put(`${API}/api/services/${editId}`, form);
+        await axios.put(`${API}/api/cancelRemarks/${editId}`, form);
       } else {
-        await axios.post(`${API}/api/services`, form);
+        await axios.post(`${API}/api/cancelRemarks`, form);
       }
 
       fetchData();
@@ -58,7 +58,7 @@ export default function CancelRemarkModal() {
   // 🔥 DELETE
   const handleDelete = async () => {
     try {
-      await axios.delete(`${API}/api/services/${editId}`);
+      await axios.delete(`${API}/api/cancelRemarks/${editId}`);
       fetchData();
       setShowModal(false);
     } catch (err) {

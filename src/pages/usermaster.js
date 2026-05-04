@@ -123,10 +123,10 @@ export default function UserMaster() {
       <table className="user_table">
         <thead>
           <tr>
-            <th>UserId</th>
+            {/* <th>UserId</th> */}
             <th>UserCode</th>
             <th>UserName</th>
-            <th>UserGroupId</th>
+            {/* <th>UserGroupId</th> */}
             <th>Action</th>
           </tr>
         </thead>
@@ -134,15 +134,15 @@ export default function UserMaster() {
         <tbody>
           {users.length === 0 ? (
             <tr>
-              <td colSpan="5">No Users Added</td>
+              <td colSpan="3">No Users Added</td>
             </tr>
           ) : (
             users.map((user, index) => (
               <tr key={user.UserId}>
-                <td>{user.UserId}</td>
+                {/* <td>{user.UserId}</td> */}
                 <td>{user.UserCode}</td>
                 <td>{user.UserName}</td>
-                <td>{user.UserGroupId || "-"}</td>
+                {/* <td>{user.UserGroupId || "-"}</td> */}
  
                 <td>
                   <button
