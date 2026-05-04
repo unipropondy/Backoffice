@@ -143,8 +143,8 @@ const dayEndReportRoutes = require("./routes/dayendreportroutes");
 app.use("/api/dayendreport", dayEndReportRoutes);
 
 
-// const salesReportRoutes = require("./routes/salesreportRoutes");
-// app.use("/api/reports", salesReportRoutes);
+const salesreportRoutes = require("./routes/salesreportRoutes");
+app.use("/api/reports", salesreportRoutes);
 
 const serverMasterRoutes = require("./routes/serverMasterRoutes");
 app.use("/api/server", serverMasterRoutes);
