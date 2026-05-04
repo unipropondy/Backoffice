@@ -7,6 +7,7 @@ export default function UserMaster() {
   const [users, setUsers] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [userGroups, setUserGroups] = useState([]);
  
   // ✅ SAFE localStorage
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -34,6 +35,7 @@ export default function UserMaster() {
  
   useEffect(() => {
     fetchUsers();
+    fetchUserGroups();
   }, []);
  
   const generateUserCode = () => {
@@ -50,7 +52,18 @@ export default function UserMaster() {
       console.log(err);
     }
   };
+
+  const fetchUserGroups = async () => {
+  try {
+    const res = await axios.get(`${BASE_URL}/api/usergroup`);
+    console.log("USER GROUP API:", res.data);
+    setUserGroups(res.data);
+  } catch (err) {
+    console.log(err);
+  }
+};
  
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
  
@@ -198,6 +211,7 @@ export default function UserMaster() {
                 ["User Code", "UserCode"],
                 ["User Name", "UserName"],
                 ["Password", "UserPassword"],
+                //  ["User Group Id", "UserGroupId"],
                 ["First Name", "FirstName"],
                 ["Last Name", "LastName"],
                 ["Full Name", "FullName"],
@@ -215,6 +229,22 @@ export default function UserMaster() {
                   />
                 </div>
               ))}
+              <div className="form_group">
+                  <label>User Group</label>
+                  <select
+                    name="UserGroupId"
+                    value={form.UserGroupId}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select Group</option>
+
+                    {userGroups.map((group) => (
+                      <option key={group.id} value={group.id}>
+                         {group.code}
+                        </option>
+                    ))}
+                  </select>
+                </div>
             </div>
  
             <div className="user_checkbox_row">

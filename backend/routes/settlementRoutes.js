@@ -54,7 +54,7 @@ router.get("/payment/:terminal/:userId", async (req, res) => {
          FROM PaymentDetailCur
         WHERE isSettlement = 0
         AND isDayend = 0
-        AND TerminalCode = 'SR'
+        AND TerminalCode = @TerminalCode
         GROUP BY PaymentType
         
       `);
