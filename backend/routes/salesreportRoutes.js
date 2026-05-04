@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const { sql, poolPromise } = require("../db");
+const puppeteer = require("puppeteer");
 
 // ✅ Get company details from database
 const getCompanyDetails = async () => {
   try {
-    const pool = await sql.connect(dbConfig);
+    const pool = await poolPromise;
     const result = await pool.request().query(`
       SELECT TOP 1 
         Name,
@@ -283,7 +284,7 @@ router.get("/salesreport", async (req, res) => {
       [fromDate, toDate] = [toDate, fromDate];
     }
     
-    const pool = await sql.connect(dbConfig);
+   const pool = await poolPromise;
     const config = getReportQuery({
       orderSales: req.query.orderSales,
       dayEnd: req.query.dayEnd,
@@ -333,7 +334,7 @@ router.get("/company-info", async (req, res) => {
 // ✅ API for Categories with Id
 router.get("/categories", async (req, res) => {
   try {
-    const pool = await sql.connect(dbConfig);
+    const pool = await poolPromise;
     const result = await pool.request().query(`
       SELECT 
         CategoryId,
@@ -356,7 +357,7 @@ router.get("/categories", async (req, res) => {
 router.get("/dishgroups", async (req, res) => {
   try {
     const { categoryId } = req.query;
-    const pool = await sql.connect(dbConfig);
+    const pool = await poolPromise;
     
     console.log("=== DISHGROUP API ===");
     console.log("Received CategoryId:", categoryId);
@@ -393,7 +394,7 @@ router.get("/dishgroups", async (req, res) => {
 // ✅ API: Category LOV with all details
 router.get("/category-lov", async (req, res) => {
   try {
-    const pool = await sql.connect(dbConfig);
+    const pool = await poolPromise;
     const result = await pool.request().query(`
       SELECT 
         CategoryId,
@@ -424,7 +425,7 @@ router.get("/category-lov", async (req, res) => {
 router.get("/dishgroup-lov", async (req, res) => {
   try {
     const { categoryId } = req.query;
-    const pool = await sql.connect(dbConfig);
+    const pool = await poolPromise;
     
     let query = `
       SELECT 
@@ -464,7 +465,7 @@ router.get("/dishgroup-lov", async (req, res) => {
 // ✅ PROFESSIONAL PDF
 router.get("/sales-pdf", async (req, res) => {
   try {
-    const pool = await sql.connect(dbConfig);
+    const pool = await poolPromise;
     const config = getReportQuery(req.query);
     const company = await getCompanyDetails();
 

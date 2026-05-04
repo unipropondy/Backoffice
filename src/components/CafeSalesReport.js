@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./CafeSalesReport.css";
+import { BASE_URL } from "../config/api";
  
-const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_BASE = process.env.REACT_APP_API_URL || `${BASE_URL}`;
  
 const CafeSalesReport = ({
   salesData = [],
