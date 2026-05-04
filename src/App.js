@@ -100,7 +100,7 @@ function Layout() {
         {/* 🔥 PURCHASE RETURN */}
         <Route path="/StockEntryPurRet" element={<StockEntryPurRet />} />
         <Route path="/StockEntryPurRet/:tranNo" element={<StockEntryPurRet />} />
-        <Route path="/ServerMaster" element={<ServerMaster />} />
+        <Route path="/ServiceMaster" element={<ServerMaster />} />
        <Route path="/tablemaster" element={<TableMaster />} />
        <Route path="/Organization" element={<Organization />} />
        </Routes>

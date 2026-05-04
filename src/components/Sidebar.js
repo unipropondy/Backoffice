@@ -196,9 +196,9 @@ const username = user?.FirstName;
           <Link className="sid-menu" to="/POSPermission">
             <FaShieldAlt className="sid-icon" /> POSPermission
           </Link>
-           {/* <Link className="sid-menu" to="/ServiceMaster">
-            <FaBarcode  className="sid-icon" /> Service Master
-          </Link> */}
+           <Link className="sid-menu" to="/ServiceMaster">
+            <FaBarcode  className="sid-icon" /> Server Master
+          </Link>
         </div>
         )}
   
