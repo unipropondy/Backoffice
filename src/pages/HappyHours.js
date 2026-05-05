@@ -1,601 +1,1131 @@
-// :contentReference[oaicite:1]{index=1}
-
 import React, { useState, useEffect } from "react";
+
 import axios from "axios";
+
 import "./HappyHours.css";
 
 import { BASE_URL } from "../config/api";
 
-const HappyHours = () => {
+
+
+const HappyHours = ({ sidebarOpen }) => {
 
   const [showForm, setShowForm] = useState(false);
 
-  const [promoCode] = useState("PR0001");
+  const [promoCode, setPromoCode] = useState("PR0001");
+
   const [description, setDescription] = useState("");
+
   const [promoBegin, setPromoBegin] = useState("");
+
   const [promoEnd, setPromoEnd] = useState("");
+
   const [promoStartTime, setPromoStartTime] = useState("00:00");
+
   const [promoEndTime, setPromoEndTime] = useState("23:59");
 
   const [tableData, setTableData] = useState([]);
+
   const [promotionType, setPromotionType] = useState("");
+
   const [promotionValue, setPromotionValue] = useState("");
 
   const [reportData, setReportData] = useState([]);
-  const [searchText, setSearchText] = useState("");
-  
 
-  // ✅ ADDED ONLY
+  const [searchText, setSearchText] = useState("");
+
+  const [promotionsData, setPromotionsData] = useState([]);
+
   const [selectAll, setSelectAll] = useState(false);
+
   const [selectedRows, setSelectedRows] = useState([]);
 
-  const daysList = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const [dishGroup, setDishGroup] = useState("");
 
-  const [selectedDays, setSelectedDays] = useState(
-    daysList.reduce((acc, day) => ({ ...acc, [day]: true }), {})
-  );
- const [dishGroup, setDishGroup] = useState("");
-  const [filteredGroups, setFilteredGroups] = useState([]);
   const [dishGroups, setDishGroups] = useState([]);
-const [selectedGroupId, setSelectedGroupId] = useState(null);
+
+  const [selectedGroupId, setSelectedGroupId] = useState(null);
+
   const [showPopup, setShowPopup] = useState(false);
 
-  // ✅ DISH POPUP STATE
   const [showDishPopup, setShowDishPopup] = useState(false);
+
   const [fetchedDishes, setFetchedDishes] = useState([]);
-  const [selectedPopupDishes, setSelectedPopupDishes] = useState([]); 
+
+  const [selectedPopupDishes, setSelectedPopupDishes] = useState([]);
+
   const [dishSearchText, setDishSearchText] = useState("");
 
+  const [lookupType, setLookupType] = useState(""); // "group" or "promo"
 
-  const toggleDay = (day) => {
-    setSelectedDays(prev => ({ ...prev, [day]: !prev[day] }));
-  };
 
-  const formatDate = (date) => {
-    if (!date) return null;
-    return new Date(date).toISOString();
-  };
-useEffect(() => {
-  fetchDishGroups();
-  fetchReport();   // 🔥 ADD THIS
-}, []);
 
-// 🔥 ADD THIS HERE
-useEffect(() => {
-  const handleClickOutside = () => {
-    setShowPopup(false);
-    setShowDishPopup(false);
-  };
+  const daysList = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-  if (showPopup || showDishPopup) {
-    window.addEventListener("click", handleClickOutside);
-  }
+  const [selectedDays, setSelectedDays] = useState(
 
-  return () => window.removeEventListener("click", handleClickOutside);
-}, [showPopup, showDishPopup]);
+    daysList.reduce((acc, day) => ({ ...acc, [day]: true }), {})
 
-const fetchDishGroups = async () => {
-  try {
-    const res = await axios.get(`${BASE_URL}/api/happyhours/dishgroups`);
+  );
 
-    console.log("API DATA:", res.data);   // 🔥 ADD HERE
 
-    setDishGroups(res.data.data);
 
-  } catch (err) {
-    console.error("Dish group load failed", err);
-  }
-};
+  useEffect(() => {
 
- const fetchReport = async () => {
-  try {
-    const res = await axios.get(`${BASE_URL}/api/happyhours/report`);
-    setReportData(res.data.data || []);
-  } catch (err) {
-    console.log("Report load failed");
-  }
-};
+    fetchDishGroups();
 
-  const handleSave = async () => {
+    fetchReport();
+
+  }, []);
+
+
+
+  useEffect(() => {
+
+    setSelectedRows([]);
+
+    setSelectAll(false);
+
+  }, [showForm]);
+
+
+
+  useEffect(() => {
+
+    const handleClickOutside = () => {
+
+      setShowPopup(false);
+
+      setShowDishPopup(false);
+
+    };
+
+    if (showPopup || showDishPopup) {
+
+      window.addEventListener("click", handleClickOutside);
+
+    }
+
+    return () => window.removeEventListener("click", handleClickOutside);
+
+  }, [showPopup, showDishPopup]);
+
+
+
+  const fetchDishGroups = async () => {
+
     try {
-      const selectedDaysArr = Object.keys(selectedDays)
-        .filter(day => selectedDays[day])
-        .join(",");
 
-      if (!selectedGroupId) {
-        alert("Select Dish Group ❌");
-        return;
-      }
+      const res = await axios.get(`${BASE_URL}/api/happyhours/dishgroups`);
 
-      let itemsToSave = [];
-      if (selectedRows.length > 0) {
-        itemsToSave = selectedRows.map(idx => tableData[idx]);
-      } else {
-        itemsToSave = tableData; // Auto-save all if none specifically checked
-      }
+      const rawData = res.data.data || res.data || [];
 
-      if (itemsToSave.length === 0) {
-        alert("No dishes in the Order View table to save ❌");
-        return;
-      }
+      const groups = rawData.map(g => {
 
-      const payload = itemsToSave.map(dish => ({
-        PromotionId: crypto.randomUUID(),
-        PromotionCode: promoCode,
-        Description: description,
-        DishGroupId: selectedGroupId, // 🔥 FIXED: Mapped properly to DishGroupId
-        DishId: dish.dishId || "00000000-0000-0000-0000-000000000000",
-        FromDate: formatDate(promoBegin),
-        ToDate: formatDate(promoEnd),
-        FromTime: promoStartTime,
-        ToTime: promoEndTime,
-        PromotionDay: selectedDaysArr,
-        PromotionPerc: promotionType === "%" ? Number(promotionValue) || 0 : 0,
-        PromotionPrice: promotionType === "$" ? Number(promotionValue) || 0 : 0,
-        CreatedBy: "00000000-0000-0000-0000-000000000000",
-        CreatedOn: new Date().toISOString(),
-        ModyfiedBy: null,
-        ModyfiedOn: null,
-        BusinessUnitId: "00000000-0000-0000-0000-000000000000",
-        PromoType: promotionType || "%"
+        if (typeof g === "string") return { id: g, name: g };
+
+        return {
+
+          id: g.id || g.DishGroupId || g.GroupId || g.name || g.DishGroupName || "",
+
+          code: g.code || g.DishGroupCode || g.GroupCode || "",
+
+          name: g.name || g.DishGroupName || g.GroupName || g || "Unknown Group"
+
+        };
+
+      });
+
+      setDishGroups(groups);
+
+    } catch (err) { console.error("Dish group load failed", err); }
+
+  };
+
+
+
+  const fetchReport = async () => {
+
+    try {
+
+      const res = await axios.get(`${BASE_URL}/api/happyhours/report`);
+
+      const trimmedData = (res.data.data || []).map(item => ({
+
+        ...item,
+
+        InventoryID: item.InventoryID?.toString().trim()
+
       }));
 
-      await axios.post(`${BASE_URL}/api/happyhours`, payload);
+      setReportData(trimmedData);
 
-      await fetchReport();
+    } catch (err) { console.log("Report load failed"); }
 
-      alert("Saved ✅");
-      setShowForm(false);
+  };
+
+
+
+  const fetchPromotions = async () => {
+
+    try {
+
+      const res = await axios.get(`${BASE_URL}/api/happyhours/promotions`);
+
+      setPromotionsData(res.data.data || []);
+
+    } catch (err) { console.log("Promotions load failed"); }
+
+  };
+
+
+
+  const handleSave = async () => {
+
+    try {
+
+      const userData = JSON.parse(localStorage.getItem("user")) || {};
+
+
+
+      // Helper to ensure we send a valid GUID string
+
+      const toGuid = (id) => {
+
+        const guidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+        if (guidRegex.test(id)) return id;
+
+        return "00000000-0000-0000-0000-000000000000";
+
+      };
+
+
+
+      const userId = toGuid(userData.UserId);
+
+      const businessUnitId = toGuid(userData.BusinessUnitId);
+
+      const groupId = toGuid(selectedGroupId);
+
+
+
+      const selectedDaysArr = Object.keys(selectedDays).filter(day => selectedDays[day]).join(",");
+
+      let itemsToSave = selectedRows.length > 0 ? selectedRows.map(idx => tableData[idx]) : tableData;
+
+      if (itemsToSave.length === 0) { alert("No dishes to save ❌"); return; }
+
+
+
+      let savedCount = 0;
+
+      let errorMsgs = [];
+
+
+
+      for (const dish of itemsToSave) {
+
+        // Generate a new GUID for new promotions, otherwise keep existing
+
+        const pId = dish.PromotionId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(dish.PromotionId)
+
+          ? dish.PromotionId
+
+          : crypto.randomUUID ? crypto.randomUUID() : "00000000-0000-0000-0000-000000000000";
+
+
+
+        const payload = {
+
+          PromotionId: pId,
+
+          PromotionCode: promoCode,
+
+          Description: description,
+
+          DishGroupId: groupId,
+
+          DishId: toGuid(dish.dishId || dish.id),
+
+          FromDate: promoBegin ? new Date(promoBegin).toISOString() : null,
+
+          ToDate: promoEnd ? new Date(promoEnd).toISOString() : null,
+
+          FromTime: promoStartTime,
+
+          ToTime: promoEndTime,
+
+          PromotionDay: selectedDaysArr,
+
+          PromotionPerc: promotionType === "%" ? Number(promotionValue) || 0 : 0,
+
+          PromotionPrice: Number(dish.promoPrice) || 0,
+
+          PromoType: promotionType || "$",
+
+          CreatedBy: userId,
+
+          CreatedOn: new Date().toISOString(),
+
+          BusinessUnitId: businessUnitId,
+
+          IsActive: 1
+
+        };
+
+
+
+        try {
+
+          const res = await axios.post(`${BASE_URL}/api/happyhours`, payload);
+
+          if (res.data.success || res.status === 200) {
+
+            savedCount++;
+
+          }
+
+        } catch (err) {
+
+          console.error(`❌ Error saving ${dish.dishName}:`, err.response?.data || err.message);
+
+          errorMsgs.push(dish.dishName);
+
+        }
+
+      }
+
+
+
+      if (savedCount > 0) {
+
+        alert(`Saved ${savedCount} records Successfully! ✅`);
+
+        await fetchReport();
+
+        setShowForm(false);
+
+      }
+
+
+
+      if (errorMsgs.length > 0) {
+
+        alert(`Failed to save ${errorMsgs.length} items. Check console. ❌`);
+
+      }
 
     } catch (err) {
-      console.error(err);
-      alert("Save Failed ❌");
+
+      console.error("❌ Save Error:", err);
+
+      alert("Save Failed! ❌");
+
     }
+
   };
-const handleFetch = async () => {
-  try {
-    if (!selectedGroupId) {
-      alert("Select Dish Group ❌");
-      return;
-    }
 
-    const cleanId = selectedGroupId; // 🔥 DO NOT cast to Number! It's a UUID.
-    console.log("Selected ID:", cleanId);
 
-    const res = await axios.get(
-      `${BASE_URL}/api/happyhours`,
-      {
-        params: { dishGroup: cleanId }
+
+  const handleFetch = async () => {
+
+    try {
+
+      if (!promoBegin || !promoEnd) { alert("Enter Promo Begin and End dates ❌"); return; }
+
+      if (!dishGroup || !selectedGroupId) { alert("Select Dish Group ❌"); return; }
+
+      console.log("Fetching dishes for group:", dishGroup, selectedGroupId);
+
+
+
+      const res = await axios.get(`${BASE_URL}/api/happyhours?dishGroup=${selectedGroupId}`);
+
+      const filtered = res.data.data || res.data || [];
+
+
+
+      if (filtered.length === 0) {
+
+        alert("No dishes found for this group ❌");
+
+        setTableData([]);
+
+        return;
+
       }
-    );
 
-    console.log("FETCH DATA:", res.data.data); // 🔥 DEBUG
 
-    setFetchedDishes(res.data.data || []);
-    setShowDishPopup(true);
-    setSelectedPopupDishes([]);
-    setDishSearchText("");
 
-  } catch (err) {
-    console.error(err);
-    alert("Fetch Failed ❌");
-  }
-};
-// 🔍 FILTER DISH GROUPS (ADD HERE)
-const filteredDishGroups = dishGroups.filter(g =>
-  g.name.toLowerCase().includes(searchText.toLowerCase())
-);
-  // ✅ ADDED ONLY
-  const handleSelectAll = () => {
-    if (selectAll) {
-      setSelectedRows([]);
-    } else {
-      setSelectedRows(tableData.map((_, i) => i));
+      const mapped = filtered.map(dish => ({
+
+        dishCode: dish.dishCode || dish.DishCode || dish.Code || "",
+
+        dishName: dish.dishName || dish.DishName || dish.Name || "",
+
+        price: dish.price || dish.CurrentCost || dish.Price || 0,
+
+        promoPrice: "",
+
+        isSelected: false,
+
+        dishId: dish.dishId || dish.DishId || dish.id
+
+      }));
+
+
+
+      setTableData(mapped);
+
+      console.log("Mapped Dishes:", mapped);
+
+    } catch (err) {
+
+      console.error("Fetch Error:", err);
+
+      alert("Failed to fetch dishes ❌");
+
     }
-    setSelectAll(!selectAll);
+
   };
 
-  const handleRowSelect = (index) => {
-    if (selectedRows.includes(index)) {
-      setSelectedRows(selectedRows.filter(i => i !== index));
-    } else {
-      setSelectedRows([...selectedRows, index]);
-    }
-  };
+
 
   const handleDelete = async () => {
+
     try {
-      if (selectedRows.length === 0) {
-        alert("Select records to delete ❌");
-        return;
+
+      if (selectedRows.length === 0) { alert("Select records to delete ❌"); return; }
+
+
+
+      if (!window.confirm("Are you sure you want to delete selected records?")) return;
+
+
+
+      const itemsToDelete = selectedRows.map(idx => {
+
+        // If it's a saved record (reportData), it will have PromotionId
+
+        // If it's a new row in tableData, we just remove it locally
+
+        return tableData[idx] || reportData[idx];
+
+      });
+
+
+
+      const promotionIds = itemsToDelete.map(d => d.PromotionId).filter(Boolean);
+
+
+
+      if (promotionIds.length > 0) {
+
+        // Delete from backend if they are saved records
+
+        await axios.post(`${BASE_URL}/api/happyhours/delete`, { promotionIds });
+
+        await fetchReport();
+
+        alert("Deleted saved records ✅");
+
       }
-      const itemsToDelete = selectedRows.map(idx => tableData[idx]);
-      const dishIds = itemsToDelete.map(d => d.dishId || d.dishCode);
-      await axios.post(`${BASE_URL}/api/happyhours/delete`, { dishIds });
-      
-      const newTableData = tableData.filter((_, idx) => !selectedRows.includes(idx));
-      setTableData(newTableData);
+
+
+
+      // Also remove from local tableData if they were just fetched but not saved yet
+
+      setTableData(tableData.filter((_, idx) => !selectedRows.includes(idx)));
+
       setSelectedRows([]);
+
       setSelectAll(false);
-      await fetchReport();
-      alert("Deleted ✅");
-    } catch (err) {
-      console.error(err);
-      alert("Delete Failed ❌");
-    }
+
+    } catch (err) { alert("Delete Failed ❌"); }
+
   };
+
+
+
+  const handleEditReport = (item) => {
+
+    setShowForm(true);
+
+    setPromoCode(item.PromotionCode || "");
+
+    setDescription(item.Description || "");
+
+    setPromoBegin(item.FromDate ? new Date(item.FromDate).toISOString().split('T')[0] : "");
+
+    setPromoEnd(item.ToDate ? new Date(item.ToDate).toISOString().split('T')[0] : "");
+
+    setPromoStartTime(item.FromTime || "00:00");
+
+    setPromoEndTime(item.ToTime || "23:59");
+
+    setPromotionType(item.PromoType || "%");
+
+    setPromotionValue(item.PromoType === "%" ? item.PromotionPerc : item.PromotionPrice);
+
+
+
+    // Find dish group if possible
+
+    const group = dishGroups.find(g => g.id === item.DishGroupId);
+
+    setDishGroup(item.DishGroupName || (group ? group.name : ""));
+
+    setSelectedGroupId(item.DishGroupId);
+
+
+
+    // Filter report data for all items in this promotion
+
+    const promoItems = reportData.filter(p => p.PromotionCode === item.PromotionCode);
+
+    const mappedTableData = promoItems.map(p => ({
+
+      PromotionId: p.PromotionId,
+
+      dishCode: p.DishCode || p.InventoryID,
+
+      dishName: p.DishName || p.dishName,
+
+      price: p.Price || p.price || "0.00",
+
+      promoPrice: p.PromotionPrice || p.promoPrice,
+
+      dishId: p.DishId || p.dishId || p.id
+
+    }));
+
+    setTableData(mappedTableData);
+
+  };
+
+
+
+  const handleApply = () => {
+
+    if (selectedRows.length === 0) { alert("Select dishes to apply promo ❌"); return; }
+
+    if (!promotionValue) { alert("Enter promotion value ❌"); return; }
+
+
+
+    const updatedData = [...tableData];
+
+    selectedRows.forEach(idx => {
+
+      if (promotionType === "%") {
+
+        const originalPrice = Number(updatedData[idx].price) || 0;
+
+        const discount = (originalPrice * Number(promotionValue)) / 100;
+
+        updatedData[idx].promoPrice = (originalPrice - discount).toFixed(2);
+
+      } else {
+
+        updatedData[idx].promoPrice = Number(promotionValue).toFixed(2);
+
+      }
+
+    });
+
+    setTableData(updatedData);
+
+  };
+
+
 
   const handleNew = () => {
-    setDescription("");
-    setPromoBegin("");
-    setPromoEnd("");
-    setPromotionValue("");
-    setTableData([]);
-    setSelectedRows([]);
-    setSelectAll(false);
+
+    setShowForm(true);
+
+    setPromoCode("PR0001"); // Reset to default or next available
+
+    setDescription(""); setPromoBegin(""); setPromoEnd(""); setPromotionValue("");
+
+    setTableData([]); setSelectedRows([]); setSelectAll(false);
+
   };
 
+
+
+  const filteredDishGroups = dishGroups.filter(g => g.name.toLowerCase().includes(searchText.toLowerCase()));
+
+
+
   return (
-    <div className="happyhours-main-full">
+
+    <div className={`happyhours-main-full ${sidebarOpen ? "sidebar-open" : ""}`}>
 
       <div className="happyhours-container">
 
-        {!showForm && (
-          <>
-            <div className="happyhours-header">
-              <h2>Happy Hours</h2>
-              <button className="happyhours-btn-new" onClick={() => setShowForm(true)}>New</button>
-            </div>
 
-            <div className="happyhours-table-wrapper">
-              <table className="happyhours-table">
-                <thead>
-                  <tr>
-                    <th>Dish Group</th>
-                    <th>Dish Code</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                  </tr>
-                </thead>
 
-                <tbody>
-                  {reportData.length === 0 ? (
-                    <tr>
-                      <td colSpan="4" className="happyhours-empty">No Data</td>
-                    </tr>
-                  ) : (
-                 reportData.map((item, i) => (
-                  <tr key={item.InventoryID || i}>
-                      <td>{item.DishGroup}</td>
-                      <td>{item.InventoryID}</td>
+        {/* HEADER */}
+
+        <header className="hh-premium-header">
+
+          <h1>Happy Hours</h1>
+
+          <div className="hh-btn-group">
+
+            {!showForm ? (
+
+              <button className="hh-btn hh-btn-primary" onClick={() => setShowForm(true)}>New</button>
+
+            ) : (
+
+              <>
+
+                <button className="hh-btn hh-btn-outline" onClick={handleNew}>New</button>
+
+                <button className="hh-btn hh-btn-primary" onClick={handleSave}>Save</button>
+
+                <button className="hh-btn hh-btn-danger" onClick={handleDelete}>Delete</button>
+
+                <button className="hh-btn hh-btn-outline" onClick={() => setShowForm(false)}>Exit</button>
+
+              </>
+
+            )}
+
+          </div>
+
+        </header>
+
+
+
+        {!showForm ? (
+
+          <div className="hh-table-card animate-slide-up">
+
+            <table className="hh-table">
+
+              <thead>
+
+                <tr>
+
+                  <th>PromotionCode</th>
+
+                  <th>Description</th>
+
+                  <th>FromTime</th>
+
+                  <th>ToTime</th>
+
+                  <th>FromDate</th>
+
+                  <th>ToDate</th>
+
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                {reportData.length === 0 ? (
+
+                  <tr><td colSpan="6" align="center" style={{ padding: '40px', color: '#666' }}>No Data</td></tr>
+
+                ) : (
+
+                  reportData.map((item, i) => (
+
+                    <tr key={i} onClick={() => handleEditReport(item)} style={{ cursor: 'pointer' }}>
+
+                      <td>{item.PromotionCode}</td>
+
                       <td>{item.Description}</td>
-                      <td>{item.Price}</td>
+
+                      <td>{item.FromTime}</td>
+
+                      <td>{item.ToTime}</td>
+
+                      <td>{item.FromDate ? new Date(item.FromDate).toLocaleDateString('en-GB') : ''}</td>
+
+                      <td>{item.ToDate ? new Date(item.ToDate).toLocaleDateString('en-GB') : ''}</td>
+
                     </tr>
+
                   ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </>
-        )}
 
-        {showForm && (
-          <div className="happyhours-form-container">
+                )}
 
-            <div className="happyhours-header">
-              <h2>Happy Hours</h2>
+              </tbody>
 
-              <div className="happyhours-top-btns">
-                <button className="happyhours-btn-new" onClick={handleNew}>New</button>
-                <button className="happyhours-btn-save" onClick={handleSave}>Save</button>
-                <button className="happyhours-btn-delete" onClick={handleDelete}>Delete</button>
-                <button className="happyhours-btn-exit" onClick={() => setShowForm(false)}>Exit</button>
-              </div>
-            </div>
+            </table>
 
-            <div className="happyhours-top-grid">
-              <div>
-                <div className="happyhours-form-row">
-                  <label>Promotion Code</label>
-                  <input value={promoCode} readOnly />
+          </div>
+
+        ) : (
+
+          <div className="animate-slide-up">
+
+            <div className="hh-form-card" style={{ padding: "15px", borderRadius: "12px", background: "#fff", border: "1px solid #dcd1c5" }}>
+
+              <div className="hh-grid-layout" style={{ gridTemplateColumns: '1.2fr 1.2fr 1fr 1fr', gap: '15px', alignItems: 'start' }}>
+
+
+
+                {/* Column 1 */}
+
+                <div className="hh-field-group">
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+
+                    <label style={{ width: "100px", fontSize: "12px", fontWeight: "bold", color: "#6d645e" }}>Promotion Code</label>
+
+                    <div style={{ display: "flex", flex: 1 }}>
+
+                      <input className="hh-input" value={promoCode} onChange={(e) => setPromoCode(e.target.value)} style={{ flex: 1, height: "26px", borderRadius: "6px", border: "1px solid #dcd1c5", fontSize: "12px", padding: "0 5px" }} />
+
+                    </div>
+
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "5px", marginTop: "8px" }}>
+
+                    <label style={{ width: "100px", fontSize: "12px", fontWeight: "bold", color: "#6d645e" }}>Description</label>
+
+                    <input className="hh-input" value={description} onChange={(e) => setDescription(e.target.value)} style={{ height: "26px", borderRadius: "0", border: "1px solid #dcd1c5", fontSize: "12px", padding: "0 5px" }} />
+
+                  </div>
+
                 </div>
 
-                <div className="happyhours-form-row">
-                  <label>Description</label>
-                  <input value={description} onChange={(e) => setDescription(e.target.value)} />
+
+
+                {/* Column 2 */}
+
+                <div className="hh-field-group">
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+
+                    <label style={{ width: "90px", fontSize: "12px", fontWeight: "bold", color: "#6d645e" }}>Promo Begin</label>
+
+                    <input type="date" className="hh-input" value={promoBegin} onChange={(e) => setPromoBegin(e.target.value)} style={{ height: "26px", borderRadius: "0", border: "1px solid #dcd1c5", fontSize: "12px", padding: "0 5px" }} />
+
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "5px", marginTop: "8px" }}>
+
+                    <label style={{ width: "90px", fontSize: "12px", fontWeight: "bold", color: "#6d645e" }}>Promo End</label>
+
+                    <input type="date" className="hh-input" value={promoEnd} onChange={(e) => setPromoEnd(e.target.value)} style={{ height: "26px", borderRadius: "0", border: "1px solid #dcd1c5", fontSize: "12px", padding: "0 5px" }} />
+
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "5px", marginTop: "8px" }}>
+
+                    <label style={{ width: "90px", fontSize: "12px", fontWeight: "bold", color: "#6d645e" }}>Dish Group</label>
+
+                    <div style={{ display: "flex", flex: 1 }}>
+
+                      <input className="hh-input" value={dishGroup} readOnly style={{ height: "26px", borderRadius: "0", border: "1px solid #dcd1c5", background: "#fdfaf7", fontSize: "12px", padding: "0 5px" }} />
+
+                      <button style={{ width: "30px", height: "26px", border: "1px solid #dcd1c5", borderLeft: "none", background: "#f2ece4", cursor: "pointer", color: "#6d645e" }} onClick={(e) => { e.stopPropagation(); setLookupType("group"); setSearchText(""); fetchDishGroups(); setShowPopup(true); }}>...</button>
+
+                    </div>
+
+                  </div>
+
                 </div>
 
-                <div className="happyhours-form-row">
-                  <label>Promo Begin</label>
-                  <input type="date" value={promoBegin} onChange={(e) => setPromoBegin(e.target.value)} />
+
+
+                {/* Column 3: Days Vertical */}
+
+                <div className="hh-field-group">
+
+                  <div style={{ border: "1px solid #dcd1c5", padding: "0", borderRadius: "6px", overflow: "hidden" }}>
+
+                    <div style={{ background: "#f2ece4", padding: "2px 8px", fontSize: "11px", fontWeight: "bold", borderBottom: "1px solid #dcd1c5", textAlign: "center", color: "#6d645e" }}>Promotion Days</div>
+
+                    <div style={{ background: "#fdfaf7", padding: "5px" }}>
+
+                      {daysList.map(day => (
+
+                        <label key={day} style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "12px", color: "#333", fontWeight: "600", marginBottom: "2px", cursor: "pointer" }}>
+
+                          <input type="checkbox" checked={selectedDays[day]} onChange={() => setSelectedDays(p => ({ ...p, [day]: !p[day] }))} style={{ margin: 0, accentColor: "#ff7f27" }} />
+
+                          {day}
+
+                        </label>
+
+                      ))}
+
+                    </div>
+
+                  </div>
+
                 </div>
 
-                <div className="happyhours-form-row">
-                  <label>Promo End</label>
-                  <input type="date" value={promoEnd} onChange={(e) => setPromoEnd(e.target.value)} />
+
+
+                {/* Column 4: Times */}
+
+                <div className="hh-field-group" style={{ textAlign: "center" }}>
+
+                  <div style={{ marginBottom: "15px" }}>
+
+                    <label style={{ fontSize: "12px", fontWeight: "bold", display: "block", marginBottom: "3px", color: "#6d645e" }}>Promo Start</label>
+
+                    <input type="time" className="hh-input" value={promoStartTime} onChange={(e) => setPromoStartTime(e.target.value)} style={{ height: "26px", borderRadius: "0", border: "1px solid #dcd1c5", width: "100%", fontSize: "12px", fontWeight: "bold", color: "#333" }} />
+
+                  </div>
+
+                  <div>
+
+                    <label style={{ fontSize: "12px", fontWeight: "bold", display: "block", marginBottom: "3px", color: "#6d645e" }}>Promo End</label>
+
+                    <input type="time" className="hh-input" value={promoEndTime} onChange={(e) => setPromoEndTime(e.target.value)} style={{ height: "26px", borderRadius: "0", border: "1px solid #dcd1c5", width: "100%", fontSize: "12px", fontWeight: "bold", color: "#333" }} />
+
+                  </div>
+
+                  <button
+
+                    className="hh-btn"
+
+                    style={{ marginTop: "15px", width: "100%", height: "28px", borderRadius: "6px", background: "#ff7f27", color: "white", fontWeight: "bold", border: "none", cursor: "pointer", boxShadow: "0 4px 10px rgba(255, 127, 39, 0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px" }}
+
+                    onClick={handleFetch}
+
+                  >
+
+                    Fetch
+
+                  </button>
+
                 </div>
 
-                <div className="happyhours-form-row">
-                  <label>Dish Group</label>
- <div style={{ display: "flex", gap: "5px" }}>
-  <input
-    placeholder="Select Dish Group"
-    value={dishGroup}
-    readOnly
-  />
 
- <button
-  onClick={(e) => {
-    e.stopPropagation();   // 🔥 VERY IMPORTANT
-    setShowPopup(true);
-  }}
->
-  ⋯
-</button>
-</div>             
-</div>
-{showPopup && (
-  <div
-    onClick={(e) => e.stopPropagation()}   // 🔥 ADD HERE
-    style={{
-      position: "absolute",
-      top: "260px",
-      left: "300px",
-      background: "#fff",
-      border: "1px solid #ccc",
-      width: "450px",
-      zIndex: 999,
-      padding: "10px"
-    }}
-  >
 
-    {/* 🔍 SEARCH BOX */}
-    <input
-      placeholder="Search Dish Group..."
-      value={searchText}
-      onChange={(e) => setSearchText(e.target.value)}
-      style={{
-        width: "100%",
-        marginBottom: "10px",
-        padding: "5px"
-      }}
-    />
-
-    {/* 📋 TABLE */}
-    <div style={{ maxHeight: "250px", overflowY: "auto" }}>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        
-        <thead style={{ background: "#f0f0f0" }}>
-          <tr>
-            <th style={{ padding: "6px", border: "1px solid #ccc" }}>Code</th>
-            <th style={{ padding: "6px", border: "1px solid #ccc" }}>Name</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {filteredDishGroups.length === 0 ? (
-            <tr>
-              <td colSpan="2" style={{ textAlign: "center", padding: "10px" }}>
-                No Data
-              </td>
-            </tr>
-          ) : (
-            filteredDishGroups.map((g, i) => (
-               <tr key={`${g.id}-${i}`}
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  setDishGroup(g.name);
-                  setSelectedGroupId(g.id);
-                  setShowPopup(false);
-                  setSearchText("");
-                }}
-              >
-                <td style={{ padding: "6px", border: "1px solid #ccc" }}>
-                  {g.code || g.id}
-                </td>
-                <td style={{ padding: "6px", border: "1px solid #ccc" }}>
-                  {g.name}
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-
-      </table>
-    </div>
-
-  </div>
-)}
-
-{/* 🍕 DISH SELECTION POPUP */}
-{showDishPopup && (
-  <div
-    onClick={(e) => e.stopPropagation()}
-    style={{
-      position: "absolute",
-      top: "260px",
-      left: "300px",
-      background: "#fff",
-      border: "1px solid #ccc",
-      width: "500px",
-      zIndex: 1000,
-      padding: "15px",
-      boxShadow: "0px 4px 10px rgba(0,0,0,0.1)"
-    }}
-  >
-    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
-      <h4 style={{ margin: 0 }}>Select Dishes from {dishGroup}</h4>
-      <button style={{ border: "none", background: "transparent", cursor: "pointer", fontSize: "16px" }} onClick={() => setShowDishPopup(false)}>✖</button>
-    </div>
-
-    <input
-      placeholder="Search Dishes..."
-      value={dishSearchText}
-      onChange={(e) => setDishSearchText(e.target.value)}
-      style={{ width: "100%", marginBottom: "10px", padding: "8px", boxSizing: "border-box" }}
-    />
-
-    <div style={{ maxHeight: "250px", overflowY: "auto", marginBottom: "10px" }}>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead style={{ background: "#f0f0f0", position: "sticky", top: 0 }}>
-          <tr>
-            <th style={{ padding: "6px", border: "1px solid #ccc", width: "40px", textAlign: "center" }}>
-              <input 
-                type="checkbox" 
-                checked={
-                  fetchedDishes.length > 0 && 
-                  fetchedDishes.filter(d => d.dishName.toLowerCase().includes(dishSearchText.toLowerCase())).length > 0 &&
-                  selectedPopupDishes.length >= fetchedDishes.filter(d => d.dishName.toLowerCase().includes(dishSearchText.toLowerCase())).length
-                }
-                onChange={(e) => {
-                  const filtered = fetchedDishes.filter(d => d.dishName.toLowerCase().includes(dishSearchText.toLowerCase()));
-                  if (e.target.checked) {
-                    const filteredIndices = filtered.map(item => fetchedDishes.findIndex(fd => fd.dishCode === item.dishCode));
-                    // Union with existing selection
-                    setSelectedPopupDishes(Array.from(new Set([...selectedPopupDishes, ...filteredIndices])));
-                  } else {
-                    const filteredIndices = filtered.map(item => fetchedDishes.findIndex(fd => fd.dishCode === item.dishCode));
-                    setSelectedPopupDishes(selectedPopupDishes.filter(idx => !filteredIndices.includes(idx)));
-                  }
-                }} 
-              />
-            </th>
-            <th style={{ padding: "6px", border: "1px solid #ccc", textAlign: "left" }}>Code</th>
-            <th style={{ padding: "6px", border: "1px solid #ccc", textAlign: "left" }}>Name</th>
-          </tr>
-        </thead>
-        <tbody>
-          {fetchedDishes.filter(d => d.dishName.toLowerCase().includes(dishSearchText.toLowerCase())).map((d, i) => {
-             const originalIndex = fetchedDishes.findIndex(fd => fd.dishCode === d.dishCode);
-             return (
-              <tr key={originalIndex} style={{ cursor: "pointer" }} onClick={() => {
-                if (selectedPopupDishes.includes(originalIndex)) {
-                  setSelectedPopupDishes(selectedPopupDishes.filter(idx => idx !== originalIndex));
-                } else {
-                  setSelectedPopupDishes([...selectedPopupDishes, originalIndex]);
-                }
-              }}>
-                <td style={{ padding: "6px", border: "1px solid #ccc", textAlign:"center" }}>
-                  <input type="checkbox" checked={selectedPopupDishes.includes(originalIndex)} readOnly />
-                </td>
-                <td style={{ padding: "6px", border: "1px solid #ccc" }}>{d.dishCode}</td>
-                <td style={{ padding: "6px", border: "1px solid #ccc" }}>{d.dishName}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-    
-    <button style={{ width: "100%", padding: "10px", background: "#4caf50", color: "#fff", border: "none", cursor: "pointer", fontWeight: "bold" }} onClick={(e) => {
-      e.preventDefault();
-      const selected = selectedPopupDishes.map(idx => fetchedDishes[idx]);
-      const newItems = selected.filter(s => !tableData.some(td => td.dishCode === s.dishCode));
-      setTableData([...tableData, ...newItems]);
-      setShowDishPopup(false);
-    }}>
-      Add to Order View
-    </button>
-  </div>
-)}
               </div>
 
-              <div className="happyhours-days-box">
-                <p>Promotion Days</p>
-                {daysList.map(day => (
-                  <label key={day}>
-                    <input
-                      type="checkbox"
-                      checked={selectedDays[day]}
-                      onChange={() => toggleDay(day)}
-                    />
-                    {day}
-                  </label>
-                ))}
-              </div>
-
-              <div className="happyhours-time-box">
-                <label>Promo Start</label>
-                <input type="time" value={promoStartTime} onChange={(e) => setPromoStartTime(e.target.value)} />
-
-                <label>Promo End</label>
-                <input type="time" value={promoEndTime} onChange={(e) => setPromoEndTime(e.target.value)} />
-
-                <button onClick={handleFetch}>Fetch</button>
-              </div>
             </div>
 
-            {/* BOTTOM TABLE */}
-            <div className="happyhours-table-wrapper">
 
-              {/* ✅ ONLY ADDITION */}
-              <div style={{ display: "flex", justifyContent: "space-between", width: "100%", marginBottom: "10px" }}>
-                <label>
-                  <input type="checkbox" checked={selectAll} onChange={handleSelectAll} /> Select All
+
+            {/* Table Area */}
+
+            <div className="hh-table-card" style={{ marginTop: "15px", border: "1px solid #dcd1c5", borderRadius: "12px", background: "#fff", overflow: "hidden" }}>
+
+              <div className="hh-table-meta" style={{ background: "#f2ece4", borderBottom: "1px solid #dcd1c5", padding: "8px 15px" }}>
+
+                <label className="hh-day-item" style={{ fontWeight: '600', color: '#6d645e', display: 'flex', alignItems: 'center', gap: '8px' }}>
+
+                  <input type="checkbox" checked={selectAll} onChange={() => {
+
+                    if (selectAll) setSelectedRows([]);
+
+                    else setSelectedRows(tableData.map((_, i) => i));
+
+                    setSelectAll(!selectAll);
+
+                  }} style={{ accentColor: "#ff7f27" }} /> Select All
+
                 </label>
-                <span>Total Records: {tableData.length}</span>
+
+                <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+
+                  <span style={{ fontWeight: "bold", color: "#6d645e", fontSize: "12px" }}>Total Records:</span>
+
+                  <span style={{ fontWeight: "bold", color: "#ff7f27", fontSize: "13px" }}>{tableData.length}</span>
+
+                </div>
+
               </div>
 
-              <table className="happyhours-table">
-                <thead>
-                  <tr>
-                    <th>Select</th>
-                    <th>Dish Code</th>
-                    <th>Dish Name</th>
-                    <th>Price</th>
-                    <th>Promo Price</th>
-                  </tr>
-                </thead>
+              <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
 
-                <tbody>
-                  {tableData.length === 0 ? (
+                <table className="hh-table">
+
+                  <thead>
+
                     <tr>
-                      <td colSpan="5" className="happyhours-empty">No Data</td>
+
+                      <th style={{ width: '50px' }}>SELECT</th>
+
+                      <th>DISH CODE</th>
+
+                      <th>DISH NAME</th>
+
+                      <th>PRICE</th>
+
+                      <th>PROMO PRICE</th>
+
                     </tr>
-                  ) : (
-                    tableData.map((item, i) => (
-                      <tr key={i}>
-                        <td>
-                          <input
-                            type="checkbox"
-                            checked={selectedRows.includes(i)}
-                            onChange={() => handleRowSelect(i)}
-                          />
-                        </td>
-                        <td>{item.dishCode}</td>
-                        <td>{item.dishName}</td>
-                        <td>{item.price}</td>
-                        <td>{item.promoPrice}</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
 
-            {/* PROMOTION SECTION UNCHANGED */}
-            <div className="happyhours-bottom-section">
-              <div className="happyhours-promo-col">
-                <input type="radio" name="promoType" value="%" onChange={(e) => setPromotionType(e.target.value)} />
-                <label>Promotion %</label>
-                <input type="number" value={promotionValue} onChange={(e) => setPromotionValue(e.target.value)} />
+                  </thead>
+
+                  <tbody>
+
+                    {tableData.length === 0 ? (
+
+                      <tr><td colSpan="5" align="center" style={{ padding: '40px', color: '#666' }}>No Data</td></tr>
+
+                    ) : (
+
+                      tableData.map((item, i) => (
+
+                        <tr key={i}>
+
+                          <td><input type="checkbox" checked={selectedRows.includes(i)} onChange={() => {
+
+                            if (selectedRows.includes(i)) setSelectedRows(selectedRows.filter(x => x !== i));
+
+                            else setSelectedRows([...selectedRows, i]);
+
+                          }} /></td>
+
+                          <td>{item.dishCode}</td>
+
+                          <td>{item.dishName || item.DishName || item.Description}</td>
+
+                          <td>{item.price || item.Price}</td>
+
+                          <td>{item.promoPrice}</td>
+
+                        </tr>
+
+                      ))
+
+                    )}
+
+                  </tbody>
+
+                </table>
+
               </div>
 
-              <div className="happyhours-promo-col">
-                <input type="radio" name="promoType" value="$" onChange={(e) => setPromotionType(e.target.value)} />
-                <label>Promotion $</label>
-                <input type="number" value={promotionValue} onChange={(e) => setPromotionValue(e.target.value)} />
+              <div className="hh-promo-footer">
+
+                <div className="hh-promo-type">
+
+                  <label><input type="radio" name="pt" value="%" onChange={(e) => setPromotionType(e.target.value)} /> Promotion %</label>
+
+                  <label><input type="radio" name="pt" value="$" onChange={(e) => setPromotionType(e.target.value)} /> Promotion $</label>
+
+                </div>
+
+                <div className="hh-field-group" style={{ width: '120px' }}>
+
+                  <label style={{ fontSize: "11px", fontWeight: "bold" }}>Promotion %</label>
+
+                  <input type="number" className="hh-input" value={promotionValue} onChange={(e) => setPromotionValue(e.target.value)} placeholder="0.00" />
+
+                </div>
+
+                <button className="hh-btn hh-btn-primary" onClick={handleApply}>Apply</button>
+
               </div>
 
-              <button className="happyhours-apply-btn">Apply</button>
             </div>
 
           </div>
+
         )}
 
+
+
+        {/* Dish Popup Modal */}
+
+        {showDishPopup && (
+
+          <div className="hh-modal-overlay">
+
+            <div className="hh-modal-content animate-slide-up">
+
+              <div className="hh-modal-header">
+
+                <h3 style={{ margin: 0, fontSize: "16px" }}>Select Dishes from {dishGroup}</h3>
+
+                <button onClick={() => setShowDishPopup(false)} style={{ background: 'none', border: 'none', color: '#6d645e', fontSize: '20px', cursor: 'pointer', lineHeight: 1 }}>×</button>
+
+              </div>
+
+              <div className="hh-modal-body">
+
+                <input className="hh-input" style={{ marginBottom: '15px' }} placeholder="Search dishes..." value={dishSearchText} onChange={(e) => setDishSearchText(e.target.value)} />
+
+                <div style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #e2e8f0', borderRadius: '6px' }}>
+
+                  <table className="hh-table">
+
+                    <thead>
+
+                      <tr>
+
+                        <th style={{ width: '40px' }}>Select</th>
+
+                        <th>Code</th>
+
+                        <th>Name</th>
+
+                      </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                      {fetchedDishes.filter(d => d.dishName.toLowerCase().includes(dishSearchText.toLowerCase())).map((d, i) => {
+
+                        const originalIdx = fetchedDishes.findIndex(fd => fd.dishCode === d.dishCode);
+
+                        return (
+
+                          <tr key={originalIdx} onClick={() => {
+
+                            if (selectedPopupDishes.includes(originalIdx)) setSelectedPopupDishes(selectedPopupDishes.filter(x => x !== originalIdx));
+
+                            else setSelectedPopupDishes([...selectedPopupDishes, originalIdx]);
+
+                          }}>
+
+                            <td><input type="checkbox" checked={selectedPopupDishes.includes(originalIdx)} readOnly /></td>
+
+                            <td>{d.dishCode}</td>
+
+                            <td>{d.dishName}</td>
+
+                          </tr>
+
+                        );
+
+                      })}
+
+                    </tbody>
+
+                  </table>
+
+                </div>
+
+                <button className="hh-btn hh-btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '20px' }} onClick={() => {
+
+                  const selected = selectedPopupDishes.map(idx => fetchedDishes[idx]);
+
+                  setTableData([...tableData, ...selected.filter(s => !tableData.some(t => t.dishCode === s.dishCode))]);
+
+                  setShowDishPopup(false);
+
+                }}>Add to Order View</button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        )}
+
+
+
+        {/* Lookup Selection Modal (Unified) */}
+
+        {showPopup && lookupType === "group" && (
+
+          <div className="hh-modal-overlay">
+
+            <div className="hh-modal-content animate-slide-up" style={{ width: "450px", padding: "0", borderRadius: "15px", overflow: "hidden" }}>
+
+              <div className="hh-modal-header" style={{ background: "#f2ece4", padding: "15px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+
+                <h3 style={{ margin: 0, color: "#6d645e", fontSize: "16px" }}>Select Dish Group</h3>
+
+                <button onClick={() => setShowPopup(false)} style={{ background: 'none', border: 'none', color: '#6d645e', fontSize: '20px', cursor: 'pointer', lineHeight: 1 }}>×</button>
+
+              </div>
+
+              <div className="hh-modal-body" style={{ padding: "20px" }}>
+
+                <div style={{ marginBottom: "20px" }}>
+
+                  <input
+
+                    className="hh-input"
+
+                    style={{ height: "30px", borderRadius: "6px", border: "1px solid #d1d5db", padding: "0 10px", width: "100%", fontSize: "12px" }}
+
+                    placeholder="Search group..."
+
+                    value={searchText}
+
+                    onChange={(e) => setSearchText(e.target.value)}
+
+                  />
+
+                </div>
+
+                <div style={{ maxHeight: '350px', overflowY: 'auto', border: "1px solid #e5e7eb", borderRadius: "8px" }}>
+
+                  <table className="hh-table" style={{ borderCollapse: "collapse" }}>
+
+                    <thead>
+
+                      <tr style={{ background: "#f2ece4" }}>
+
+                        <th style={{ padding: "10px 15px", textAlign: "left", color: "#6d645e", fontSize: "12px", borderBottom: "1px solid #e5e7eb" }}>GROUP CODE</th>
+
+                        <th style={{ padding: "10px 15px", textAlign: "left", color: "#6d645e", fontSize: "12px", borderBottom: "1px solid #e5e7eb" }}>GROUP NAME</th>
+
+                      </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                      {dishGroups.filter(g => (g.name || "").toLowerCase().includes(searchText.toLowerCase()) || (g.code || "").toLowerCase().includes(searchText.toLowerCase())).map((g, i) => (
+
+                        <tr key={i} onClick={() => {
+
+                          setDishGroup(g.name);
+
+                          setSelectedGroupId(g.id);
+
+                          setShowPopup(false);
+
+                          setSearchText("");
+
+                        }} style={{ cursor: 'pointer', borderBottom: "1px solid #f3f4f6" }} className="hh-row-hover">
+
+                          <td style={{ padding: "10px 15px", color: "#374151", fontSize: "12px", fontWeight: "600" }}>{g.code}</td>
+
+                          <td style={{ padding: "10px 15px", color: "#374151", fontSize: "12px" }}>{g.name}</td>
+
+                        </tr>
+
+                      ))}
+
+                    </tbody>
+
+                  </table>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        )}
+
+
+
       </div>
+
     </div>
+
   );
+
 };
+
+
 
 export default HappyHours;
