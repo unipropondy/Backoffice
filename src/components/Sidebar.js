@@ -165,9 +165,9 @@ const username = user?.FirstName;
 
    {ShowPromotions && (
    <div className="sid-submenu-container">
-     {/* <Link className="sid-menu" to="/HappyHours">
+     <Link className="sid-menu" to="/HappyHours">
         <FaGlassMartiniAlt  className="sid-icon" /> HappyHours
-      </Link> */}
+      </Link>
      <Link className="sid-menu" to="/Discount">
       <FaPercent  className="sid-icon" /> Discount
     </Link>
