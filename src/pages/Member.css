@@ -192,7 +192,7 @@
 .mem-meal-buttons {
   margin-top: 10px;
   display: flex;
-  gap: 5px;
+  gap: 15px;
 }
 
 .mem-meal-buttons button {
@@ -203,6 +203,7 @@
   cursor: pointer;
   font-size: 13px;
   transition: all 0.2s ease;
+   margin-right: 10px !important;
 }
 
 .mem-meal-buttons button:nth-child(1) { background: var(--primary);  color: white; }
@@ -238,7 +239,7 @@
 .mem-value-card-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 15px;
 }
 
 .mem-form-row {
@@ -361,7 +362,7 @@
 .input-with-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 15px;
 }
 
 .input-with-btn input {

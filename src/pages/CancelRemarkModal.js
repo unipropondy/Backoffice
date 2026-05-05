@@ -5,20 +5,21 @@ import { BASE_URL } from "../config/api";
 
 const API = `${BASE_URL}`;
 
-export default function CancelRemarkModal() {
+export default function CancelRemarks() {
   const [data, setData] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(null);
 
   const [form, setForm] = useState({
-    SER_NAME: "",
-    Activeflag: true
+    CRCode: "",
+    CRName: "",
+    SortCode: ""
   });
 
-  // 🔥 GET
+  // 🔥 GET DATA
   const fetchData = async () => {
     const res = await axios.get(`${API}/api/cancelRemarks`);
-    setData(Array.isArray(res.data) ? res.data : []);
+    setData(res.data);
   };
 
   useEffect(() => {
@@ -27,12 +28,8 @@ export default function CancelRemarkModal() {
 
   // 🔥 INPUT CHANGE
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    setForm({
-      ...form,
-      [name]: type === "checkbox" ? checked : value
-    });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
   };
 
   // 🔥 SAVE
@@ -41,9 +38,9 @@ export default function CancelRemarkModal() {
 
     try {
       if (editId) {
-        await axios.put(`${API}/api/cancelRemarks/${editId}`, form);
+       await axios.put(`${API}/api/cancelRemarks/${editId}`, form);
       } else {
-        await axios.post(`${API}/api/cancelRemarks`, form);
+       await axios.post(`${API}/api/cancelRemarks`, form);
       }
 
       fetchData();
@@ -67,18 +64,18 @@ export default function CancelRemarkModal() {
   };
 
   return (
-    <div className="service-container">
+    <div className="cancel-container">
 
-      {/* HEADER */}
-      <div className="service-header">
-        <h2>Cancel Remark Modal</h2>
+      <div className="cancel-header">
+        <h2>Cancel Remarks</h2>
 
         <button
-          className="new-btn"
+          className="cancel-new-btn"
           onClick={() => {
             setForm({
-              SER_NAME: "",
-              Activeflag: true
+              CRCode: "",
+              CRName: "",
+              SortCode: ""
             });
             setEditId(null);
             setShowModal(true);
@@ -89,12 +86,12 @@ export default function CancelRemarkModal() {
       </div>
 
       {/* TABLE */}
-      <table className="service-table">
+      <table className="cancel-table">
         <thead>
           <tr>
-            <th>ID</th>
+            <th>Code</th>
             <th>Name</th>
-            <th>Status</th>
+            <th>Sort</th>
           </tr>
         </thead>
 
@@ -104,18 +101,17 @@ export default function CancelRemarkModal() {
               key={i}
               onClick={() => {
                 setForm({
-                  SER_NAME: item.SER_NAME,
-                  Activeflag: item.Activeflag === true || item.Activeflag === 1
+                  CRCode: item.CancelRemarkCode,
+                  CRName: item.CancelRemarkName,
+                  SortCode: item.SortCode
                 });
-                setEditId(item.SER_ID);
+                setEditId(item.CancelRemarkCode);
                 setShowModal(true);
               }}
             >
-              <td>{item.SER_ID}</td>
-              <td>{item.SER_NAME}</td>
-              <td>
-                {item.Activeflag ? "Active" : "Inactive"}
-              </td>
+              <td>{item.CancelRemarkCode}</td>
+              <td>{item.CancelRemarkName}</td>
+              <td>{item.SortCode}</td>
             </tr>
           ))}
         </tbody>
@@ -123,66 +119,68 @@ export default function CancelRemarkModal() {
 
       {/* 🔥 MODAL */}
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-box">
+        <div className="cancel-modal-overlay">
+  <div className="cancel-modal-box">
 
-            <h2>Service Master</h2>
+    <h2 className="cancel-title">Cancel Remarks Master</h2>
 
-            <form onSubmit={handleSave} className="form-grid">
+    <form onSubmit={handleSave} className="cancel-form-grid">
 
-              <div className="form-group">
-                <label>Service Name</label>
-                <input
-                  name="SER_NAME"
-                  value={form.SER_NAME}
-                  onChange={handleChange}
-                />
-              </div>
+      <div className="cancel-form-group">
+        <label>Code</label>
+        <input
+          name="CRCode"
+          value={form.CRCode}
+          onChange={handleChange}
+        />
+      </div>
 
-              <div className="form-group">
-                <label>Status</label>
-                <input
-                  type="checkbox"
-                  name="Activeflag"
-                  checked={form.Activeflag}
-                  onChange={handleChange}
-                />
-                <span>
-                  {form.Activeflag ? "Active" : "Inactive"}
-                </span>
-              </div>
+      <div className="cancel-form-group">
+        <label>Name</label>
+        <input
+          name="CRName"
+          value={form.CRName}
+          onChange={handleChange}
+        />
+      </div>
 
-              <div className="actions">
-                <button type="submit" className="btn save">
-                  Save
-                </button>
+      <div className="cancel-form-group full">
+        <label>Sort Code</label>
+        <input
+          name="SortCode"
+          value={form.SortCode}
+          onChange={handleChange}
+        />
+      </div>
 
-                {editId && (
-                  <button
-                    type="button"
-                    className="btn delete"
-                    onClick={handleDelete}
-                  >
-                    Delete
-                  </button>
-                )}
+      <div className="actions full">
+        <button type="submit" className="btn cl-save">Save</button>
 
-                <button
-                  type="button"
-                  className="btn exit"
-                  onClick={() => setShowModal(false)}
-                >
-                  Exit
-                </button>
-              </div>
+        {editId && (
+          <button
+            type="button"
+            className="cancel-btn delete"
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
+        )}
 
-            </form>
+        <button
+          type="button"
+          className="cancel-btn exit"
+          onClick={() => setShowModal(false)}
+        >
+          Exit
+        </button>
+      </div>
 
-          </div>
-        </div>
+    </form>
+
+  </div>
+</div>
       )}
 
     </div>
   );
 }
-

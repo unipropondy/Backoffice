@@ -48,14 +48,14 @@ router.get("/payment/:terminal/:userId", async (req, res) => {
       .input("UserId", sql.VarChar, req.params.userId)
       .query(`
            SELECT 
-          ISNULL(PaymentType,'') AS PaymentType,
+          Remarks AS PaymentType,
           ISNULL(SUM(Amount),0) AS Amount,
           COUNT(*) AS PayCount
          FROM PaymentDetailCur
         WHERE isSettlement = 0
         AND isDayend = 0
         AND TerminalCode = @TerminalCode
-        GROUP BY PaymentType
+        GROUP BY Remarks
         
       `);
 

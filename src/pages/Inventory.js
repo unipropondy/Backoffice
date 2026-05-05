@@ -233,17 +233,58 @@ function Inventory() {
             <h2>{editIndex !== null ? "Edit Item" : "Add Item"}</h2>
 
             <div className="form-grid">
-              <input name="itemCode" value={item.itemCode} onChange={handleChange} placeholder="Item Code" />
-              <input name="description" value={item.description} onChange={handleChange} placeholder="Description" />
-              <input name="inventoryGroup" value={item.inventoryGroup} onChange={handleChange} placeholder="Group" />
-              <input name="brand" value={item.brand} onChange={handleChange} placeholder="Brand" />
-              <input name="uom" value={item.uom} onChange={handleChange} placeholder="UOM" />
-              <input type="number" name="grossCost" value={item.grossCost} onChange={handleChange} placeholder="Gross Cost" />
-              <input type="number" name="sortCode" value={item.sortCode} onChange={handleChange} placeholder="Sort Code" />
-              <input name="vendor" value={item.vendor} onChange={handleChange} placeholder="Vendor" />
-              <input type="number" name="price" value={item.price} onChange={handleChange} placeholder="Price" />
-              <input type="number" name="avgCost" value={item.avgCost} onChange={handleChange} placeholder="Avg Cost" />
-            </div>
+  
+  <div className="form-group">
+    <label>Item Code</label>
+    <input name="itemCode" value={item.itemCode} onChange={handleChange} />
+  </div>
+
+  <div className="form-group">
+    <label>Description</label>
+    <input name="description" value={item.description} onChange={handleChange} />
+  </div>
+
+  <div className="form-group">
+    <label>Group</label>
+    <input name="inventoryGroup" value={item.inventoryGroup} onChange={handleChange} />
+  </div>
+
+  <div className="form-group">
+    <label>Brand</label>
+    <input name="brand" value={item.brand} onChange={handleChange} />
+  </div>
+
+  <div className="form-group">
+    <label>UOM</label>
+    <input name="uom" value={item.uom} onChange={handleChange} />
+  </div>
+
+  <div className="form-group">
+    <label>Gross Cost</label>
+    <input type="number" name="grossCost" value={item.grossCost} onChange={handleChange} />
+  </div>
+
+  <div className="form-group">
+    <label>Sort Code</label>
+    <input type="number" name="sortCode" value={item.sortCode} onChange={handleChange} />
+  </div>
+
+  <div className="form-group">
+    <label>Vendor</label>
+    <input name="vendor" value={item.vendor} onChange={handleChange} />
+  </div>
+
+  <div className="form-group">
+    <label>Price</label>
+    <input type="number" name="price" value={item.price} onChange={handleChange} />
+  </div>
+
+  <div className="form-group">
+    <label>Avg Cost</label>
+    <input type="number" name="avgCost" value={item.avgCost} onChange={handleChange} />
+  </div>
+
+</div>
 
             <div className="checkbox-group">
               <label>
