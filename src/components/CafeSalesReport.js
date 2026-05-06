@@ -26,7 +26,7 @@ const CafeSalesReport = ({
   const [viewMode, setViewMode] = useState("");
   const [isSearched, setIsSearched] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
-const [selectedCategoryName, setSelectedCategoryName] = useState("");
+  const [selectedCategoryName, setSelectedCategoryName] = useState("");
   const [localData, setLocalData] = useState([]);
   const [grandTotal, setGrandTotal] = useState(0);
   const [companyInfo, setCompanyInfo] = useState(null);
@@ -99,71 +99,118 @@ useEffect(() => {
   console.log("New dishGroupList:", dishGroupList);
   console.log("Length:", dishGroupList.length);
 }, [dishGroupList]);
-  const handleDownload = async () => {
+
+//   const handleDownload = async () => {
+//   try {
+//     const selectedReport = orderSales || dayEnd;
+   
+   
+//     if (selectedReport === "Paymode") {
+     
+//       let url = `${API_BASE}/api/reports/paymode-pdf?fromDate=${fromDate}&toDate=${toDate}`;
+     
+//       const response = await fetch(url);
+//       if (!response.ok) throw new Error("PDF download failed");
+     
+//       const blob = await response.blob();
+//       const downloadUrl = window.URL.createObjectURL(blob);
+     
+   
+//       const link = document.createElement('a');
+//       link.href = downloadUrl;
+//       link.download = `Paymode_Sales_${fromDate}_to_${toDate}.pdf`;
+//       document.body.appendChild(link);
+//       link.click();
+//       document.body.removeChild(link);
+//       window.URL.revokeObjectURL(downloadUrl);
+     
+//     } else if (selectedReport === "Terminal") {
+    
+//       let url = `${API_BASE}/api/reports/terminal-pdf?fromDate=${fromDate}&toDate=${toDate}`;
+//       const response = await fetch(url);
+//       if (!response.ok) throw new Error("PDF download failed");
+//       const blob = await response.blob();
+//       const downloadUrl = window.URL.createObjectURL(blob);
+//       const link = document.createElement('a');
+//       link.href = downloadUrl;
+//       link.download = `Terminal_Sales_${fromDate}_to_${toDate}.pdf`;
+//       document.body.appendChild(link);
+//       link.click();
+//       document.body.removeChild(link);
+//       window.URL.revokeObjectURL(downloadUrl);
+     
+//     } else {
+      
+//       let url = `${API_BASE}/api/reports/sales-pdf?fromDate=${fromDate}&toDate=${toDate}&orderSales=${selectedReport}&bySales=${bySales}`;
+ 
+//       if (selectedReport === "Itemwise") {
+//         if (category) url += `&category=${encodeURIComponent(category)}`;
+//         if (dishGroup) url += `&dishGroup=${encodeURIComponent(dishGroup)}`;
+//       }
+ 
+//       const response = await fetch(url);
+//       if (!response.ok) throw new Error("PDF download failed");
+ 
+//       const blob = await response.blob();
+//       const downloadUrl = window.URL.createObjectURL(blob);
+//       const link = document.createElement('a');
+//       link.href = downloadUrl;
+//       link.download = `Sales_Report_${fromDate}_to_${toDate}.pdf`;
+//       document.body.appendChild(link);
+//       link.click();
+//       document.body.removeChild(link);
+//       window.URL.revokeObjectURL(downloadUrl);
+//     }
+ 
+//   } catch (err) {
+//     console.error(err);
+//     alert("Error downloading PDF");
+//   }
+// };
+
+const handleDownload = () => {
   try {
     const selectedReport = orderSales || dayEnd;
-   
-    // Check if it's Paymode Collection report
-    if (selectedReport === "Paymode") {
-      // Call Paymode PDF endpoint
-      let url = `${API_BASE}/api/reports/paymode-pdf?fromDate=${fromDate}&toDate=${toDate}`;
-     
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("PDF download failed");
-     
-      const blob = await response.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-     
-      // Create download link
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.download = `Paymode_Sales_${fromDate}_to_${toDate}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(downloadUrl);
-     
-    } else if (selectedReport === "Terminal") {
-      // Terminal Sales PDF
-      let url = `${API_BASE}/api/reports/terminal-pdf?fromDate=${fromDate}&toDate=${toDate}`;
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("PDF download failed");
-      const blob = await response.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.download = `Terminal_Sales_${fromDate}_to_${toDate}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(downloadUrl);
-     
-    } else {
-      // Existing sales report PDF
-      let url = `${API_BASE}/api/reports/sales-pdf?fromDate=${fromDate}&toDate=${toDate}&orderSales=${selectedReport}&bySales=${bySales}`;
- 
-      if (selectedReport === "Itemwise") {
-        if (category) url += `&category=${encodeURIComponent(category)}`;
-        if (dishGroup) url += `&dishGroup=${encodeURIComponent(dishGroup)}`;
-      }
- 
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("PDF download failed");
- 
-      const blob = await response.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.download = `Sales_Report_${fromDate}_to_${toDate}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(downloadUrl);
+
+    let url = `${API_BASE}/api/reports/sales-pdf?fromDate=${fromDate}&toDate=${toDate}`;
+
+    // ✅ Order Sales
+    if (orderSales) {
+      url += `&orderSales=${orderSales}`;
     }
- 
+
+    // ✅ Day End
+    if (dayEnd) {
+      url += `&dayEnd=${dayEnd}`;
+    }
+
+    // ✅ By Sales
+    if (bySales) {
+      url += `&bySales=${bySales}`;
+    }
+
+    // ✅ By Item
+    if (byItem) {
+      url += `&byItem=${byItem}`;
+    }
+
+    // ✅ Category & DishGroup
+    if (category) {
+      url += `&category=${encodeURIComponent(category)}`;
+    }
+
+    if (dishGroup) {
+      url += `&dishGroup=${encodeURIComponent(dishGroup)}`;
+    }
+
+    console.log("Opening URL:", url);
+
+    // ✅ Open HTML report in new tab
+    window.open(url, "_blank");
+
   } catch (err) {
     console.error(err);
-    alert("Error downloading PDF");
+    alert("Error opening report");
   }
 };
  
