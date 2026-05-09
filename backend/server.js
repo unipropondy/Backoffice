@@ -149,6 +149,10 @@ app.use("/api/reports", salesreportRoutes);
 const serverMasterRoutes = require("./routes/serverMasterRoutes");
 app.use("/api/server", serverMasterRoutes);
 
+const qrCodeRoutes = require("./routes/QrcodeRoutes");
+
+app.use("/qrmaster", qrCodeRoutes); 
+
 /* ------------------- GET ALL KITCHENS ------------------- */
 app.get("/kitchen", async (req, res) => {
   try {

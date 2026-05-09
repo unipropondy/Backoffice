@@ -39,6 +39,7 @@ import StockEntryPurRet from "./pages/StockEntryPurRet";
 import ServerMaster from "./pages/ServerMaster";
 import TableMaster from "./pages/tablemaster";
 import Organization from "./pages/Organization";
+import QRCode from "./pages/QRCode";
 
 
 // import { LoaderProvider } from "./context/LoaderContext";
@@ -103,6 +104,7 @@ function Layout() {
         <Route path="/ServiceMaster" element={<ServerMaster />} />
        <Route path="/tablemaster" element={<TableMaster />} />
        <Route path="/Organization" element={<Organization />} />
+       <Route path="/QRCode" element={<QRCode />} />
        </Routes>
       </div>
     </>

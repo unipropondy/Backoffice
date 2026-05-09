@@ -209,6 +209,9 @@ const username = user?.FirstName;
 
         {showSetup && (
         <div className="sid-submenu-container">
+          <Link className="sid-menu" to="/QRCode">
+            <FaBuilding  className="sid-icon" /> QRCode
+          </Link>
           <Link className="sid-menu" to="/Organization">
             <FaBuilding  className="sid-icon" /> Organization
           </Link>
