@@ -170,7 +170,11 @@ router.put("/:id", async (req, res) => {
 
   try {
 
-    const { TableNo, QRLink } = req.body;
+    const {
+  TableId,
+  TableNo,
+  QRLink
+} = req.body;
 
     const { id } = req.params;
 
