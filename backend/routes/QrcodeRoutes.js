@@ -19,12 +19,13 @@ router.get("/", async (req, res) => {
 
       .query(`
       
-        SELECT
-          Id,
-          TableNo,
-          QRLink
-        FROM dbo.QRMaster
-        ORDER BY Id DESC
+      SELECT
+        Id,
+        TableId,
+        TableNo,
+        QRLink
+      FROM dbo.QRMaster
+      ORDER BY Id DESC
       
       `);
 
@@ -51,9 +52,10 @@ router.post("/", async (req, res) => {
 
   try {
 
-    const {
+  const {
   TableId,
-  TableNo
+  TableNo,
+  QRLink
 } = req.body;
 
     if (!TableNo || !QRLink) {

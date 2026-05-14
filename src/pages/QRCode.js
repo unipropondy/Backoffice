@@ -160,8 +160,10 @@ export default function TableMaster() {
         // const qrCode =
         //   `${BASE_URL}/menu?table=${tableNo}`;
 
-         const qrCode =
-         `${QRLink}?table=${tableNo}`;
+        //  const qrCode =
+        //  `${QRLink}?table=${tableNo}`;
+
+        const qrCode = QRLink;
 
         const url = editId
           ? `${BASE_URL}/qrmaster/${editId}`
@@ -198,7 +200,10 @@ export default function TableMaster() {
       getQRTables();
 
       // Clear
+      setTableId("");
       setTableNo("");
+      setQRLink("");
+      setEditId(null);
 
       // Close Modal
       setShowAddModal(false);
@@ -446,18 +451,19 @@ export default function TableMaster() {
               Table NO.
             </label>
 
-           <select
+          <select
   value={tableId}
   onChange={(e) => {
 
-    const selectedId = e.target.value;
+    const selectedId =
+      e.target.value;
 
     setTableId(selectedId);
 
     const selectedTable =
       tableMasterList.find(
         (x) =>
-          String(x.Id) ===
+          String(x.TableId) ===
           String(selectedId)
       );
 
@@ -479,8 +485,8 @@ export default function TableMaster() {
   {tableMasterList.map((table) => (
 
     <option
-      key={table.Id}
-      value={table.Id}
+      key={table.TableId}
+      value={table.TableId}
     >
       {table.TableNumber}
     </option>
