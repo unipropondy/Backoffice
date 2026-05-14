@@ -51,8 +51,10 @@ router.post("/", async (req, res) => {
 
   try {
 
-    const { TableNo, QRLink } =
-      req.body;
+    const {
+  TableId,
+  TableNo
+} = req.body;
 
     if (!TableNo || !QRLink) {
 
@@ -65,6 +67,12 @@ router.post("/", async (req, res) => {
     const pool = await poolPromise;
 
     await pool.request()
+
+    .input(
+    "TableId",
+    sql.UniqueIdentifier,
+    TableId
+  )
 
       .input(
         "TableNo",
@@ -82,11 +90,13 @@ router.post("/", async (req, res) => {
 
         INSERT INTO dbo.QRMaster
         (
+         TableId,
           TableNo,
           QRLink
         )
         VALUES
         (
+        @TableId,
           @TableNo,
           @QRLink
         )
@@ -172,6 +182,12 @@ router.put("/:id", async (req, res) => {
 
       .input("Id", sql.Int, id)
 
+       .input(
+    "TableId",
+    sql.UniqueIdentifier,
+    TableId
+  )
+
       .input("TableNo", sql.VarChar, TableNo)
 
     //   .input("QRCode", sql.VarChar, QRCode)
@@ -181,7 +197,8 @@ router.put("/:id", async (req, res) => {
         UPDATE dbo.QRMaster
 
         SET
-
+        
+           TableId = @TableId,   
           TableNo = @TableNo,
 
           QRLink  = @QRLink 

@@ -12,6 +12,7 @@ export default function TableMaster() {
 
   const [tables, setTables] = useState([]);
 
+
   const [tableMasterList, setTableMasterList] =
     useState([]);
 
@@ -23,6 +24,9 @@ export default function TableMaster() {
 
   const [showAddModal, setShowAddModal] =
     useState(false);
+
+   const [tableId, setTableId] =
+  useState("");
 
   const [tableNo, setTableNo] =
     useState("");
@@ -177,6 +181,7 @@ export default function TableMaster() {
             },
 
             body: JSON.stringify({
+              TableId: tableId,
               TableNo: tableNo,
               QRCode: qrCode,
               QRLink: qrCode,
@@ -214,15 +219,17 @@ export default function TableMaster() {
 
   const editQR = (table) => {
 
-    setEditId(table.Id);
+  setEditId(table.Id);
 
-    setTableNo(table.TableNo);
+  setTableId(table.TableId);
 
-    setQRLink(table.QRLink);
+  setTableNo(table.TableNo);
 
-    setShowAddModal(true);
+  setQRLink(table.QRLink);
 
-  };
+  setShowAddModal(true);
+
+};
 
 
   // =========================
@@ -439,34 +446,47 @@ export default function TableMaster() {
               Table NO.
             </label>
 
-            <select
-              value={tableNo}
-              onChange={(e) =>
-                setTableNo(
-                  e.target.value
-                )
-              }
-              className="qr-table-input"
-            >
+           <select
+  value={tableId}
+  onChange={(e) => {
 
-              <option value="">
-                Select Table
-              </option>
+    const selectedId = e.target.value;
 
-              {Array.isArray(tableMasterList) &&
-                tableMasterList.map(
-                  (table) => (
+    setTableId(selectedId);
 
-                  <option
-                    key={table.Id}
-                    value={table.TableNumber}
-                  >
-                   {table.TableNumber}
-                  </option>
+    const selectedTable =
+      tableMasterList.find(
+        (x) =>
+          String(x.Id) ===
+          String(selectedId)
+      );
 
-                ))}
+    if (selectedTable) {
 
-            </select>
+      setTableNo(
+        selectedTable.TableNumber
+      );
+
+    }
+
+  }}
+  className="qr-table-input"
+>
+  <option value="">
+    Select Table
+  </option>
+
+  {tableMasterList.map((table) => (
+
+    <option
+      key={table.Id}
+      value={table.Id}
+    >
+      {table.TableNumber}
+    </option>
+
+  ))}
+</select>
            
            <label className="qr-label">
             QR Link
