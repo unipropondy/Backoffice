@@ -163,7 +163,8 @@ export default function TableMaster() {
         //  const qrCode =
         //  `${QRLink}?table=${tableNo}`;
 
-        const qrCode = QRLink;
+        const qrCode =
+          `${QRLink}?tableId=${tableId}&table=${tableNo}`;
 
         const url = editId
           ? `${BASE_URL}/qrmaster/${editId}`
@@ -290,10 +291,12 @@ export default function TableMaster() {
 
        <button
         className="qr-new-btn"
-        onClick={() => {
+       onClick={() => {
 
           // CLEAR OLD DATA
           setEditId(null);
+
+          setTableId("");
 
           setTableNo("");
 

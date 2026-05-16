@@ -67,6 +67,33 @@ white-space: nowrap;
 .dish-report-table1 th{
 background: var(--primary);
 color: white;
+
+  position: relative;
+  vertical-align: top;
+  padding: 10px 8px;
+
+}
+
+.dish-report-table1 th input {
+  display: block;
+
+  width: 140px;
+  height: 30px;
+
+  margin-top: 6px;
+
+  padding: 4px 10px;
+
+  border: 1px solid #d8d0c5;
+  border-radius: 16px;
+
+  outline: none;
+
+  font-size: 13px;
+
+  background: #fff;
+
+  box-sizing: border-box;
 }
 
  

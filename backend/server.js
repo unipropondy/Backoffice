@@ -1248,11 +1248,23 @@ app.post("/dishgroupkitchen", async (req, res) => {
 app.get("/dish", async (req, res) => {
   try {
     const pool = await poolPromise;
-    const result = await pool.request().query(`SELECT D.*,  (SELECT I.ImageData
-                                                              from ImageList I
-                                                              where  D.ImageId = I.ImageId) ImageData
-                                               FROM DishMaster D
-                                                ORDER BY D.CreatedOn DESC`);
+    const result = await pool.request().query(`SELECT 
+    D.*,
+
+    DG.DishGroupName,
+
+    (
+      SELECT I.ImageData
+      FROM ImageList I
+      WHERE D.ImageId = I.ImageId
+    ) AS ImageData
+
+FROM DishMaster D
+
+LEFT JOIN DishGroupMaster DG
+ON D.DishGroupId = DG.DishGroupId
+
+ORDER BY DG.DishGroupName ASC, D.Name ASC`);
     const data = result.recordset.map(row => {
   let imageBase64 = null;
 

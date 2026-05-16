@@ -839,7 +839,7 @@ const totalRows = filteredData.length;
               </div>
 
               <div className="dish-form-row1">
-                <label>Sord Code</label>
+                <label>Sort Code</label>
                 <input name="SordCode" value={dish.SordCode} onChange={handleChange} />
               </div>
 
