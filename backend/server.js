@@ -1251,7 +1251,7 @@ app.get("/dish", async (req, res) => {
     const result = await pool.request().query(`SELECT 
     D.*,
 
-    DG.DishGroupName,
+    DG.DishGroupName
 
    
 
