@@ -1253,11 +1253,7 @@ app.get("/dish", async (req, res) => {
 
     DG.DishGroupName,
 
-    (
-      SELECT I.ImageData
-      FROM ImageList I
-      WHERE D.ImageId = I.ImageId
-    ) AS ImageData
+   
 
 FROM DishMaster D
 
