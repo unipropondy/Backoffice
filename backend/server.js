@@ -1251,9 +1251,13 @@ app.get("/dish", async (req, res) => {
     const result = await pool.request().query(`SELECT 
     D.*,
 
-    DG.DishGroupName
+    DG.DishGroupName,
 
-   
+    (
+      SELECT I.ImageData
+      FROM ImageList I
+      WHERE D.ImageId = I.ImageId
+    ) AS ImageData
 
 FROM DishMaster D
 
