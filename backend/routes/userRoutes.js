@@ -170,7 +170,7 @@ router.post("/usermaster", async (req, res) => {
       .input("UserCode", sql.VarChar(50), finalUserCode)
       .input("UserName", sql.VarChar(100), UserName)
       .input("UserPassword", sql.VarChar(100), finalPassword)
-      .input("UserGroupid", sql.UniqueIdentifier, uuidv4())
+      .input("UserGroupid", sql.UniqueIdentifier, cleanGroupId)
       .input("FirstName", sql.VarChar(100), FirstName)
       .input("LastName", sql.VarChar(100), LastName)
       .input("FullName", sql.VarChar(150), FullName)
@@ -221,6 +221,28 @@ router.delete("/usermaster/:code", async (req, res) => {
  
   } catch (err) {
     console.error("DELETE USER ERROR:", err.message);
+    res.status(500).send(err.message);
+  }
+});
+
+
+router.get("/usergroupmaster", async (req, res) => {
+  try {
+    const pool = await poolPromise;
+ 
+    const result = await pool.request().query(`
+      SELECT
+        UserGroupId,
+        UserGroupCode,
+        UserGroupName
+      FROM UserGroupMaster
+      ORDER BY UserGroupCode
+    `);
+ 
+    res.json(result.recordset);
+ 
+  } catch (err) {
+    console.error("GET USERGROUP ERROR:", err.message);
     res.status(500).send(err.message);
   }
 });

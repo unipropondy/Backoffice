@@ -55,13 +55,15 @@ export default function UserMaster() {
 
   const fetchUserGroups = async () => {
   try {
-    const res = await axios.get(`${BASE_URL}/api/usergroup`);
-    console.log("USER GROUP API:", res.data);
+    const res = await axios.get(`${BASE_URL}/api/usergroupmaster`);
+
+console.log("USER GROUP API:", JSON.stringify(res.data, null, 2));
+
     setUserGroups(res.data);
   } catch (err) {
     console.log(err);
   }
-};
+}
  
 
   const handleChange = (e) => {
@@ -236,17 +238,17 @@ export default function UserMaster() {
                     value={form.UserGroupId}
                     onChange={handleChange}
                   >
-                    <option value="">Select Group</option>
+                        <option value="">Select Group</option>
 
-                   {userGroups.map((group) => (
-                    <option
-                      key={group.UserGroupId}
-                      value={group.UserGroupId}
-                    >
-                      {group.code}
-                    </option>
-                  ))}
-                  </select>
+                      {userGroups.map((group, index) => (
+                        <option
+                          key={index}
+                          value={group.UserGroupId}
+                        >
+                          {group.UserGroupName}
+                        </option>
+                      ))}
+              </select>
                 </div>
             </div>
  
