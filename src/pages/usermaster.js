@@ -238,11 +238,14 @@ export default function UserMaster() {
                   >
                     <option value="">Select Group</option>
 
-                    {userGroups.map((group) => (
-                      <option key={group.id} value={group.id}>
-                         {group.code}
-                        </option>
-                    ))}
+                   {userGroups.map((group) => (
+                    <option
+                      key={group.UserGroupId}
+                      value={group.UserGroupId}
+                    >
+                      {group.code}
+                    </option>
+                  ))}
                   </select>
                 </div>
             </div>
