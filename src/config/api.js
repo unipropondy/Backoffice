@@ -1,5 +1,5 @@
 
- export const BASE_URL = "https://backoffice-production-937b.up.railway.app"; //std
+ export const BASE_URL = "https://backoffice-production-7a8d.up.railway.app"; //std
 
 // export const BASE_URL = "http://localhost:3000";
  
