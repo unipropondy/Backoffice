@@ -113,14 +113,14 @@ z-index:999;
 }
  
 .dish-modal-box1{
-background: var(--bg-card);
-padding:20px;
-padding: 15px;
-border-radius:8px;
-width:1150px;
-max-width:95vw;
-max-height:90vh;
-overflow:auto;
+  background: var(--bg-card);
+  padding:20px;
+  border-radius:8px;
+  width:1150px;
+  max-width:95vw;
+  max-height:90vh;
+  overflow:auto;
+  position: relative;
 }
 
 .dish-form-grid {
