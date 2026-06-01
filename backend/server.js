@@ -1651,8 +1651,11 @@ app.get("/dishgroupmapping/:id", async (req, res) => {
     res.json(result.recordset);
 
   } catch (err) {
-    console.log(err);
-    res.status(500).send("Error");
+    console.log("🔥 ERROR:", err);
+    res.status(500).json({
+      message: err.message,
+      stack: err.stack
+    });
   }
 });
 
