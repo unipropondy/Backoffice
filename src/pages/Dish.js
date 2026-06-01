@@ -85,6 +85,8 @@ import { BASE_URL } from "../config/api";
   const [displayName, setDisplayName] = useState(true);
   const [existingImage, setExistingImage] = useState(null);
   const [dishGroups, setDishGroups] = useState([]);
+  const [showDishGroupModal, setShowDishGroupModal] = useState(false);
+const [selectedDishGroups, setSelectedDishGroups] = useState([]);
 
   const [dishmodifier, setdishModifiers] = useState([]);
   const [dishkitchens, setdishKitchens] = useState([]);
@@ -212,6 +214,11 @@ formData.set(
       JSON.stringify(selecteddishModifiers || [])
     );
 
+    formData.append(
+  "DishGroups",
+  JSON.stringify(selectedDishGroups || [])
+);
+
     // 🔥 image file
     if (categoryImage) {
       formData.append("image", categoryImage);
@@ -332,8 +339,15 @@ const handleEdit = async (data) => {
   const mRes = await axios.get(`${BASE_URL}/dishmodifier/${data.DishId}`);
   const mIds = mRes.data.map(x => String(x.ModifierId));
 
+   const dgRes = await axios.get(
+    `${BASE_URL}/dishgroupmapping/${data.DishId}`
+  );
+
+  const dgIds = dgRes.data.map(x => String(x.DishGroupId));
+
   setSelecteddishKitchens(kIds);
   setSelecteddishModifiers(mIds);
+  setSelectedDishGroups(dgIds);
 
   setShowModal(true);
 };
@@ -902,6 +916,13 @@ const totalRows = filteredData.length;
           >
             Kitchen
           </button>
+
+          <button
+          className={activeTab === "dishgroup" ? "active-tab" : ""}
+          onClick={() => setActiveTab("dishgroup")}
+        >
+          Dish Group
+        </button>
         </div>
 
         {/* 🔽 TAB CONTENT */}
@@ -1016,6 +1037,35 @@ const totalRows = filteredData.length;
             ))}
           </div>
         )}
+
+        {activeTab === "dishgroup" && (
+  <div className="dish-kitchen-container">
+    {dishGroups.map((g) => (
+      <label key={g.DishGroupId}>
+        <input
+          type="checkbox"
+          checked={selectedDishGroups.includes(g.DishGroupId)}
+          onChange={(e) => {
+            const value = g.DishGroupId;
+
+            if (e.target.checked) {
+              setSelectedDishGroups((prev) =>
+                prev.includes(value)
+                  ? prev
+                  : [...prev, value]
+              );
+            } else {
+              setSelectedDishGroups((prev) =>
+                prev.filter((id) => id !== value)
+              );
+            }
+          }}
+        />
+        {g.DishGroupName}
+      </label>
+    ))}
+  </div>
+)}
 
 </div>
         </div>

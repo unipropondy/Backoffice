@@ -1307,6 +1307,12 @@ app.post("/dish", upload.single("image"), async (req, res) => {
     const pool = await poolPromise;
    const d = req.body;
 
+   let dishGroups = [];
+
+      if (d.DishGroups) {
+        dishGroups = JSON.parse(d.DishGroups);
+      }
+
        if (!d.DishCode || d.DishCode.trim() === "") {
       return res.status(400).send("DishCode required ❗");
     }
@@ -1503,6 +1509,28 @@ try {
         `);
     }
 
+    // 🔥 DISH GROUP SAVE
+
+await pool.request()
+  .input("DishId", sql.UniqueIdentifier, dishId)
+  .query(`
+    DELETE FROM DishGroupMapping
+    WHERE DishId=@DishId
+  `);
+
+for (let g of dishGroups) {
+  await pool.request()
+    .input("DishId", sql.UniqueIdentifier, dishId)
+    .input("DishGroupId", sql.UniqueIdentifier, g)
+    .query(`
+      INSERT INTO DishGroupMapping
+      (DishId, DishGroupId)
+      VALUES
+      (@DishId, @DishGroupId)
+    `);
+}
+
+
     res.send("Saved ✅");
 
   } catch (err) {
@@ -1510,6 +1538,8 @@ try {
     res.status(500).send(err.message);
   }
 });
+
+
 
 // ================= DELETE =================
 app.delete("/dish/:id", async (req, res) => {
@@ -1596,6 +1626,26 @@ app.get("/dishkitchen/:id", async (req, res) => {
         SELECT KitchenTypeCode
         FROM DishKitchenType
         WHERE DishId=@DishId
+      `);
+
+    res.json(result.recordset);
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Error");
+  }
+});
+
+app.get("/dishgroupmapping/:id", async (req, res) => {
+  try {
+    const pool = await poolPromise;
+
+    const result = await pool.request()
+      .input("DishId", sql.UniqueIdentifier, req.params.id)
+      .query(`
+        SELECT DishGroupId
+        FROM DishGroupMapping
+        WHERE DishId = @DishId
       `);
 
     res.json(result.recordset);
