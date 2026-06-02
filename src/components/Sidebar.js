@@ -218,6 +218,9 @@ const username = user?.FirstName;
            <Link className="sid-menu" to="/TableMaster">
             <FaBarcode  className="sid-icon" /> Table Master
           </Link>
+          <Link className="sid-menu" to="/DishOrderItemShare">
+            <BsTerminal  className="sid-icon" /> DishOrderItemShare
+          </Link>
            <Link className="sid-menu" to="/Terminal">
             <BsTerminal  className="sid-icon" /> Terminal
           </Link>

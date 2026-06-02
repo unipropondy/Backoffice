@@ -1536,6 +1536,50 @@ for (let g of dishGroups) {
     `);
 }
 
+// 🔥 ORDER ITEM SHARE SAVE
+
+let orderItemShares = [];
+
+try {
+  orderItemShares = d.OrderItemShares
+    ? JSON.parse(d.OrderItemShares)
+    : [];
+} catch (e) {
+  orderItemShares = [];
+}
+
+await pool.request()
+  .input("DishId", sql.UniqueIdentifier, dishId)
+  .query(`
+    DELETE FROM OrderItemShare
+    WHERE OrderDetailId=@DishId
+  `);
+
+for (let item of orderItemShares) {
+
+  await pool.request()
+    .input("OrderDetailId", sql.UniqueIdentifier, dishId)
+    .input("CustomerName", sql.NVarChar(100), item)
+    .query(`
+      INSERT INTO OrderItemShare
+      (
+        Id,
+        OrderDetailId,
+        CustomerName,
+        IsSelected,
+        CreatedDate
+      )
+      VALUES
+      (
+        NEWID(),
+        @OrderDetailId,
+        @CustomerName,
+        1,
+        GETDATE()
+      )
+    `);
+}
+
 
     res.send("Saved ✅");
 
@@ -1662,6 +1706,27 @@ app.get("/dishgroupmapping/:id", async (req, res) => {
       message: err.message,
       stack: err.stack
     });
+  }
+});
+
+app.get("/orderitemshare/:id", async (req, res) => {
+  try {
+
+    const pool = await poolPromise;
+
+    const result = await pool.request()
+      .input("DishId", sql.UniqueIdentifier, req.params.id)
+      .query(`
+        SELECT CustomerName
+        FROM OrderItemShare
+        WHERE OrderDetailId = @DishId
+      `);
+
+    res.json(result.recordset);
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err.message);
   }
 });
 

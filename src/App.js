@@ -39,6 +39,7 @@ import StockEntryPurRet from "./pages/StockEntryPurRet";
 import ServerMaster from "./pages/ServerMaster";
 import TableMaster from "./pages/tablemaster";
 import Organization from "./pages/Organization";
+import DishOrderItemShare from "./pages/DishOrderItemShare";
 import QRCode from "./pages/QRCode";
 
 
@@ -105,6 +106,7 @@ function Layout() {
        <Route path="/tablemaster" element={<TableMaster />} />
        <Route path="/Organization" element={<Organization />} />
        <Route path="/QRCode" element={<QRCode />} />
+       <Route path="/DishOrderItemShare" element={<DishOrderItemShare />} />
        </Routes>
       </div>
     </>

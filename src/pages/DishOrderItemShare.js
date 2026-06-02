@@ -16,7 +16,7 @@ function DishOrderItemShare({ sidebarOpen }) {
   });
  
   const isEditMode = editId !== null;
-   const res = await axios.get(`${BASE_URL}/dishorderitemshare`);
+  
   // ================= FETCH DATA =================
   const fetchData = async () => {
     try {

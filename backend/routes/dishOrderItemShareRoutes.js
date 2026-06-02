@@ -38,9 +38,12 @@ router.post("/", async (req, res) => {
  
     res.json({ success: true, message: "Dish order item share inserted successfully" });
   } catch (err) {
-    console.error("INSERT Error:", err);
-    res.status(500).json({ error: "Insert Error" });
-  }
+  console.error("INSERT Error:", err);
+  res.status(500).json({
+    message: err.message,
+    details: err
+  });
+}
 });
  
 // ================= UPDATE DISH ORDER ITEM SHARE =================

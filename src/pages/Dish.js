@@ -71,7 +71,18 @@ import { BASE_URL } from "../config/api";
   })
   .catch(err => console.error("DishGroup error:", err));
 
+  // axios.get(`${BASE_URL}/dishorderitemshare`)
+  // .then(res => {
+  //   console.log("ORDER ITEM SHARE 👉", res.data);
+  //   setOrderItemShare(res.data);
+  // })
+  // .catch(err => {
+  //   console.log("ORDER ITEM SHARE ERROR", err);
+  // });
+
  },[]);
+
+ 
 
   const [entries,setEntries] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -96,6 +107,9 @@ const [selectedDishGroups, setSelectedDishGroups] = useState([]);
 
   const [selecteddishModifiers, setSelecteddishModifiers] = useState([]);
   const [selecteddishKitchens, setSelecteddishKitchens] = useState([]);
+
+  const [orderItemShare, setOrderItemShare] = useState([]);
+const [selectedOrderItemShare, setSelectedOrderItemShare] = useState([]);
 
   useEffect(() => {
   if (showModal && !dish.DishId) {
@@ -219,6 +233,11 @@ formData.set(
   JSON.stringify(selectedDishGroups || [])
 );
 
+formData.append(
+  "OrderItemShares",
+  JSON.stringify(selectedOrderItemShare || [])
+);
+
     // 🔥 image file
     if (categoryImage) {
       formData.append("image", categoryImage);
@@ -304,6 +323,12 @@ setExistingImage(null);
   try {
     // const res = await axios.get(`${BASE_URL}/dish/nextcode`);
 
+
+     const shareRes = await axios.get(
+      `${BASE_URL}/dishorderitemshare`
+    );
+console.log("SHARE DATA => ", shareRes.data);
+    setOrderItemShare(shareRes.data);
     setDish({
       ...emptyDish,
        DishCode: ""    // 🔥 AUTO CODE SHOW
@@ -311,6 +336,8 @@ setExistingImage(null);
 
     setSelecteddishKitchens([]);
     setSelecteddishModifiers([]);
+    setSelectedDishGroups([]);
+setSelectedOrderItemShare([]);
      setDishImage(null);        // 🔥 ADD THIS
     setExistingImage(null); 
     setEditIndex(null);
@@ -331,6 +358,15 @@ const handleEdit = async (data) => {
 
   setDish(data);
 
+
+     const shareRes = await axios.get(
+    `${BASE_URL}/dishorderitemshare`
+  );
+
+  console.log("EDIT SHARE DATA => ", shareRes.data);
+
+  setOrderItemShare(shareRes.data);
+
    setExistingImage(data.ImageData);
 
   const kRes = await axios.get(`${BASE_URL}/dishkitchen/${data.DishId}`);
@@ -345,9 +381,20 @@ const handleEdit = async (data) => {
 
   const dgIds = dgRes.data.map(x => String(x.DishGroupId));
 
+  const osRes = await axios.get(
+  `${BASE_URL}/orderitemshare/${data.DishId}`
+);
+
+const osNames = osRes.data.map(
+  x => x.CustomerName
+);
+
+setSelectedOrderItemShare(osNames);
+
   setSelecteddishKitchens(kIds);
   setSelecteddishModifiers(mIds);
   setSelectedDishGroups(dgIds);
+ 
 
   setShowModal(true);
 };
@@ -923,6 +970,12 @@ const totalRows = filteredData.length;
         >
           Dish Group
         </button>
+        <button
+  className={activeTab === "orderitemshare" ? "active-tab" : ""}
+  onClick={() => setActiveTab("orderitemshare")}
+>
+  Order Item Share
+</button>
         </div>
 
         {/* 🔽 TAB CONTENT */}
@@ -1064,6 +1117,44 @@ const totalRows = filteredData.length;
         {g.DishGroupName}
       </label>
     ))}
+  </div>
+)}
+
+{activeTab === "orderitemshare" && (
+  <div className="dish-kitchen-container">
+
+    {orderItemShare.map((item) => (
+
+      <label key={item.Id}>
+        <input
+          type="checkbox"
+          checked={selectedOrderItemShare.includes(item.CustomerName)}
+          onChange={(e) => {
+
+            const value = item.CustomerName;
+
+            if (e.target.checked) {
+
+              setSelectedOrderItemShare(prev =>
+                [...prev, value]
+              );
+
+            } else {
+
+              setSelectedOrderItemShare(prev =>
+                prev.filter(x => x !== value)
+              );
+
+            }
+          }}
+        />
+
+        {item.CustomerName}
+
+      </label>
+
+    ))}
+
   </div>
 )}
 
