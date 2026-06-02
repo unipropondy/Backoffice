@@ -153,6 +153,12 @@ const qrCodeRoutes = require("./routes/QrcodeRoutes");
 
 app.use("/qrmaster", qrCodeRoutes); 
 
+const dishOrderItemShareRoutes = require("./routes/dishOrderItemShareRoutes");
+
+app.use("/dishorderitemshare", dishOrderItemShareRoutes); 
+
+
+
 /* ------------------- GET ALL KITCHENS ------------------- */
 app.get("/kitchen", async (req, res) => {
   try {
