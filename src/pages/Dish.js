@@ -25,6 +25,7 @@ import { BASE_URL } from "../config/api";
     AvailableTimeTo: "",
     isMultiPrice: false,
     isOpenitem: false,
+    IsSplitDish: false,
     IsShowinKiosk: false,
     IsActive: false,
     iskitchenPrint: false,
@@ -936,7 +937,8 @@ const totalRows = filteredData.length;
                   <label><input type="checkbox" name="isServiceCharge" checked={dish.isServiceCharge} onChange={handleChange} /> Service Charge</label>
                   <label><input type="checkbox" name="isFavourite" checked={dish.isFavourite} onChange={handleChange} /> Favourite</label>
                   <label><input type="checkbox" name="isMultiPrice" checked={dish.isMultiPrice} onChange={handleChange} /> MultiPrice</label>
-                  <label><input type="checkbox" name="isOpenitem" checked={dish.isOpenitem} onChange={handleChange} /> Openitem</label>
+                  <label><input type="checkbox" name="isOpenitem" checked={dish.isOpenitem} onChange={handleChange} /> Open Price</label>
+                  <label><input type="checkbox" name="IsSplitDish" checked={dish.IsSplitDish} onChange={handleChange} /> Artist</label>
                 </div>
  
               </div>
@@ -970,12 +972,12 @@ const totalRows = filteredData.length;
         >
           Dish Group
         </button>
-        <button
+       {/* <button
   className={activeTab === "orderitemshare" ? "active-tab" : ""}
   onClick={() => setActiveTab("orderitemshare")}
 >
   Order Item Share
-</button>
+</button>*/}
         </div>
 
         {/* 🔽 TAB CONTENT */}
@@ -1120,7 +1122,7 @@ const totalRows = filteredData.length;
   </div>
 )}
 
-{activeTab === "orderitemshare" && (
+{/* {activeTab === "orderitemshare" && (
   <div className="dish-kitchen-container">
 
     {orderItemShare.map((item) => (
@@ -1156,7 +1158,7 @@ const totalRows = filteredData.length;
     ))}
 
   </div>
-)}
+)} */}
 
 </div>
         </div>
