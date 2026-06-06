@@ -26,6 +26,7 @@ import { BASE_URL } from "../config/api";
     isMultiPrice: false,
     isOpenitem: false,
     IsSplitDish: false,
+    IsGroupDish: false,
     IsShowinKiosk: false,
     IsActive: false,
     iskitchenPrint: false,
@@ -165,10 +166,10 @@ const [selectedOrderItemShare, setSelectedOrderItemShare] = useState([]);
   return;
 }
 
-  if (!dish.CurrentCost) {
-   alert("Price must be entered. ");
-  return;
-}
+//   if (!dish.CurrentCost) {
+//    alert("Price must be entered. ");
+//   return;
+// }
 
   if (!dish.DishGroupId || dish.DishGroupId === "") {
   alert("Dish Group must be entered. ❗");
@@ -939,6 +940,7 @@ const totalRows = filteredData.length;
                   <label><input type="checkbox" name="isMultiPrice" checked={dish.isMultiPrice} onChange={handleChange} /> MultiPrice</label>
                   <label><input type="checkbox" name="isOpenitem" checked={dish.isOpenitem} onChange={handleChange} /> Open Price</label>
                   <label><input type="checkbox" name="IsSplitDish" checked={dish.IsSplitDish} onChange={handleChange} /> Artist</label>
+                  <label><input type="checkbox" name="IsGroupDish" checked={dish.IsGroupDish} onChange={handleChange} /> Group Dish</label>
                 </div>
  
               </div>
