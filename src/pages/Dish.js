@@ -26,7 +26,7 @@ import { BASE_URL } from "../config/api";
     isMultiPrice: false,
     isOpenitem: false,
     IsSplitDish: false,
-    IsGroupDish: false,
+    IsgroupDish: false,
     IsShowinKiosk: false,
     IsActive: false,
     iskitchenPrint: false,
@@ -246,6 +246,10 @@ formData.append(
     }
 
     console.log("FORM DATA READY ✅");
+
+    for (let pair of formData.entries()) {
+  console.log(pair[0] + " = " + pair[1]);
+}
    if (editIndex !== null && dish.DishId) {
   await axios.put(
     `${BASE_URL}/dish/${dish.DishId}`,
@@ -357,7 +361,7 @@ setSelectedOrderItemShare([]);
     };
  
 const handleEdit = async (data) => {
-
+console.log("EDIT DATA =", data);
   setDish(data);
 
 
@@ -940,7 +944,7 @@ const totalRows = filteredData.length;
                   <label><input type="checkbox" name="isMultiPrice" checked={dish.isMultiPrice} onChange={handleChange} /> MultiPrice</label>
                   <label><input type="checkbox" name="isOpenitem" checked={dish.isOpenitem} onChange={handleChange} /> Open Price</label>
                   <label><input type="checkbox" name="IsSplitDish" checked={dish.IsSplitDish} onChange={handleChange} /> Artist</label>
-                  <label><input type="checkbox" name="IsGroupDish" checked={dish.IsGroupDish} onChange={handleChange} /> Group Dish</label>
+                  <label><input type="checkbox" name="IsgroupDish" checked={dish.IsgroupDish} onChange={handleChange} /> Group Dish</label>
                 </div>
  
               </div>

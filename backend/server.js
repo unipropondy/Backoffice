@@ -1387,7 +1387,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
         .input("isMultiPrice", sql.Bit, Number(d.isMultiPrice) === 1)
         .input("isOpenitem", sql.Bit, Number(d.isOpenitem) === 1)
         .input("IsSplitDish", sql.Bit, Number(d.IsSplitDish) === 1)
-        .input("IsGroupDish", sql.Bit, Number(d.IsGroupDish) === 1)
+        .input("IsgroupDish", sql.Bit, Number(d.IsgroupDish) === 1)
         .query(`
           UPDATE DishMaster SET
             DishCode=@DishCode,
@@ -1412,7 +1412,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
             isMultiPrice=@isMultiPrice,
             isOpenitem=@isOpenitem,
             IsSplitDish=@IsSplitDish,
-            IsGroupDish=@IsGroupDish
+            IsgroupDish=@IsgroupDish
           WHERE DishId=@DishId
         `);
 
@@ -1447,7 +1447,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
         .input("isMultiPrice", sql.Bit, Number(d.isMultiPrice) === 1)
         .input("isOpenitem", sql.Bit, Number(d.isOpenitem) === 1)
         .input("IsSplitDish", sql.Bit, Number(d.IsSplitDish) === 1)
-        .input("IsGroupDish", sql.Bit, Number(d.IsGroupDish) === 1)
+        .input("IsgroupDish", sql.Bit, Number(d.IsgroupDish) === 1)
         .input("CreatedOn", sql.DateTime, new Date())
 
         .query(`
@@ -1456,7 +1456,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
             DishGroupId, CurrentCost, SordCode, UnitCost, QuantityOnHand,
             NameInOtherLanguage, IsActive, iskitchenPrint,
             isDiscountAllowed, IsTaxAllowed, IsStockDish,
-            isFOC, isServiceCharge, isFavourite, isMultiPrice, isOpenitem,IsSplitDish, IsGroupDish,
+            isFOC, isServiceCharge, isFavourite, isMultiPrice, isOpenitem,IsSplitDish, IsgroupDish,
             ImageId, KitchenType, SubkitchenType,CreatedOn
           )
           VALUES (
@@ -1464,7 +1464,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
             @DishGroupId, @CurrentCost, @SordCode, @UnitCost, @QuantityOnHand,
             @NameInOtherLanguage, @IsActive, @iskitchenPrint,
             @isDiscountAllowed, @IsTaxAllowed, @IsStockDish,
-            @isFOC, @isServiceCharge, @isFavourite, @isMultiPrice, @isOpenitem,@IsSplitDish, @IsGroupDish,
+            @isFOC, @isServiceCharge, @isFavourite, @isMultiPrice, @isOpenitem,@IsSplitDish, @IsgroupDish,
             @ImageId, @KitchenType, @SubkitchenType,@CreatedOn
           )
         `);
