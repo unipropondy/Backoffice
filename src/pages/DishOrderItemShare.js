@@ -26,7 +26,7 @@ function DishOrderItemShare({ sidebarOpen }) {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${BASE_URL}/api/dishorderitemshare`);
+      const res = await axios.get(`${BASE_URL}/dishorderitemshare`);
       setData(res.data);
     } catch (err) {
       console.error("Fetch Error:", err);
@@ -37,7 +37,7 @@ function DishOrderItemShare({ sidebarOpen }) {
  
  const fetchDishes = async () => {
   try {
-   const res = await axios.get(`${BASE_URL}/api/dish`);
+   const res = await axios.get(`${BASE_URL}/dish`);
     console.log("Dish List =", res.data);
     setDishList(res.data);
   } catch (err) {
@@ -115,9 +115,9 @@ function DishOrderItemShare({ sidebarOpen }) {
 };
  
       if (isEditMode) {
-        await axios.put(`${BASE_URL}/api/dishorderitemshare/${editId}`, payload);
+        await axios.put(`${BASE_URL}/dishorderitemshare/${editId}`, payload);
       } else {
-        await axios.post(`${BASE_URL}/api/dishorderitemshare`, payload);      }
+        await axios.post(`${BASE_URL}/dishorderitemshare`, payload);      }
  
       setShowModal(false);
       fetchData();
@@ -129,14 +129,14 @@ function DishOrderItemShare({ sidebarOpen }) {
  
   // ================= DELETE DATA =================
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this dish order item share?")) {
+    if (window.confirm("Are you sure you want to delete this Target?")) {
       try {
-        await axios.delete(`${BASE_URL}/api/dishorderitemshare/${id}`);
+        await axios.delete(`${BASE_URL}/dishorderitemshare/${id}`);
         setShowModal(false);
         fetchData();
       } catch (err) {
         console.error("Delete Error:", err);
-        alert("Failed to delete dish order item share.");
+        alert("Failed to delete target.");
       }
     }
   };
@@ -146,7 +146,7 @@ function DishOrderItemShare({ sidebarOpen }) {
       <div className="dishorderitemshare-container">
         {/* HEADER AREA */}
         <div className="dishorderitemshare-top-header">
-          <h1 className="dishorderitemshare-page-title">Dish Order Item Share</h1>
+          <h1 className="dishorderitemshare-page-title">Target</h1>
           <button className="dishorderitemshare-btn-orange-new" onClick={handleNew}>
             New
           </button>
@@ -168,7 +168,7 @@ function DishOrderItemShare({ sidebarOpen }) {
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan="2" className="dishorderitemshare-text-center">No dish order item shares found.</td>
+                  <td colSpan="2" className="dishorderitemshare-text-center">No targets found.</td>
                 </tr>
               ) : (
                 data.map((item) => (
@@ -195,7 +195,7 @@ function DishOrderItemShare({ sidebarOpen }) {
         <div className="dishorderitemshare-modal-overlay" onClick={() => setShowModal(false)}>
           <div className="dishorderitemshare-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="dishorderitemshare-modal-header">
-              <h2>{isEditMode ? "Update Dish Order Item Share" : "New Dish Order Item Share"}</h2>
+              <h2>{isEditMode ? "Update Target" : "New Target"}</h2>
             </div>
  
             <div className="dishorderitemshare-form-field">

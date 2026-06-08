@@ -57,7 +57,7 @@ router.post("/", async (req, res) => {
         (@DishId, @CustomerName, @Amount, @FromDate, @ToDate, @IsSelected, GETDATE())
       `);
  
-    res.json({ success: true, message: "Dish order item share inserted successfully" });
+    res.json({ success: true, message: "Target inserted successfully" });
   } catch (err) {
     console.error("INSERT Error:", err);
     res.status(500).json({
@@ -105,10 +105,10 @@ router.put("/:id", async (req, res) => {
       `);
  
     if (result.rowsAffected[0] === 0) {
-      return res.status(404).json({ error: "Dish order item share not found" });
+      return res.status(404).json({ error: "Target not found" });
     }
  
-    res.json({ success: true, message: "Dish order item share updated successfully" });
+    res.json({ success: true, message: "Target updated successfully" });
   } catch (err) {
     console.error("UPDATE Error:", err);
     res.status(500).json({ error: "Update Error" });
@@ -125,10 +125,10 @@ router.delete("/:id", async (req, res) => {
       .query("DELETE FROM dishOrderItemShare WHERE Id = @Id");
  
     if (result.rowsAffected[0] === 0) {
-      return res.status(404).json({ error: "Dish order item share not found" });
+      return res.status(404).json({ error: "Target not found" });
     }
  
-    res.json({ success: true, message: "Dish order item share deleted successfully" });
+    res.json({ success: true, message: "Target deleted successfully" });
   } catch (err) {
     console.error("DELETE Error:", err);
     res.status(500).json({ error: "Delete Error" });
