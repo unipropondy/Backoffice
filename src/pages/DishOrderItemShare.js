@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./DishOrderItemShare.css";
-
+ 
 import { BASE_URL } from "../config/api";
  
 function DishOrderItemShare({ sidebarOpen }) {
@@ -17,16 +17,16 @@ function DishOrderItemShare({ sidebarOpen }) {
   Amount: "",
   FromDate: "",
   ToDate: "",
-  IsSelected: false,
+  Active: false,
 });
  
   const isEditMode = editId !== null;
-  
+ 
   // ================= FETCH DATA =================
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${BASE_URL}/dishorderitemshare`);
+      const res = await axios.get(`${BASE_URL}/api/dishorderitemshare`);
       setData(res.data);
     } catch (err) {
       console.error("Fetch Error:", err);
@@ -34,10 +34,10 @@ function DishOrderItemShare({ sidebarOpen }) {
       setLoading(false);
     }
   };
-
+ 
  const fetchDishes = async () => {
   try {
-    const res = await axios.get(`${BASE_URL}/dish`);
+   const res = await axios.get(`${BASE_URL}/api/dish`);
     console.log("Dish List =", res.data);
     setDishList(res.data);
   } catch (err) {
@@ -79,7 +79,7 @@ function DishOrderItemShare({ sidebarOpen }) {
       Amount: item.Amount ?? "",
       FromDate: item.FromDate?.split("T")[0] ?? "",
       ToDate: item.ToDate?.split("T")[0] ?? "",
-      IsSelected: item.IsSelected === true || item.IsSelected === 1,
+     Active: item.IsSelected === true || item.IsSelected === 1,
     });
     setShowModal(true);
   };
@@ -92,7 +92,7 @@ function DishOrderItemShare({ sidebarOpen }) {
   Amount: "",
   FromDate: "",
   ToDate: "",
-  IsSelected: false,
+  Active: false,
 });
     setShowModal(true);
   };
@@ -106,19 +106,18 @@ function DishOrderItemShare({ sidebarOpen }) {
  
     try {
      const payload = {
-        DishId: form.DishId,
-        CustomerName: form.CustomerName,
-        Amount: form.Amount,
-        FromDate: form.FromDate,
-        ToDate: form.ToDate,
-        IsSelected: Boolean(form.IsSelected),
-      };
+  DishId: form.DishId,
+  CustomerName: form.CustomerName,
+  Amount: form.Amount,
+  FromDate: form.FromDate,
+  ToDate: form.ToDate,
+  IsSelected: form.Active
+};
  
       if (isEditMode) {
-        await axios.put(`${BASE_URL}/dishorderitemshare/${editId}`, payload);
+        await axios.put(`${BASE_URL}/api/dishorderitemshare/${editId}`, payload);
       } else {
-        await axios.post(`${BASE_URL}/dishorderitemshare`, payload);
-      }
+        await axios.post(`${BASE_URL}/api/dishorderitemshare`, payload);      }
  
       setShowModal(false);
       fetchData();
@@ -132,7 +131,7 @@ function DishOrderItemShare({ sidebarOpen }) {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this dish order item share?")) {
       try {
-        await axios.delete(`${BASE_URL}/dishorderitemshare/${id}`);
+        await axios.delete(`${BASE_URL}/api/dishorderitemshare/${id}`);
         setShowModal(false);
         fetchData();
       } catch (err) {
@@ -159,7 +158,7 @@ function DishOrderItemShare({ sidebarOpen }) {
             <thead>
               <tr>
                 <th className="dishorderitemshare-text-center" style={{ width: "50%" }}>CUSTOMER NAME</th>
-                <th className="dishorderitemshare-text-center" style={{ width: "50%" }}>IS SELECTED</th>
+                <th className="dishorderitemshare-text-center" style={{ width: "50%" }}>ACTIVE</th>
               </tr>
             </thead>
             <tbody>
@@ -179,7 +178,7 @@ function DishOrderItemShare({ sidebarOpen }) {
                       <input
                         type="checkbox"
                         className="dishorderitemshare-custom-checkbox"
-                        checked={item.IsSelected}
+                        checked={item.IsSelected === 1 || item.IsSelected === true}
                         readOnly
                       />
                     </td>
@@ -201,34 +200,35 @@ function DishOrderItemShare({ sidebarOpen }) {
  
             <div className="dishorderitemshare-form-field">
             <label>Dish Name</label>
-
+ 
             <select
               value={form.DishId}
-              onChange={(e) => {
-                const selectedDish = dishList.find(
-                  (dish) => dish.DishId === e.target.value
-                );
-
-                setForm({
-                  ...form,
-                  DishId: selectedDish?.DishId || "",
-                  CustomerName: selectedDish?.DishName || ""
-                });
-              }}
+             onChange={(e) => {
+  const selectedDish = dishList.find(
+    (dish) => dish.DishId === e.target.value
+  );
+ 
+  setForm({
+    ...form,
+    DishId: selectedDish?.DishId || "",
+    CustomerName: selectedDish?.Name || "",
+Amount: selectedDish?.Amount || ""
+  });
+}}
             >
               <option value="">Select Dish</option>
-
+ 
               {dishList.map((dish) => (
                 <option
-                  key={dish.DishId}
-                  value={dish.DishId}
-                >
-                  {dish.DishName}
-                </option>
+  key={dish.DishId}
+  value={dish.DishId}
+>
+  {dish.Name}
+</option>
               ))}
             </select>
           </div>
-
+ 
             <div className="dishorderitemshare-form-field">
             <label>Amount</label>
             <input
@@ -238,7 +238,7 @@ function DishOrderItemShare({ sidebarOpen }) {
               onChange={handleChange}
             />
           </div>
-
+ 
           <div className="dishorderitemshare-form-field">
             <label>From Date</label>
             <input
@@ -248,7 +248,7 @@ function DishOrderItemShare({ sidebarOpen }) {
               onChange={handleChange}
             />
           </div>
-
+ 
           <div className="dishorderitemshare-form-field">
             <label>To Date</label>
             <input
@@ -263,12 +263,12 @@ function DishOrderItemShare({ sidebarOpen }) {
               <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                 <input
                   type="checkbox"
-                  name="IsSelected"
+                  name="Active"
                   className="dishorderitemshare-custom-checkbox"
-                  checked={form.IsSelected}
+                  checked={form.Active}
                   onChange={handleChange}
                 />
-                Is Selected
+                Active
               </label>
             </div>
  
@@ -297,4 +297,7 @@ function DishOrderItemShare({ sidebarOpen }) {
 }
  
 export default DishOrderItemShare;
+ 
+ 
+ 
  
