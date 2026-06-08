@@ -16,6 +16,7 @@ import ChangePassword from "./ChangePassword";
 import { FaKey } from "react-icons/fa";
 import { FaClock } from "react-icons/fa";
 import { FaBuilding } from "react-icons/fa"; 
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { BASE_URL } from "../config/api";
 // import TimeEntry from "./TimeEntry";
@@ -28,6 +29,7 @@ function Sidebar({ open, setOpen }) {
    const [ShowSecurity, setShowSecurity] = useState(false);
    const [ShowReport, setShowReport] = useState(false);
    const [ShowMaster, setShowMaster] = useState(false);
+   const [showPassword, setShowPassword] = useState(false);
  const user = JSON.parse(localStorage.getItem("user"));
 const username = user?.FirstName;
 
@@ -413,22 +415,37 @@ const handleTargetAccess = async () => {
     >
       <h3>Enter Password</h3>
 
-      <input
-  type="password"
-  value={targetPassword}
-  onChange={(e) => setTargetPassword(e.target.value)}
-  onKeyDown={(e) => {
-    if (e.key === "Enter") {
-      handleTargetAccess();
-    }
-  }}
-  placeholder="Password"
-  style={{
-    width: "100%",
-    padding: "8px",
-    marginBottom: "10px"
-  }}
-/>
+     <div style={{ position: "relative" }}>
+  <input
+    type={showPassword ? "text" : "password"}
+    value={targetPassword}
+    onChange={(e) => setTargetPassword(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter") {
+        handleTargetAccess();
+      }
+    }}
+    placeholder="Password"
+    style={{
+      width: "100%",
+      padding: "8px 40px 8px 8px",
+      marginBottom: "10px"
+    }}
+  />
+
+  <span
+    onClick={() => setShowPassword(!showPassword)}
+    style={{
+      position: "absolute",
+      right: "12px",
+      top: "35%",
+      transform: "translateY(-50%)",
+      cursor: "pointer"
+    }}
+  >
+    {showPassword ? <FaEyeSlash /> : <FaEye />}
+  </span>
+</div>
 
       <button onClick={handleTargetAccess}>
         Submit

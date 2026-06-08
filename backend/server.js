@@ -164,7 +164,7 @@ app.post("/api/check-target-password", async (req, res) => {
     const pool = await poolPromise;
 
     const result = await pool.request()
-      .input("Password", sql.VarChar(100), password)
+       .input("Password", sql.VarChar(100), encodedPassword)
       .query(`
         SELECT *
         FROM UserMaster
