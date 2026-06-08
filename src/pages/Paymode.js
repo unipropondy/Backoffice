@@ -14,8 +14,11 @@ function Paymode() {
     position: "",
     paymode: "",
     description: "",
+    DeviceSN: "",
+    DeviceSalt: "",
     active: true,
     entertainment: false,
+    YeahPayEnabled: false,
     imagePreview: null
   });
  
@@ -66,9 +69,12 @@ function Paymode() {
       position: item.Position,
       paymode: item.PayMode,
       description: item.Description,
+      DeviceSN: item.DeviceSN || "",
+      DeviceSalt: item.DeviceSalt || "",
       active: item.Active === true || item.Active === 1,
       entertainment: item.isEntertainment === true || item.isEntertainment === 1,
-  imagePreview: item.PaymodeImage || null
+      YeahPayEnabled: item.YeahPayEnabled === true || item.YeahPayEnabled === 1,
+      imagePreview: item.PaymodeImage || null
     });
  
     setEditId(item.Position);
@@ -90,8 +96,11 @@ function Paymode() {
       position: Number(form.position),
       paymode: form.paymode,
       description: form.description,
+      DeviceSN: form.DeviceSN,
+      DeviceSalt: form.DeviceSalt,
       active: form.active,
       entertainment: form.entertainment,
+      YeahPayEnabled: form.YeahPayEnabled,
       image: form.imagePreview
     };
 
@@ -136,8 +145,11 @@ function Paymode() {
     position: "",
     paymode: "",
     description: "",
+    DeviceSN: "",
+    DeviceSalt: "",
     active: true,
     entertainment: false,
+    YeahPayEnabled: false,
     imagePreview: null
   });
 }}
@@ -216,6 +228,24 @@ function Paymode() {
                   onChange={handleChange}
                 />
               </div>
+
+               <div className="payment-field1">
+                <label>DeviceSN</label>
+                <input
+                  name="DeviceSN"
+                  value={form.DeviceSN}
+                  onChange={handleChange}
+                />
+              </div>
+
+               <div className="payment-field1">
+                <label>DeviceSalt</label>
+                <input
+                  name="DeviceSalt"
+                  value={form.DeviceSalt}
+                  onChange={handleChange}
+                />
+              </div>
  
             </div>
  
@@ -233,7 +263,7 @@ function Paymode() {
               </div>
  
               {/* IMAGE BOX */}
-              <div className="payment-imageBox1">
+             {/* <div className="payment-imageBox1">
                 {form.imagePreview ? (
                   <img
                     src={form.imagePreview}
@@ -245,10 +275,10 @@ function Paymode() {
                 ) : (
                   <span>preview</span>
                 )}
-              </div>
+              </div>*/}
  
               {/* FILE INPUT */}
-              <input
+             {/* <input
                 type="file"
                 id="scanInput"
                 accept="image/*"
@@ -268,6 +298,16 @@ function Paymode() {
                   onChange={handleChange}
                 />
                 <label>Entertainment</label>
+              </div>*/}
+
+              <div className="payment-checkbox1">
+                <input
+                  type="checkbox"
+                  name="YeahPayEnabled"
+                  checked={form.YeahPayEnabled}
+                  onChange={handleChange}
+                />
+                <label>YeahPayEnabled</label>
               </div>
  
             </div>
