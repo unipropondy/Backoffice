@@ -163,6 +163,9 @@ app.post("/api/check-target-password", async (req, res) => {
 
     const pool = await poolPromise;
 
+    const encodedPassword =
+  Buffer.from(password).toString("base64");
+
     const result = await pool.request()
        .input("Password", sql.VarChar(100), encodedPassword)
       .query(`
