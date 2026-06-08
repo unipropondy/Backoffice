@@ -132,8 +132,17 @@
   background: white;
   padding: 20px;
   border-radius: 15px;
-  width: 380px;
+  width: 450px; /* 380px -> 450px */
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.dishorderitemshare-form-field select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 11px;
+  box-sizing: border-box;
 }
  
 .dishorderitemshare-modal-header {
@@ -161,7 +170,8 @@
 }
  
 .dishorderitemshare-form-field input[type="text"],
-.dishorderitemshare-form-field input[type="number"] {
+.dishorderitemshare-form-field input[type="number"], 
+  .dishorderitemshare-form-field input[type="date"] {
   width: 100%;
   padding: 8px 12px;
   border: 1px solid #ddd;

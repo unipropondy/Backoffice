@@ -7,7 +7,7 @@ router.get("/", async (req, res) => {
   try {
     const pool = await poolPromise;
     const result = await pool.request().query(
-      "SELECT Id, OrderDishId, CustomerName, IsSelected, CreatedDate FROM dishOrderItemShare ORDER BY CreatedDate DESC"
+      "SELECT Id, CustomerName, IsSelected, CreatedDate FROM dishOrderItemShare ORDER BY CreatedDate DESC"
     );
     res.json(result.recordset);
   } catch (err) {
@@ -20,7 +20,6 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const { CustomerName, IsSelected } = req.body;
-    const OrderDishId = req.body.OrderDishId ? req.body.OrderDishId : null;
  
     if (!CustomerName || !CustomerName.trim()) {
       return res.status(400).json({ error: "Customer Name is required." });
@@ -28,12 +27,16 @@ router.post("/", async (req, res) => {
  
     const pool = await poolPromise;
     await pool.request()
-      .input("OrderDishId", sql.UniqueIdentifier, OrderDishId)
       .input("CustomerName", sql.NVarChar(100), CustomerName)
+      .input("Amount", sql.Decimal(18, 2), Amount)
+      .input("FromDate", sql.Date, FromDate)
+      .input("ToDate", sql.Date, ToDate)
       .input("IsSelected", sql.Bit, IsSelected ? 1 : 0)
       .query(`
-        INSERT INTO dishOrderItemShare (OrderDishId, CustomerName, IsSelected, CreatedDate)
-        VALUES (@OrderDishId, @CustomerName, @IsSelected, GETDATE())
+        INSERT INTO dishOrderItemShare (CustomerName, Amount,
+    FromDate,
+    ToDate, IsSelected, CreatedDate)
+        VALUES (@CustomerName, @Amount, @FromDate, @ToDate, @IsSelected, GETDATE())
       `);
  
     res.json({ success: true, message: "Dish order item share inserted successfully" });
@@ -60,10 +63,16 @@ router.put("/:id", async (req, res) => {
     const result = await pool.request()
       .input("Id", sql.UniqueIdentifier, id)
       .input("CustomerName", sql.NVarChar(100), CustomerName)
+      .input("Amount", sql.Decimal(18, 2), req.body.Amount)
+      .input("FromDate", sql.Date, req.body.FromDate)
+      .input("ToDate", sql.Date, req.body.ToDate)
       .input("IsSelected", sql.Bit, IsSelected ? 1 : 0)
       .query(`
         UPDATE dishOrderItemShare
         SET CustomerName = @CustomerName,
+            Amount = @Amount,
+            FromDate = @FromDate,
+            ToDate = @ToDate,
             IsSelected = @IsSelected
         WHERE Id = @Id
       `);

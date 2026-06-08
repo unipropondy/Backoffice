@@ -238,7 +238,14 @@ function Paymode() {
                 />
               </div>
 
-               <div className="payment-field1">
+              
+ 
+            </div>
+ 
+            {/* CHECKBOX + IMAGE */}
+            <div className="payment-modalRow1">
+
+               <div className="payment-field2">
                 <label>DeviceSalt</label>
                 <input
                   name="DeviceSalt"
@@ -246,11 +253,6 @@ function Paymode() {
                   onChange={handleChange}
                 />
               </div>
- 
-            </div>
- 
-            {/* CHECKBOX + IMAGE */}
-            <div className="payment-modalRow1">
  
               <div className="payment-checkbox1">
                 <input
