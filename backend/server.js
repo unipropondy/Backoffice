@@ -157,7 +157,34 @@ const dishOrderItemShareRoutes = require("./routes/dishOrderItemShareRoutes");
 
 app.use("/dishorderitemshare", dishOrderItemShareRoutes); 
 
+app.post("/api/check-target-password", async (req, res) => {
+  try {
+    const { password } = req.body;
 
+    const pool = await poolPromise;
+
+    const result = await pool.request()
+      .input("Password", sql.VarChar(100), password)
+      .query(`
+        SELECT *
+        FROM UserMaster
+        WHERE UserPassword = @Password
+        and   (UserGroupid = (select UserGroupid
+                     from UserGroupMaster
+                     where UserGroupName ='ADMIN'))
+      `);
+
+    if (result.recordset.length > 0) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false });
+    }
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false });
+  }
+});
 
 /* ------------------- GET ALL KITCHENS ------------------- */
 app.get("/kitchen", async (req, res) => {
