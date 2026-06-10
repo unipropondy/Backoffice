@@ -2025,6 +2025,27 @@ app.delete("/modifiermaster/:id", async (req, res) => {
 
 //=======================================end modifier
 
+router.get("/dishmasterorder", async (req, res) => {
+  try {
+    const pool = await poolPromise;
+
+    const result = await pool.request().query(`
+     SELECT
+        DishId,
+        Name
+      FROM DishMaster
+      WHERE IsActive = 1
+      and IsSplitDish = 1
+      and IsGroupDish = 0
+      ORDER BY Name
+    `);
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("GET DishMaster Error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 /* ------------------- SERVER ------------------- */
 app.get("/", (req, res) => {

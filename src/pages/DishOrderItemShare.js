@@ -37,7 +37,7 @@ function DishOrderItemShare({ sidebarOpen }) {
  
  const fetchDishes = async () => {
   try {
-   const res = await axios.get(`${BASE_URL}/dish`);
+   const res = await axios.get(`${BASE_URL}/dishmasterorder`);
     console.log("Dish List =", res.data);
     setDishList(res.data);
   } catch (err) {
