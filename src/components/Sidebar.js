@@ -16,6 +16,9 @@ import ChangePassword from "./ChangePassword";
 import { FaKey } from "react-icons/fa";
 import { FaClock } from "react-icons/fa";
 import { FaBuilding } from "react-icons/fa"; 
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import axios from "axios";
+import { BASE_URL } from "../config/api";
 // import TimeEntry from "./TimeEntry";
 
 function Sidebar({ open, setOpen }) {
@@ -26,16 +29,49 @@ function Sidebar({ open, setOpen }) {
    const [ShowSecurity, setShowSecurity] = useState(false);
    const [ShowReport, setShowReport] = useState(false);
    const [ShowMaster, setShowMaster] = useState(false);
+   const [showPassword, setShowPassword] = useState(false);
  const user = JSON.parse(localStorage.getItem("user"));
 const username = user?.FirstName;
 
    const [showChangePwd, setShowChangePwd] = useState(false);
+   const [targetPassword, setTargetPassword] = useState("");
+const [showTargetModal, setShowTargetModal] = useState(false);
   //  const [showTimeEntry, setShowTimeEntry] = useState(false);
 
   const handleLogout = () => {
     navigate("/"); // ✅ back to login page
   };
 
+//   const handleTargetAccess = () => {
+//   if (targetPassword === "1234") {
+//     setShowTargetModal(false);
+//     setTargetPassword("");
+//     navigate("/DishOrderItemShare");
+//   } else {
+//     alert("Invalid Password");
+//   }
+// };
+const handleTargetAccess = async () => {
+  try {
+    const res = await axios.post(
+      `${BASE_URL}/api/check-target-password`,
+      {
+        password: targetPassword
+      }
+    );
+
+    if (res.data.success) {
+      setShowTargetModal(false);
+      setTargetPassword("");
+      navigate("/DishOrderItemShare");
+    } else {
+      alert("Invalid Password");
+    }
+  } catch (err) {
+    console.log(err);
+    alert("Server Error");
+  }
+};
   return (
     <>
       <div className="sid-topbar">
@@ -218,6 +254,15 @@ const username = user?.FirstName;
            <Link className="sid-menu" to="/TableMaster">
             <FaBarcode  className="sid-icon" /> Table Master
           </Link>
+          {/* <Link className="sid-menu" to="/DishOrderItemShare">
+            <BsTerminal  className="sid-icon" /> Target
+          </Link> */}
+          <div
+              className="sid-menu"
+              onClick={() => setShowTargetModal(true)}
+            >
+              <BsTerminal className="sid-icon" /> Target
+            </div>
            <Link className="sid-menu" to="/Terminal">
             <BsTerminal  className="sid-icon" /> Terminal
           </Link>
@@ -345,6 +390,76 @@ const username = user?.FirstName;
       </div>
     </div>
   )} */}
+  {showTargetModal && (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      background: "rgba(0,0,0,0.5)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 99999
+    }}
+  >
+    <div
+      style={{
+        background: "#fff",
+        padding: "20px",
+        borderRadius: "10px",
+        width: "300px"
+      }}
+    >
+      <h3>Enter Password</h3>
+
+     <div style={{ position: "relative" }}>
+  <input
+    type={showPassword ? "text" : "password"}
+    value={targetPassword}
+    onChange={(e) => setTargetPassword(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter") {
+        handleTargetAccess();
+      }
+    }}
+    placeholder="Password"
+    style={{
+      width: "100%",
+      padding: "8px 40px 8px 8px",
+      marginBottom: "10px"
+    }}
+  />
+
+  <span
+    onClick={() => setShowPassword(!showPassword)}
+    style={{
+      position: "absolute",
+      right: "12px",
+      top: "35%",
+      transform: "translateY(-50%)",
+      cursor: "pointer"
+    }}
+  >
+    {showPassword ? <FaEyeSlash /> : <FaEye />}
+  </span>
+</div>
+
+      <button onClick={handleTargetAccess}>
+        Submit
+      </button>
+
+      <button
+        onClick={() => setShowTargetModal(false)}
+        style={{ marginLeft: "10px" }}
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+)}
     </>
   );
 }

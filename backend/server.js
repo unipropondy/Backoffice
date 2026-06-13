@@ -153,6 +153,42 @@ const qrCodeRoutes = require("./routes/QrcodeRoutes");
 
 app.use("/qrmaster", qrCodeRoutes); 
 
+const dishOrderItemShareRoutes = require("./routes/dishOrderItemShareRoutes");
+
+app.use("/dishorderitemshare", dishOrderItemShareRoutes); 
+
+app.post("/api/check-target-password", async (req, res) => {
+  try {
+    const { password } = req.body;
+
+    const pool = await poolPromise;
+
+    const encodedPassword =
+  Buffer.from(password).toString("base64");
+
+    const result = await pool.request()
+       .input("Password", sql.VarChar(100), encodedPassword)
+      .query(`
+        SELECT *
+        FROM UserMaster
+        WHERE UserPassword = @Password
+        and   (UserGroupid = (select UserGroupid
+                     from UserGroupMaster
+                     where UserGroupName ='ADMIN'))
+      `);
+
+    if (result.recordset.length > 0) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false });
+    }
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ success: false });
+  }
+});
+
 /* ------------------- GET ALL KITCHENS ------------------- */
 app.get("/kitchen", async (req, res) => {
   try {
@@ -1380,7 +1416,8 @@ app.post("/dish", upload.single("image"), async (req, res) => {
         .input("isFavourite", sql.Bit, Number(d.isFavourite) === 1)
         .input("isMultiPrice", sql.Bit, Number(d.isMultiPrice) === 1)
         .input("isOpenitem", sql.Bit, Number(d.isOpenitem) === 1)
-
+        .input("IsSplitDish", sql.Bit, Number(d.IsSplitDish) === 1)
+        .input("IsgroupDish", sql.Bit, Number(d.IsgroupDish) === 1)
         .query(`
           UPDATE DishMaster SET
             DishCode=@DishCode,
@@ -1403,7 +1440,9 @@ app.post("/dish", upload.single("image"), async (req, res) => {
             isServiceCharge=@isServiceCharge,
             isFavourite=@isFavourite,
             isMultiPrice=@isMultiPrice,
-            isOpenitem=@isOpenitem
+            isOpenitem=@isOpenitem,
+            IsSplitDish=@IsSplitDish,
+            IsgroupDish=@IsgroupDish
           WHERE DishId=@DishId
         `);
 
@@ -1437,6 +1476,8 @@ app.post("/dish", upload.single("image"), async (req, res) => {
         .input("isFavourite", sql.Bit, Number(d.isFavourite) === 1)
         .input("isMultiPrice", sql.Bit, Number(d.isMultiPrice) === 1)
         .input("isOpenitem", sql.Bit, Number(d.isOpenitem) === 1)
+        .input("IsSplitDish", sql.Bit, Number(d.IsSplitDish) === 1)
+        .input("IsgroupDish", sql.Bit, Number(d.IsgroupDish) === 1)
         .input("CreatedOn", sql.DateTime, new Date())
 
         .query(`
@@ -1445,7 +1486,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
             DishGroupId, CurrentCost, SordCode, UnitCost, QuantityOnHand,
             NameInOtherLanguage, IsActive, iskitchenPrint,
             isDiscountAllowed, IsTaxAllowed, IsStockDish,
-            isFOC, isServiceCharge, isFavourite, isMultiPrice, isOpenitem,
+            isFOC, isServiceCharge, isFavourite, isMultiPrice, isOpenitem,IsSplitDish, IsgroupDish,
             ImageId, KitchenType, SubkitchenType,CreatedOn
           )
           VALUES (
@@ -1453,7 +1494,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
             @DishGroupId, @CurrentCost, @SordCode, @UnitCost, @QuantityOnHand,
             @NameInOtherLanguage, @IsActive, @iskitchenPrint,
             @isDiscountAllowed, @IsTaxAllowed, @IsStockDish,
-            @isFOC, @isServiceCharge, @isFavourite, @isMultiPrice, @isOpenitem,
+            @isFOC, @isServiceCharge, @isFavourite, @isMultiPrice, @isOpenitem,@IsSplitDish, @IsgroupDish,
             @ImageId, @KitchenType, @SubkitchenType,@CreatedOn
           )
         `);
@@ -1527,6 +1568,50 @@ for (let g of dishGroups) {
       (DishId, DishGroupId)
       VALUES
       (@DishId, @DishGroupId)
+    `);
+}
+
+// 🔥 ORDER ITEM SHARE SAVE
+
+let orderItemShares = [];
+
+try {
+  orderItemShares = d.OrderItemShares
+    ? JSON.parse(d.OrderItemShares)
+    : [];
+} catch (e) {
+  orderItemShares = [];
+}
+
+await pool.request()
+  .input("DishId", sql.UniqueIdentifier, dishId)
+  .query(`
+    DELETE FROM OrderItemShare
+    WHERE OrderDetailId=@DishId
+  `);
+
+for (let item of orderItemShares) {
+
+  await pool.request()
+    .input("OrderDetailId", sql.UniqueIdentifier, dishId)
+    .input("CustomerName", sql.NVarChar(100), item)
+    .query(`
+      INSERT INTO OrderItemShare
+      (
+        Id,
+        OrderDetailId,
+        CustomerName,
+        IsSelected,
+        CreatedDate
+      )
+      VALUES
+      (
+        NEWID(),
+        @OrderDetailId,
+        @CustomerName,
+        1,
+        GETDATE()
+      )
     `);
 }
 
@@ -1651,8 +1736,32 @@ app.get("/dishgroupmapping/:id", async (req, res) => {
     res.json(result.recordset);
 
   } catch (err) {
+    console.log("🔥 ERROR:", err);
+    res.status(500).json({
+      message: err.message,
+      stack: err.stack
+    });
+  }
+});
+
+app.get("/orderitemshare/:id", async (req, res) => {
+  try {
+
+    const pool = await poolPromise;
+
+    const result = await pool.request()
+      .input("DishId", sql.UniqueIdentifier, req.params.id)
+      .query(`
+        SELECT CustomerName
+        FROM OrderItemShare
+        WHERE OrderDetailId = @DishId
+      `);
+
+    res.json(result.recordset);
+
+  } catch (err) {
     console.log(err);
-    res.status(500).send("Error");
+    res.status(500).send(err.message);
   }
 });
 
@@ -1930,7 +2039,27 @@ app.delete("/modifiermaster/:id", async (req, res) => {
 
 //=======================================end modifier
 
+app.get("/dishmasterorder", async (req, res) => {
+  try {
+    const pool = await poolPromise;
 
+    const result = await pool.request().query(`
+      SELECT
+        DishId,
+        Name
+      FROM DishMaster
+      WHERE IsActive = 1
+        AND IsSplitDish = 1
+        AND IsGroupDish = 0
+      ORDER BY Name
+    `);
+
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("GET DishMaster Error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 /* ------------------- SERVER ------------------- */
 app.get("/", (req, res) => {
   res.send("Backend is running 🚀");

@@ -25,6 +25,8 @@ import { BASE_URL } from "../config/api";
     AvailableTimeTo: "",
     isMultiPrice: false,
     isOpenitem: false,
+    IsSplitDish: false,
+    IsgroupDish: false,
     IsShowinKiosk: false,
     IsActive: false,
     iskitchenPrint: false,
@@ -71,7 +73,18 @@ import { BASE_URL } from "../config/api";
   })
   .catch(err => console.error("DishGroup error:", err));
 
+  // axios.get(`${BASE_URL}/dishorderitemshare`)
+  // .then(res => {
+  //   console.log("ORDER ITEM SHARE 👉", res.data);
+  //   setOrderItemShare(res.data);
+  // })
+  // .catch(err => {
+  //   console.log("ORDER ITEM SHARE ERROR", err);
+  // });
+
  },[]);
+
+ 
 
   const [entries,setEntries] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -96,6 +109,9 @@ const [selectedDishGroups, setSelectedDishGroups] = useState([]);
 
   const [selecteddishModifiers, setSelecteddishModifiers] = useState([]);
   const [selecteddishKitchens, setSelecteddishKitchens] = useState([]);
+
+  const [orderItemShare, setOrderItemShare] = useState([]);
+const [selectedOrderItemShare, setSelectedOrderItemShare] = useState([]);
 
   useEffect(() => {
   if (showModal && !dish.DishId) {
@@ -150,10 +166,10 @@ const [selectedDishGroups, setSelectedDishGroups] = useState([]);
   return;
 }
 
-  if (!dish.CurrentCost) {
-   alert("Price must be entered. ");
-  return;
-}
+//   if (!dish.CurrentCost) {
+//    alert("Price must be entered. ");
+//   return;
+// }
 
   if (!dish.DishGroupId || dish.DishGroupId === "") {
   alert("Dish Group must be entered. ❗");
@@ -219,12 +235,21 @@ formData.set(
   JSON.stringify(selectedDishGroups || [])
 );
 
+formData.append(
+  "OrderItemShares",
+  JSON.stringify(selectedOrderItemShare || [])
+);
+
     // 🔥 image file
     if (categoryImage) {
       formData.append("image", categoryImage);
     }
 
     console.log("FORM DATA READY ✅");
+
+    for (let pair of formData.entries()) {
+  console.log(pair[0] + " = " + pair[1]);
+}
    if (editIndex !== null && dish.DishId) {
   await axios.put(
     `${BASE_URL}/dish/${dish.DishId}`,
@@ -304,6 +329,12 @@ setExistingImage(null);
   try {
     // const res = await axios.get(`${BASE_URL}/dish/nextcode`);
 
+
+     const shareRes = await axios.get(
+      `${BASE_URL}/dishorderitemshare`
+    );
+console.log("SHARE DATA => ", shareRes.data);
+    setOrderItemShare(shareRes.data);
     setDish({
       ...emptyDish,
        DishCode: ""    // 🔥 AUTO CODE SHOW
@@ -311,6 +342,8 @@ setExistingImage(null);
 
     setSelecteddishKitchens([]);
     setSelecteddishModifiers([]);
+    setSelectedDishGroups([]);
+setSelectedOrderItemShare([]);
      setDishImage(null);        // 🔥 ADD THIS
     setExistingImage(null); 
     setEditIndex(null);
@@ -328,8 +361,17 @@ setExistingImage(null);
     };
  
 const handleEdit = async (data) => {
-
+console.log("EDIT DATA =", data);
   setDish(data);
+
+
+     const shareRes = await axios.get(
+    `${BASE_URL}/dishorderitemshare`
+  );
+
+  console.log("EDIT SHARE DATA => ", shareRes.data);
+
+  setOrderItemShare(shareRes.data);
 
    setExistingImage(data.ImageData);
 
@@ -345,9 +387,20 @@ const handleEdit = async (data) => {
 
   const dgIds = dgRes.data.map(x => String(x.DishGroupId));
 
+  const osRes = await axios.get(
+  `${BASE_URL}/orderitemshare/${data.DishId}`
+);
+
+const osNames = osRes.data.map(
+  x => x.CustomerName
+);
+
+setSelectedOrderItemShare(osNames);
+
   setSelecteddishKitchens(kIds);
   setSelecteddishModifiers(mIds);
   setSelectedDishGroups(dgIds);
+ 
 
   setShowModal(true);
 };
@@ -889,7 +942,9 @@ const totalRows = filteredData.length;
                   <label><input type="checkbox" name="isServiceCharge" checked={dish.isServiceCharge} onChange={handleChange} /> Service Charge</label>
                   <label><input type="checkbox" name="isFavourite" checked={dish.isFavourite} onChange={handleChange} /> Favourite</label>
                   <label><input type="checkbox" name="isMultiPrice" checked={dish.isMultiPrice} onChange={handleChange} /> MultiPrice</label>
-                  <label><input type="checkbox" name="isOpenitem" checked={dish.isOpenitem} onChange={handleChange} /> Openitem</label>
+                  <label><input type="checkbox" name="isOpenitem" checked={dish.isOpenitem} onChange={handleChange} /> Open Price</label>
+                  <label><input type="checkbox" name="IsSplitDish" checked={dish.IsSplitDish} onChange={handleChange} /> Artist</label>
+                  <label><input type="checkbox" name="IsgroupDish" checked={dish.IsgroupDish} onChange={handleChange} /> Group Dish</label>
                 </div>
  
               </div>
@@ -923,6 +978,12 @@ const totalRows = filteredData.length;
         >
           Dish Group
         </button>
+       {/* <button
+  className={activeTab === "orderitemshare" ? "active-tab" : ""}
+  onClick={() => setActiveTab("orderitemshare")}
+>
+  Order Item Share
+</button>*/}
         </div>
 
         {/* 🔽 TAB CONTENT */}
@@ -1066,6 +1127,44 @@ const totalRows = filteredData.length;
     ))}
   </div>
 )}
+
+{/* {activeTab === "orderitemshare" && (
+  <div className="dish-kitchen-container">
+
+    {orderItemShare.map((item) => (
+
+      <label key={item.Id}>
+        <input
+          type="checkbox"
+          checked={selectedOrderItemShare.includes(item.CustomerName)}
+          onChange={(e) => {
+
+            const value = item.CustomerName;
+
+            if (e.target.checked) {
+
+              setSelectedOrderItemShare(prev =>
+                [...prev, value]
+              );
+
+            } else {
+
+              setSelectedOrderItemShare(prev =>
+                prev.filter(x => x !== value)
+              );
+
+            }
+          }}
+        />
+
+        {item.CustomerName}
+
+      </label>
+
+    ))}
+
+  </div>
+)} */}
 
 </div>
         </div>
