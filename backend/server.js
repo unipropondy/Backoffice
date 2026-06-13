@@ -1881,17 +1881,31 @@ app.put("/modifiermaster/:id", async (req, res) => {
 //delete
 app.delete("/modifiermaster/:id", async (req, res) => {
   try {
+    console.log("DELETE ID:", req.params.id);
+
     const pool = await poolPromise;
 
     const check = await pool.request()
       .input("ModifierId", sql.UniqueIdentifier, req.params.id)
       .query(`
-        SELECT * FROM CategoryModifier WHERE ModifierId=@ModifierId
-        UNION
-        SELECT * FROM DishGroupModifier WHERE ModifierId=@ModifierId
-        UNION
-        SELECT * FROM DishModifier WHERE ModifierId=@ModifierId
+        SELECT 1
+        FROM CategoryModifier
+        WHERE ModifierId=@ModifierId
+
+        UNION ALL
+
+        SELECT 1
+        FROM DishGroupModifier
+        WHERE ModifierId=@ModifierId
+
+        UNION ALL
+
+        SELECT 1
+        FROM DishModifier
+        WHERE ModifierId=@ModifierId
       `);
+
+    console.log("REFERENCES:", check.recordset.length);
 
     if (check.recordset.length > 0) {
       return res.status(400).json({

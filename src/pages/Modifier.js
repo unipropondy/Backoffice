@@ -88,7 +88,8 @@ const handleDelete = async (id) => {
     await axios.delete(`${API}/modifiermaster/${id}`);
     loadModifiers();
   } catch (err) {
-    console.error("DELETE ERROR", err);
+    console.error("DELETE ERROR", err.response?.data);
+    alert(JSON.stringify(err.response?.data));
   }
 };
 
