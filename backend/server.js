@@ -12,25 +12,10 @@ const fs = require("fs");
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:3001",
-  "http://localhost:3000",
-];
-
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps, curl, or server-to-server)
-    if (!origin) return callback(null, true);
-    
-    const isAllowed = allowedOrigins.includes(origin) || 
-                      origin.endsWith(".railway.app") || 
-                      origin.includes("localhost:");
-                      
-    if (isAllowed) {
-      callback(null, true);
-    } else {
-      callback(null, false);
-    }
+    // Reflect the requesting origin back to allow it, supporting credentials: true
+    callback(null, true);
   },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
