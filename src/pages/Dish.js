@@ -329,12 +329,15 @@ setExistingImage(null);
   try {
     // const res = await axios.get(`${BASE_URL}/dish/nextcode`);
 
+    try {
+      const shareRes = await axios.get(`${BASE_URL}/dishorderitemshare`);
+      console.log("SHARE DATA => ", shareRes.data);
+      setOrderItemShare(shareRes.data);
+    } catch (err) {
+      console.log("ORDER ITEM SHARE ERROR", err);
+      setOrderItemShare([]);
+    }
 
-     const shareRes = await axios.get(
-      `${BASE_URL}/dishorderitemshare`
-    );
-console.log("SHARE DATA => ", shareRes.data);
-    setOrderItemShare(shareRes.data);
     setDish({
       ...emptyDish,
        DishCode: ""    // 🔥 AUTO CODE SHOW
@@ -361,46 +364,56 @@ setSelectedOrderItemShare([]);
     };
  
 const handleEdit = async (data) => {
-console.log("EDIT DATA =", data);
+  console.log("EDIT DATA =", data);
   setDish(data);
+  setExistingImage(data.ImageData);
 
+  // Each call wrapped individually so one 500 won't block the modal
+  try {
+    const shareRes = await axios.get(`${BASE_URL}/dishorderitemshare`);
+    console.log("EDIT SHARE DATA => ", shareRes.data);
+    setOrderItemShare(shareRes.data);
+  } catch (err) {
+    console.log("ORDER ITEM SHARE ERROR", err);
+    setOrderItemShare([]);
+  }
 
-     const shareRes = await axios.get(
-    `${BASE_URL}/dishorderitemshare`
-  );
+  let kIds = [];
+  try {
+    const kRes = await axios.get(`${BASE_URL}/dishkitchen/${data.DishId}`);
+    kIds = kRes.data.map(x => Number(x.KitchenTypeCode));
+  } catch (err) {
+    console.log("DISH KITCHEN ERROR", err);
+  }
 
-  console.log("EDIT SHARE DATA => ", shareRes.data);
+  let mIds = [];
+  try {
+    const mRes = await axios.get(`${BASE_URL}/dishmodifier/${data.DishId}`);
+    mIds = mRes.data.map(x => String(x.ModifierId));
+  } catch (err) {
+    console.log("DISH MODIFIER ERROR", err);
+  }
 
-  setOrderItemShare(shareRes.data);
+  let dgIds = [];
+  try {
+    const dgRes = await axios.get(`${BASE_URL}/dishgroupmapping/${data.DishId}`);
+    dgIds = dgRes.data.map(x => String(x.DishGroupId));
+  } catch (err) {
+    console.log("DISH GROUP MAPPING ERROR", err);
+  }
 
-   setExistingImage(data.ImageData);
-
-  const kRes = await axios.get(`${BASE_URL}/dishkitchen/${data.DishId}`);
-  const kIds = kRes.data.map(x => Number(x.KitchenTypeCode));
-
-  const mRes = await axios.get(`${BASE_URL}/dishmodifier/${data.DishId}`);
-  const mIds = mRes.data.map(x => String(x.ModifierId));
-
-   const dgRes = await axios.get(
-    `${BASE_URL}/dishgroupmapping/${data.DishId}`
-  );
-
-  const dgIds = dgRes.data.map(x => String(x.DishGroupId));
-
-  const osRes = await axios.get(
-  `${BASE_URL}/orderitemshare/${data.DishId}`
-);
-
-const osNames = osRes.data.map(
-  x => x.CustomerName
-);
-
-setSelectedOrderItemShare(osNames);
+  try {
+    const osRes = await axios.get(`${BASE_URL}/orderitemshare/${data.DishId}`);
+    const osNames = osRes.data.map(x => x.CustomerName);
+    setSelectedOrderItemShare(osNames);
+  } catch (err) {
+    console.log("ORDER ITEM SHARE MAPPING ERROR", err);
+    setSelectedOrderItemShare([]);
+  }
 
   setSelecteddishKitchens(kIds);
   setSelecteddishModifiers(mIds);
   setSelectedDishGroups(dgIds);
- 
 
   setShowModal(true);
 };
