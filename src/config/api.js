@@ -1,5 +1,5 @@
 
- export const BASE_URL ="https://backoffice-production-cbbe.up.railway.app";
+ export const BASE_URL ="https://backoffice-production-351f.up.railway.app";
  // process.env.REACT_APP_API_URL || "https://backoffice-production-e8ac.up.railway.app"; //std
 
 // export const BASE_URL = "http://localhost:3000";

@@ -23,16 +23,33 @@ router.post("/login", async (req, res) => {
       `);
 
     if (result.recordset.length > 0) {
-      res.json({
-        success: true,
-        user: result.recordset[0]
-      });
-    } else {
-      res.status(401).json({
-        success: false,
-        message: "Invalid username or password"
-      });
-    }
+
+  const user = result.recordset[0];
+
+  const today = new Date();
+  const fromDate = new Date(user.FromDate);
+  const toDate = new Date(user.ToDate);
+
+  if (today < fromDate || today > toDate) {
+    return res.status(403).json({
+      success: false,
+      message: "User access expired"
+    });
+  }
+
+  res.json({
+    success: true,
+    user
+  });
+
+} else {
+
+  res.status(401).json({
+    success: false,
+    message: "Invalid username or password"
+  });
+
+}
 
   } catch (err) {
     console.error("Login Error:", err);
