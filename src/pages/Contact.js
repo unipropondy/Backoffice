@@ -86,7 +86,7 @@ function Contact() {
       await axios.delete(`${BASE_URL}/kitchen/${id}`);
       fetchKitchen();
     } catch (err) {
-      alert("Delete failed");
+      alert(err.response?.data?.message || "Delete failed");
     }
   };
 
@@ -384,7 +384,7 @@ const handleSelectAll = async (checked) => {
   </div>
 </th>
 
-{/* <th>Actions</th> */}
+<th>Actions</th>
           </tr>
         </thead>
 
@@ -424,6 +424,14 @@ const handleSelectAll = async (checked) => {
       toggleActive(row);
     }}
   />
+</td>
+<td onClick={(e) => e.stopPropagation()}>
+  <button 
+    onClick={() => handleDelete(row.id)} 
+    style={{ backgroundColor: "#ff4d4d", color: "white", border: "none", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" }}
+  >
+    Delete
+  </button>
 </td>
 </tr>
   ))

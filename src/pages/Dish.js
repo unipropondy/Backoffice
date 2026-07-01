@@ -324,6 +324,21 @@ setExistingImage(null);
     );
   }
 };
+
+const handleDelete = async (id, e) => {
+  if (e) e.stopPropagation();
+  if (!window.confirm("Delete this dish?")) return;
+
+  try {
+    setLoading(true);
+    await axios.delete(`${BASE_URL}/dish/${id}`);
+    fetchDish();
+  } catch (err) {
+    alert(err.response?.data?.message || "Delete failed");
+  } finally {
+    setLoading(false);
+  }
+};
  
   const openNewDish = async () => {
   try {
@@ -757,7 +772,7 @@ const totalRows = filteredData.length;
                 />
               )}
             </th> */}
-
+            <th>Actions</th>
           </tr>
           </thead>
  
@@ -765,7 +780,7 @@ const totalRows = filteredData.length;
 
             {loading ? (
               <tr>
-                <td colSpan="12">
+                <td colSpan="13">
                   <div className="spinner"></div>
                 </td>
               </tr>
@@ -773,7 +788,7 @@ const totalRows = filteredData.length;
             ) : entries.length === 0 ? (
 
               <tr>
-                <td colSpan="12">No Data Found</td>
+                <td colSpan="13">No Data Found</td>
               </tr>
 
             ) : (
@@ -829,6 +844,14 @@ const totalRows = filteredData.length;
                   {/* <td>{d.isFOC ? "Yes" : "No"}</td> */}
                   {/* <td>{d.isServiceCharge ? "Yes" : "No"}</td> */}
                   {/* <td>{d.isFavourite ? "Yes" : "No"}</td> */}
+                <td onClick={(e) => e.stopPropagation()}>
+                  <button 
+                    onClick={(e) => handleDelete(d.DishId, e)} 
+                    style={{ backgroundColor: "#ff4d4d", color: "white", border: "none", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" }}
+                  >
+                    Delete
+                  </button>
+                </td>
                 </tr>
               ))
             )}

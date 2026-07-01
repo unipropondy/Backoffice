@@ -198,6 +198,21 @@ const handleToggle = async (row, field, value) => {
   }
 };
 
+const handleDelete = async (id, e) => {
+  if (e) e.stopPropagation();
+  if (!window.confirm("Delete this dish group?")) return;
+
+  try {
+    setLoading(true);
+    await axios.delete(`${BASE_URL}/dishgroup/${id}`);
+    fetchDishGroup();
+  } catch (err) {
+    alert(err.response?.data?.message || "Delete failed");
+  } finally {
+    setLoading(false);
+  }
+};
+
   const handleEdit = (row) => {
   // const row = entries[index];
 
@@ -772,6 +787,7 @@ Cancel
 <th>Discount</th>
 <th>SortCode</th>
 <th>KitchenSortCode</th>
+<th>Actions</th>
 </tr>
 </thead>
 
@@ -779,7 +795,7 @@ Cancel
 
 {loading ? (
   <tr>
-    <td colSpan="8">
+    <td colSpan="9">
       <div className="spinner"></div>
     </td>
   </tr>
@@ -787,7 +803,7 @@ Cancel
 ) : entries.length === 0 ? (
 
   <tr>
-    <td colSpan="8">No Data Found</td>
+    <td colSpan="9">No Data Found</td>
   </tr>
 
 ) : (paginatedData.map((row,index)=>(//(entries.map((row,index)=>(
@@ -831,7 +847,14 @@ Cancel
 
 <td>{row.SortCode}</td>
 <td>{row.KitchenSortCode}</td>
-
+<td onClick={(e) => e.stopPropagation()}>
+  <button 
+    onClick={(e) => handleDelete(row.DishGroupId, e)} 
+    style={{ backgroundColor: "#ff4d4d", color: "white", border: "none", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" }}
+  >
+    Delete
+  </button>
+</td>
 </tr>
 
 )))}

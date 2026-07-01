@@ -400,6 +400,22 @@ const toggleField = async (row, fieldName) => {
     alert("Update failed");
   }
 };
+
+const handleDelete = async (id, e) => {
+  if (e) e.stopPropagation();
+  if (!window.confirm("Delete this category?")) return;
+
+  try {
+    setLoading(true);
+    await axios.delete(`${BASE_URL}/category/${id}`);
+    fetchCategory();
+  } catch (err) {
+    alert(err.response?.data?.message || "Delete failed");
+  } finally {
+    setLoading(false);
+  }
+};
+
 return(
 
 <div className="cat-page">
@@ -955,6 +971,7 @@ Cancel
 {/* <th>Language</th> */}
 <th>Service</th>
 <th>Member</th>
+<th>Actions</th>
 </tr>
 </thead>
 
@@ -962,7 +979,7 @@ Cancel
 
 {loading ? (
   <tr>
-    <td colSpan="10">
+    <td colSpan="11">
       <div className="spinner"></div>
     </td>
   </tr>
@@ -970,7 +987,7 @@ Cancel
 ) : filteredData.length === 0 ? (
 
   <tr>
-    <td colSpan="10">No entries yet</td>
+    <td colSpan="11">No entries yet</td>
   </tr>
 
 ) : (
@@ -1023,6 +1040,14 @@ Cancel
   checked={row.isMemberSalesAllowed}
   onChange={() => toggleField(row, "isMemberSalesAllowed")}
 />
+</td>
+<td onClick={(e) => e.stopPropagation()}>
+  <button 
+    onClick={(e) => handleDelete(row.CategoryId, e)} 
+    style={{ backgroundColor: "#ff4d4d", color: "white", border: "none", padding: "5px 10px", borderRadius: "5px", cursor: "pointer" }}
+  >
+    Delete
+  </button>
 </td>
 </tr>
 ))

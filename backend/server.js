@@ -353,13 +353,28 @@ app.delete("/kitchen/:id", async (req, res) => {
     const KitchenTypeId = req.params.id;
     const pool = await poolPromise;
 
-    // Check dish mapping
-    const check = await pool.request()
+    // 1. Get the KitchenTypeCode for this Kitchen
+    const getCode = await pool.request()
       .input("KitchenTypeId", sql.UniqueIdentifier, KitchenTypeId)
+      .query(`
+        SELECT KitchenTypeCode 
+        FROM Kitchen 
+        WHERE KitchenTypeId = @KitchenTypeId
+      `);
+
+    if (getCode.recordset.length === 0) {
+      return res.status(404).json({ message: "Kitchen not found" });
+    }
+
+    const KitchenTypeCode = getCode.recordset[0].KitchenTypeCode;
+
+    // 2. Check dish mapping using KitchenTypeCode
+    const check = await pool.request()
+      .input("KitchenTypeCode", sql.Numeric, KitchenTypeCode)
       .query(`
         SELECT *
         FROM DishKitchenType
-        WHERE KitchenTypeId = @KitchenTypeId
+        WHERE KitchenTypeCode = @KitchenTypeCode
       `);
 
     if (check.recordset.length > 0) {
@@ -368,6 +383,7 @@ app.delete("/kitchen/:id", async (req, res) => {
       });
     }
 
+    // 3. Delete from Kitchen using KitchenTypeId
     await pool.request()
       .input("KitchenTypeId", sql.UniqueIdentifier, KitchenTypeId)
       .query(`
@@ -379,7 +395,7 @@ app.delete("/kitchen/:id", async (req, res) => {
 
   } catch (err) {
     console.error(err);
-    res.status(500).send("Delete failed");
+    res.status(500).json({ message: "Delete failed" });
   }
 });
 //======================================================END KITCHEN----============
