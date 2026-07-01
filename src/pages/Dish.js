@@ -111,7 +111,7 @@ const [selectedDishGroups, setSelectedDishGroups] = useState([]);
   const [selecteddishKitchens, setSelecteddishKitchens] = useState([]);
 
   const [orderItemShare, setOrderItemShare] = useState([]);
-const [selectedOrderItemShare, setSelectedOrderItemShare] = useState([]);
+ const [selectedOrderItemShare, setSelectedOrderItemShare] = useState([]);
 
   useEffect(() => {
   if (showModal && !dish.DishId) {
@@ -361,7 +361,7 @@ const handleDelete = async (id, e) => {
     setSelecteddishKitchens([]);
     setSelecteddishModifiers([]);
     setSelectedDishGroups([]);
-setSelectedOrderItemShare([]);
+    setSelectedOrderItemShare([]);
      setDishImage(null);        // 🔥 ADD THIS
     setExistingImage(null); 
     setEditIndex(null);

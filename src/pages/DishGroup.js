@@ -743,7 +743,7 @@ Cancel
 <tr>
 <th>S.No</th>
 <th onClick={() => setActiveFilter("DishGroupCode")}>
-  DishGroupCode
+  Dish Group Code
   {activeFilter === "DishGroupCode" && (
     <input
       onClick={(e)=>e.stopPropagation()}
@@ -756,8 +756,24 @@ Cancel
     />
   )}
 </th>
+<th onClick={() => setActiveFilter("CategoryName")}>
+  Category Name
+  {activeFilter === "CategoryName" && (
+    <input
+      onClick={(e) => e.stopPropagation()}
+      type="text"
+      value={filters.CategoryName || ""}
+      onChange={(e) =>
+        setFilters({
+          ...filters,
+          CategoryName: e.target.value,
+        })
+      }
+    />
+  )}
+</th>
 <th onClick={() => setActiveFilter("DishGroupName")}>
-  DishGroupName
+  Dish Group Name
   {activeFilter === "DishGroupName" && (
     <input
       onClick={(e)=>e.stopPropagation()}
@@ -773,9 +789,10 @@ Cancel
   Active
   {activeFilter === "isActive" && (
     <input
+      className="dg-filter-checkbox"
       onClick={(e)=>e.stopPropagation()}
       type="text"
-      placeholder="Yes/No"
+      placeholder="Y/N"
       value={filters.isActive || ""}
       onChange={(e)=>
         setFilters({...filters, isActive: e.target.value})
@@ -783,10 +800,10 @@ Cancel
     />
   )}
 </th>
-<th>KitchenPrint</th>
+<th>Kitchen Print</th>
 <th>Discount</th>
-<th>SortCode</th>
-<th>KitchenSortCode</th>
+<th>Sort Code</th>
+<th>Kitchen Sort Code</th>
 <th>Actions</th>
 </tr>
 </thead>
@@ -812,6 +829,7 @@ Cancel
 
 <td>{index+1}</td>
 <td>{row.DishGroupCode}</td>
+<td>{row.CategoryName}</td>
 <td>{row.DishGroupName}</td>
 
 <td onClick={(e) => e.stopPropagation()}>

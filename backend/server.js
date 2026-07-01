@@ -885,8 +885,11 @@ app.get("/dishgroup", async (req, res) => {
         C.ForeColor,
          (SELECT I.ImageData
                   from ImageList I
-                  where  C.ImageId = I.ImageId) ImageData
+                  where  C.ImageId = I.ImageId) ImageData,
+                  DC.CategoryName
       FROM DishGroupMaster C
+      LEFT JOIN Categorymaster DC
+      on  DC.CategoryId = C.CategoryId 
      ORDER BY CAST(C.DishGroupCode AS INT) DESC
     `);
 
