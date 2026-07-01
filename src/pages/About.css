@@ -446,6 +446,7 @@ padding:6px;
 margin-bottom:10px;
 border: 1px solid var(--border);
 border-radius:4px;
+box-sizing: border-box;
 }
 
 .kitchen-list-about{

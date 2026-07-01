@@ -590,6 +590,7 @@ border-radius:10px;
   border-radius: 20px;       /* 🔥 rounded */
   border: 1px solid #ddd;
   font-size: 13px;
+  box-sizing: border-box;
 
   outline: none;
   transition: 0.2s;
