@@ -44,6 +44,11 @@ const rewardRoutes = require("./routes/rewardRoutes");
 
 app.use("/api/rewardpoints", rewardRoutes);
 
+const comboRoutes = require("./routes/comboRoutes");
+ 
+app.use("/api/combo", comboRoutes);
+ 
+
 const vendorRoutes = require("./routes/vendorRoutes");
  
 // 🔥 USE ROUTES
@@ -153,6 +158,7 @@ app.use("/qrmaster", qrCodeRoutes);
 const dishOrderItemShareRoutes = require("./routes/dishOrderItemShareRoutes");
 
 app.use("/dishorderitemshare", dishOrderItemShareRoutes); 
+
 
 app.post("/api/check-target-password", async (req, res) => {
   try {
