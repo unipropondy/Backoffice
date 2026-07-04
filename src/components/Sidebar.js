@@ -141,8 +141,12 @@ const handleTargetAccess = async () => {
     <Link className="sid-menu" to="/Dish">
       <FaHamburger className="sid-icon" /> Dish
     </Link>
+     <Link className="sid-menu" to="/ComboGroupMaster">
+      <FaHamburger className="sid-icon" /> ComboGroupMaster
+    </Link>
   </div>
 )}
+
 
 <Link className="sid-menu" to="/Modifier">
   <FaSlidersH className="sid-icon" /> Modifier
