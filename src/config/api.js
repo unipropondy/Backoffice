@@ -1,5 +1,3 @@
-
-
  export const BASE_URL ="https://backoffice-production-6317.up.railway.app";
 
 // export const BASE_URL = "http://localhost:3000";
