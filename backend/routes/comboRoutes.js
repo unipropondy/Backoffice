@@ -321,17 +321,25 @@ router.get("/mappings", async (req, res) => {
           cgm.StoreId,
           cgm.IsActive,
           cgm.CreatedOn,
-          dm.DishCode as DishCode,
-          dm.Name as DishName
+      (SELECT Name FROM DishMaster WHERE DishId = cgm.DishId) AS DishName,
+      (SELECT DishCode FROM DishMaster WHERE DishId = cgm.DishId) AS DishCode
         FROM ComboGroupDishMapping cgm
-        LEFT JOIN DishMaster dm ON cgm.DishId = dm.DishId
-        ORDER BY cgm.SortOrder, dm.Name
+        ORDER BY cgm.SortOrder
       `);
     res.json(result.recordset);
   } catch (err) {
-    console.error("GET Mappings Error:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+  console.error("GET Mappings Error:", err);
+
+  if (err.originalError) {
+    console.error("SQL Error:", err.originalError.info);
   }
+
+  res.status(500).json({
+    success: false,
+    message: err.message,
+    sql: err.originalError?.info?.message
+  });
+}
 });
  
 // ================= GET DISH MAPPINGS BY GROUP =================
@@ -379,6 +387,9 @@ router.post("/mappings", async (req, res) => {
       StoreId = null,
       IsActive = true
     } = req.body;
+
+    console.log("STEP 0");
+     console.log(req.body);
  
     if (!ComboGroupId) {
       return res.status(400).json({ error: "Combo group ID is required." });
@@ -433,7 +444,10 @@ router.post("/mappings", async (req, res) => {
             @StoreId, @IsActive, GETDATE()
           )
         `);
- 
+        console.log("STEP 3");
+ await transaction.commit(); 
+
+ console.log("STEP 4");
           res.json({
         success: true,
         message: "Dish mapping created successfully",
@@ -444,9 +458,18 @@ router.post("/mappings", async (req, res) => {
       throw err;
     }
   } catch (err) {
-    console.error("INSERT Mapping Error:", err);
-    res.status(500).json({ error: "Insert Error: " + err.message });
+  console.error("INSERT Mapping Error:", err);
+
+  if (err.originalError) {
+    console.error("SQL Error:", err.originalError.info);
   }
+
+  res.status(500).json({
+    success: false,
+    message: err.message,
+    sql: err.originalError?.info?.message
+  });
+}
 });
  
 // ================= UPDATE DISH MAPPING =================

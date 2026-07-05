@@ -236,9 +236,13 @@ function ComboGroupMaster({ sidebarOpen }) {
       fetchDishMappings(dishForm.ComboGroupId);
       setActiveTab('mappings');
     } catch (err) {
-      console.error("Save Dish Mapping Error:", err);
-      alert("Failed to save dish mapping.");
-    }
+  console.error("Save Dish Mapping Error:", err);
+
+  console.log("Response =>", err.response);
+  console.log("Data =>", err.response?.data);
+
+  alert(JSON.stringify(err.response?.data));
+}
   };
 
   // ================= DELETE COMBO GROUP =================

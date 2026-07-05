@@ -68,7 +68,7 @@ function Layout() {
           <Route path="/About" element={<About />} />
           <Route path="/DishGroup" element={<DishGroup />} />
           <Route path="/Dish" element={<Dish />} />
-          {/* <Route path="/ComboGroupMaster" element={<ComboGroupMaster />} /> */}
+          <Route path="/ComboGroupMaster" element={<ComboGroupMaster />} />
           <Route path="/Modifier" element={<Modifier />} />
           <Route path="/Inventory" element={<Inventory />} />
           <Route path="/Settlement" element={<Settlement />} />
