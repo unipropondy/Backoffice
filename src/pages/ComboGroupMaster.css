@@ -342,7 +342,13 @@
 /* Workspace Panels Split */
 .mappings-workspace {
   flex: 1;
+<<<<<<< HEAD
   display: block;
+=======
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+>>>>>>> cec46d489f1364a347109f843bd4855ac19a53d1
   width: 100%;
 }
 
@@ -350,6 +356,10 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+<<<<<<< HEAD
+=======
+  flex: 1;
+>>>>>>> cec46d489f1364a347109f843bd4855ac19a53d1
 }
 
 .panel-header {
