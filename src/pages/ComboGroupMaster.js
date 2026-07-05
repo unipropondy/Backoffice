@@ -519,17 +519,26 @@ function ComboGroupMaster({ sidebarOpen }) {
               </div>
 
               {/* MAPPINGS WORKSPACE */}
-<<<<<<< HEAD
-              <div className="mappings-workspace" style={{ display: 'block', padding: '20px' }}>
-                
-                {/* CURRENT MAPPINGS LIST */}
-                <div className="current-mappings-panel" style={{ borderRight: 'none' }}>
-=======
-              <div className="mappings-workspace" style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden', padding: '20px' }}>
-                
-                {/* CURRENT MAPPINGS LIST */}
-                <div className="current-mappings-panel" style={{ borderRight: 'none', display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
->>>>>>> cec46d489f1364a347109f843bd4855ac19a53d1
+<div
+  className="mappings-workspace"
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    flex: 1,
+    overflow: "hidden",
+    padding: "20px",
+  }}
+>
+  <div
+    className="current-mappings-panel"
+    style={{
+      borderRight: "none",
+      display: "flex",
+      flexDirection: "column",
+      flex: 1,
+      overflow: "hidden",
+    }}
+  >
                   <div className="panel-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0' }}>
                     <h4 style={{ margin: 0, fontSize: '16px' }}>Mapped Dishes ({dishMappings.length})</h4>
                     <button 
