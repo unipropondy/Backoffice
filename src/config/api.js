@@ -1,4 +1,4 @@
-export const BASE_URL = "https://backoffice-production-26ab.up.railway.app";
+export const BASE_URL = "https://backoffice-production-5651.up.railway.app";
 
 // export const BASE_URL = "http://localhost:3000";
 
