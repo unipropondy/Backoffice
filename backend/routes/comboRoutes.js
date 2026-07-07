@@ -101,7 +101,7 @@ router.get("/groups", async (req, res) => {
       .query(`
         SELECT
           cgm.ComboGroupId,
-          cgm.ParentComboDishId,
+          COALESCE(pdcgm.ParentDishId, cgm.ParentComboDishId) AS ParentComboDishId,
           cgm.GroupName,
           cgm.DisplayOrder,
           cgm.MinSelection,
@@ -112,7 +112,8 @@ router.get("/groups", async (req, res) => {
           dm.DishCode as ParentDishCode,
           dm.Name as ParentDishName
         FROM ComboGroupMaster cgm
-        LEFT JOIN DishMaster dm ON cgm.ParentComboDishId = dm.DishId
+        LEFT JOIN ParentDishComboGroupMapping pdcgm ON cgm.ComboGroupId = pdcgm.ComboGroupId
+        LEFT JOIN DishMaster dm ON COALESCE(pdcgm.ParentDishId, cgm.ParentComboDishId) = dm.DishId
         WHERE cgm.IsActive = 1
         ORDER BY cgm.DisplayOrder, cgm.GroupName
       `);
@@ -194,6 +195,7 @@ router.post("/groups", async (req, res) => {
     const newComboGroupId = require('crypto').randomUUID();
     console.log("Generated ComboGroupId:", newComboGroupId);
 
+<<<<<<< HEAD
     await pool.request()
       .input("ComboGroupId", sql.UniqueIdentifier, newComboGroupId)
       .input("ParentComboDishId", sql.UniqueIdentifier, ParentComboDishId)
@@ -231,6 +233,63 @@ router.post("/groups", async (req, res) => {
       message: "Combo group created successfully",
       ComboGroupId: newComboGroupId
     });
+=======
+    // Use a transaction to ensure group and mapping are both created
+    const transaction = new sql.Transaction(pool);
+    await transaction.begin();
+
+    try {
+      await transaction.request()
+        .input("ComboGroupId", sql.UniqueIdentifier, newComboGroupId)
+        .input("ParentComboDishId", sql.UniqueIdentifier, ParentComboDishId)
+        .input("GroupName", sql.NVarChar, GroupName.trim())
+        .input("DisplayOrder", sql.Int, DisplayOrder)
+        .input("MinSelection", sql.Int, MinSelection)
+        .input("MaxSelection", sql.Int, MaxSelection)
+        .input("IsMultiSelect", sql.Bit, IsMultiSelect ? 1 : 0)
+        .input("IsActive", sql.Bit, IsActive ? 1 : 0)
+        .query(`
+          INSERT INTO ComboGroupMaster (
+            ComboGroupId, ParentComboDishId, GroupName,
+            DisplayOrder, MinSelection, MaxSelection,
+            IsMultiSelect, IsActive, CreatedOn
+          )
+          VALUES (
+            @ComboGroupId, @ParentComboDishId, @GroupName,
+            @DisplayOrder, @MinSelection, @MaxSelection,
+            @IsMultiSelect, @IsActive, GETDATE()
+          )
+        `);
+
+      await transaction.request()
+        .input("ParentDishId", sql.UniqueIdentifier, ParentComboDishId)
+        .input("ComboGroupId", sql.UniqueIdentifier, newComboGroupId)
+        .query(`
+          INSERT INTO ParentDishComboGroupMapping (ParentDishId, ComboGroupId)
+          VALUES (@ParentDishId, @ComboGroupId)
+        `);
+
+      await transaction.request()
+        .input("DishId", sql.UniqueIdentifier, ParentComboDishId)
+        .query(`
+          UPDATE DishMaster
+          SET IsCombo = 1
+          WHERE DishId = @DishId
+        `);
+
+      await transaction.commit();
+      console.log("Combo group created successfully:", newComboGroupId);
+
+      res.json({
+        success: true,
+        message: "Combo group created successfully",
+        ComboGroupId: newComboGroupId
+      });
+    } catch (txErr) {
+      await transaction.rollback();
+      throw txErr;
+    }
+>>>>>>> 90ceefa5 (KINDEE)
   } catch (err) {
     console.error("INSERT Combo Group Error:", err);
     res.status(500).json({ error: "Insert Error: " + err.message });
@@ -298,6 +357,7 @@ router.delete("/groups/:id", async (req, res) => {
     const { id } = req.params;
     const pool = await poolPromise;
    
+<<<<<<< HEAD
     // Get all dish mappings for this group
     const mappingsResult = await pool.request()
       .input("ComboGroupId", sql.UniqueIdentifier, id)
@@ -318,12 +378,110 @@ router.delete("/groups/:id", async (req, res) => {
     }
 
     res.json({ success: true, message: "Combo group deleted successfully" });
+=======
+    // Start a transaction
+    const transaction = new sql.Transaction(pool);
+    await transaction.begin();
+
+    try {
+      // Delete mappings first (foreign key constraint)
+      await transaction.request()
+        .input("ComboGroupId", sql.UniqueIdentifier, id)
+        .query("DELETE FROM ComboGroupDishMapping WHERE ComboGroupId = @ComboGroupId");
+
+      // Delete parent mappings
+      await transaction.request()
+        .input("ComboGroupId", sql.UniqueIdentifier, id)
+        .query("DELETE FROM ParentDishComboGroupMapping WHERE ComboGroupId = @ComboGroupId");
+
+      // Delete the group
+      const result = await transaction.request()
+        .input("ComboGroupId", sql.UniqueIdentifier, id)
+        .query("DELETE FROM ComboGroupMaster WHERE ComboGroupId = @ComboGroupId");
+
+      if (result.rowsAffected[0] === 0) {
+        await transaction.rollback();
+        return res.status(404).json({ error: "Combo group not found" });
+      }
+
+      await transaction.commit();
+      res.json({ success: true, message: "Combo group deleted successfully" });
+    } catch (txErr) {
+      await transaction.rollback();
+      throw txErr;
+    }
+>>>>>>> 90ceefa5 (KINDEE)
   } catch (err) {
     console.error("DELETE Combo Group Error:", err);
     res.status(500).json({ error: "Delete Error" });
   }
 });
 
+<<<<<<< HEAD
+=======
+// ================= GET PARENT DISHES FOR A COMBO GROUP =================
+router.get("/groups/:id/parents", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input("ComboGroupId", sql.UniqueIdentifier, id)
+      .query(`
+        SELECT ParentDishId FROM ParentDishComboGroupMapping
+        WHERE ComboGroupId = @ComboGroupId
+      `);
+    res.json(result.recordset.map(row => row.ParentDishId));
+  } catch (err) {
+    console.error("GET Combo Group Parents Error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// ================= ASSIGN PARENT DISHES TO A COMBO GROUP =================
+router.post("/groups/:id/parents", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { ParentDishIds } = req.body;
+
+    if (!Array.isArray(ParentDishIds)) {
+      return res.status(400).json({ error: "ParentDishIds must be an array." });
+    }
+
+    const pool = await poolPromise;
+    const transaction = new sql.Transaction(pool);
+    await transaction.begin();
+
+    try {
+      // 1. Delete all existing mappings for this group
+      await transaction.request()
+        .input("ComboGroupId", sql.UniqueIdentifier, id)
+        .query("DELETE FROM ParentDishComboGroupMapping WHERE ComboGroupId = @ComboGroupId");
+
+      // 2. Insert new mappings
+      for (const parentId of ParentDishIds) {
+        await transaction.request()
+          .input("ParentDishId", sql.UniqueIdentifier, parentId)
+          .input("ComboGroupId", sql.UniqueIdentifier, id)
+          .query(`
+            INSERT INTO ParentDishComboGroupMapping (ParentDishId, ComboGroupId)
+            VALUES (@ParentDishId, @ComboGroupId)
+          `);
+      }
+
+      await transaction.commit();
+      res.json({ success: true, message: "Parent dishes assigned successfully." });
+    } catch (txErr) {
+      await transaction.rollback();
+      throw txErr;
+    }
+  } catch (err) {
+    console.error("POST Assign Parents Error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+>>>>>>> 90ceefa5 (KINDEE)
 // ================= GET DISH MAPPINGS =================
 router.get("/mappings", async (req, res) => {
   try {
