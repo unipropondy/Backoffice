@@ -471,11 +471,17 @@ router.post("/mappings", async (req, res) => {
             GETDATE()
           )
         `);
+<<<<<<< HEAD
 
       await transaction.commit();
       console.log("Dish mapping created successfully:", newMappingId);
 
       res.json({
+=======
+ 
+          await transaction.commit();
+          res.json({
+>>>>>>> 16768d0d (CONESTONE)
         success: true,
         message: "Dish mapping created successfully",
         MappingId: newMappingId
