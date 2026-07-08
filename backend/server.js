@@ -32,7 +32,9 @@ const inventoryRoutes = require("./routes/inventory");
 
 app.use("/inventory", inventoryRoutes);
 
+const memberRoute = require("./routes/memberRoute");
 
+app.use("/api/member", memberRoute);
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 

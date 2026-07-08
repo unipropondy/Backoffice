@@ -208,6 +208,9 @@ const handleTargetAccess = async () => {
      <Link className="sid-menu" to="/HappyHours">
         <FaGlassMartiniAlt  className="sid-icon" /> HappyHours
       </Link>
+       <Link className="sid-menu" to="/MemberMaster">
+        <FaGlassMartiniAlt  className="sid-icon" /> Promotions
+      </Link>
      <Link className="sid-menu" to="/Discount">
       <FaPercent  className="sid-icon" /> Discount
     </Link>
