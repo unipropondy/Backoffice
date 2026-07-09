@@ -305,6 +305,28 @@
   border-color: var(--text-muted);
 }
 
+.btn-assign-parent {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-light);
+  color: var(--primary-orange);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+  font-family: var(--font-sans);
+}
+
+.btn-assign-parent:hover {
+  background: rgba(255, 127, 39, 0.05);
+  border-color: var(--primary-orange);
+}
+
 /* Settings Bar */
 .settings-summary-bar {
   display: flex;
