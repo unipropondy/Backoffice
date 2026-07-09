@@ -1,6 +1,5 @@
+export const BASE_URL = "https://backoffice-production-351f.up.railway.app";
 
-
-export const API_BASE_URL = "https://backoffice-production-e8ac.up.railway.app";
 
 
 
