@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "../config/config";
+import { BASE_URL } from "../config/config";
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { FaTrash, FaEdit, FaPlus, FaCheck, FaFolder, FaUtensils, FaArrowRight, FaChevronDown, FaChevronRight } from "react-icons/fa";
@@ -65,7 +65,7 @@ function ComboGroupMaster({ sidebarOpen }) {
   // ================= FETCH DATA =================
   const fetchParentDishes = useCallback(async () => {
     try {
-      const res = await axios.get(API_BASE_URL + "/api/combo/parent-dishes");
+      const res = await axios.get(BASE_URL + "/api/combo/parent-dishes");
       setParentDishes(res.data || []);
     } catch (err) {
       console.error("Fetch Parent Dishes Error:", err);
@@ -74,7 +74,7 @@ function ComboGroupMaster({ sidebarOpen }) {
 
   const fetchComboGroups = useCallback(async () => {
     try {
-      const res = await axios.get(API_BASE_URL + "/api/combo/groups");
+      const res = await axios.get(BASE_URL + "/api/combo/groups");
       setComboGroups(res.data || []);
     } catch (err) {
       console.error("Fetch Combo Groups Error:", err);
@@ -83,7 +83,7 @@ function ComboGroupMaster({ sidebarOpen }) {
 
   const fetchAvailableDishes = useCallback(async () => {
     try {
-      const res = await axios.get(API_BASE_URL + "/api/combo/available-dishes");
+      const res = await axios.get(BASE_URL + "/api/combo/available-dishes");
       setAvailableDishes(res.data || []);
     } catch (err) {
       console.error("Fetch Available Dishes Error:", err);
@@ -93,7 +93,7 @@ function ComboGroupMaster({ sidebarOpen }) {
   const fetchDishMappings = useCallback(async (groupId) => {
     if (!groupId) return;
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/combo/mappings/${groupId}`);
+      const res = await axios.get(`${BASE_URL}/api/combo/mappings/${groupId}`);
       setDishMappings(res.data || []);
     } catch (err) {
       console.error("Fetch Mappings Error:", err);
@@ -145,7 +145,7 @@ function ComboGroupMaster({ sidebarOpen }) {
       return;
     }
     try {
-      await axios.post(`${API_BASE_URL}/api/combo/parent-dishes`, { DishId: selectedNewParentDishId });
+      await axios.post(`${BASE_URL}/api/combo/parent-dishes`, { DishId: selectedNewParentDishId });
       setShowParentModal(false);
       setSelectedNewParentDishId("");
       setParentSearchSelect("");
@@ -161,7 +161,7 @@ function ComboGroupMaster({ sidebarOpen }) {
   const handleDeleteParentCombo = async (id) => {
     if (window.confirm("Are you sure you want to unmark this dish as a Parent Combo?")) {
       try {
-        await axios.delete(`${API_BASE_URL}/api/combo/parent-dishes/${id}`);
+        await axios.delete(`${BASE_URL}/api/combo/parent-dishes/${id}`);
         if (selectedParentId === id) {
           setSelectedParentId(null);
           setSelectedGroupId(null);
@@ -215,9 +215,9 @@ function ComboGroupMaster({ sidebarOpen }) {
 
     try {
       if (groupForm.ComboGroupId) {
-        await axios.put(`${API_BASE_URL}/api/combo/groups/${groupForm.ComboGroupId}`, groupForm);
+        await axios.put(`${BASE_URL}/api/combo/groups/${groupForm.ComboGroupId}`, groupForm);
       } else {
-        const res = await axios.post(API_BASE_URL + "/api/combo/groups", groupForm);
+        const res = await axios.post(BASE_URL + "/api/combo/groups", groupForm);
         if (res.data && res.data.ComboGroupId) {
           setSelectedGroupId(res.data.ComboGroupId);
         }
@@ -234,7 +234,7 @@ function ComboGroupMaster({ sidebarOpen }) {
   const handleDeleteGroup = async (id) => {
     if (window.confirm("Are you sure you want to delete this group and all its mappings?")) {
       try {
-        await axios.delete(`${API_BASE_URL}/api/combo/groups/${id}`);
+        await axios.delete(`${BASE_URL}/api/combo/groups/${id}`);
         setSelectedGroupId(null);
         await fetchComboGroups();
         await fetchParentDishes();
@@ -249,11 +249,11 @@ function ComboGroupMaster({ sidebarOpen }) {
   const handleRemoveParentMapping = async (parentId, groupId, groupName) => {
     if (window.confirm(`Are you sure you want to remove the combo group "${groupName}" from this parent dish?`)) {
       try {
-        const res = await axios.get(`${API_BASE_URL}/api/combo/groups/${groupId}/parents`);
+        const res = await axios.get(`${BASE_URL}/api/combo/groups/${groupId}/parents`);
         const currentParents = res.data || [];
         const updatedParents = currentParents.filter(id => id !== parentId);
         
-        await axios.post(`${API_BASE_URL}/api/combo/groups/${groupId}/parents`, {
+        await axios.post(`${BASE_URL}/api/combo/groups/${groupId}/parents`, {
           ParentDishIds: updatedParents
         });
         
@@ -285,7 +285,7 @@ function ComboGroupMaster({ sidebarOpen }) {
 
   const handleSaveMapping = async () => {
     try {
-      await axios.put(`${API_BASE_URL}/api/combo/mappings/${mappingForm.MappingId}`, mappingForm);
+      await axios.put(`${BASE_URL}/api/combo/mappings/${mappingForm.MappingId}`, mappingForm);
       setShowMappingModal(false);
       fetchDishMappings(selectedGroupId);
     } catch (err) {
@@ -297,7 +297,7 @@ function ComboGroupMaster({ sidebarOpen }) {
   const handleDeleteMapping = async (id) => {
     if (window.confirm("Are you sure you want to remove this dish mapping?")) {
       try {
-        await axios.delete(`${API_BASE_URL}/api/combo/mappings/${id}`);
+        await axios.delete(`${BASE_URL}/api/combo/mappings/${id}`);
         fetchDishMappings(selectedGroupId);
       } catch (err) {
         console.error("Delete Mapping Error:", err);
@@ -313,7 +313,7 @@ function ComboGroupMaster({ sidebarOpen }) {
       return;
     }
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/combo/mappings/batch`, {
+      const response = await axios.post(`${BASE_URL}/api/combo/mappings/batch`, {
         ComboGroupId: selectedGroupId,
         DishIds: selectedAvailableDishIds,
         Surcharge: batchSurcharge,
@@ -353,7 +353,7 @@ function ComboGroupMaster({ sidebarOpen }) {
   const openAssignParentModal = async () => {
     if (!selectedGroupId) return;
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/combo/groups/${selectedGroupId}/parents`);
+      const res = await axios.get(`${BASE_URL}/api/combo/groups/${selectedGroupId}/parents`);
       setAssignedParentIds(res.data || []);
       setParentSearchQuery("");
       setShowAssignParentModal(true);
@@ -365,7 +365,7 @@ function ComboGroupMaster({ sidebarOpen }) {
 
   const handleSaveAssignedParents = async () => {
     try {
-      await axios.post(`${API_BASE_URL}/api/combo/groups/${selectedGroupId}/parents`, {
+      await axios.post(`${BASE_URL}/api/combo/groups/${selectedGroupId}/parents`, {
         ParentDishIds: assignedParentIds
       });
       setShowAssignParentModal(false);
