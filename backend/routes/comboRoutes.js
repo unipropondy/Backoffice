@@ -283,7 +283,7 @@ router.put("/groups/:id", async (req, res) => {
       .input("ParentComboDishId", sql.UniqueIdentifier, ParentComboDishId)
       .input("GroupName", sql.NVarChar, GroupName.trim())
       .input("DisplayOrder", sql.Int, DisplayOrder || 0)
-      .input("MinSelection", sql.Int, MinSelection || 1)
+      .input("MinSelection", sql.Int, MinSelection !== undefined && MinSelection !== null ? MinSelection : 1)
       .input("MaxSelection", sql.Int, MaxSelection || 1)
       .input("IsMultiSelect", sql.Bit, IsMultiSelect ? 1 : 0)
       .input("IsActive", sql.Bit, IsActive ? 1 : 0)
@@ -563,6 +563,7 @@ router.post("/mappings", async (req, res) => {
             GETDATE()
           )
         `);
+
       await transaction.commit();
       console.log("Dish mapping created successfully:", newMappingId);
 
