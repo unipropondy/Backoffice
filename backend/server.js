@@ -32,13 +32,7 @@ const inventoryRoutes = require("./routes/inventory");
 
 app.use("/inventory", inventoryRoutes);
 
-const memberRoute = require("./routes/memberRoute");
 
-app.use("/api/member", memberRoute);
-
-const promoCodeRoute = require("./routes/promoCodeRoute");
-
-app.use("/api/promocode", promoCodeRoute);
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 
@@ -53,6 +47,10 @@ app.use("/api/rewardpoints", rewardRoutes);
 const comboRoutes = require("./routes/comboRoutes");
  
 app.use("/api/combo", comboRoutes);
+
+const promoCodeRoute = require("./routes/promoCodeRoute");
+
+app.use("/api/promocode", promoCodeRoute);
  
 
 const vendorRoutes = require("./routes/vendorRoutes");
@@ -478,6 +476,7 @@ app.post("/category", upload.single("image"), async (req, res) => {
       CategoryName,
       SortCode,
       isActive,
+      IsPublished,
       ShortName,
       KitchenTypes,
       Modifiers,
@@ -537,6 +536,7 @@ let request = pool.request()
 .input("CategoryName", sql.VarChar(100), (CategoryName || "").substring(0,100))
 .input("SortCode", sql.Int, SortCode)
 .input("isActive", sql.Bit, Number(isActive) === 1)
+.input("IsPublished", sql.Bit, Number(IsPublished) === 1)
 .input("ShortName", sql.VarChar(50), (ShortName || "").substring(0,50))
 .input("BackColor", sql.NVarChar(50), safeBackColor)
 .input("ForeColor", sql.NVarChar(50), safeForeColor)
@@ -557,6 +557,7 @@ CategoryCode=@CategoryCode,
 CategoryName=@CategoryName,
 SortCode=@SortCode,
 isActive=@isActive,
+IsPublished =@IsPublished,
 ShortName=@ShortName,
 ImageId = COALESCE(@ImageId, ImageId),  
 BackColor=@BackColor,
@@ -579,6 +580,7 @@ WHERE CategoryId=@CategoryId
         .input("CategoryName", sql.VarChar(100), CategoryName)
         .input("SortCode", sql.Int, SortCode)
         .input("isActive", sql.Bit, isActive ?? false)
+        .input("IsPublished", sql.Bit, IsPublished ?? false)
         .input("ShortName", sql.VarChar(50), ShortName)
         .input("ImageId", sql.UniqueIdentifier, imageId)
         .input("BackColor", sql.NVarChar(50), safeBackColor)
@@ -594,9 +596,9 @@ WHERE CategoryId=@CategoryId
         .input("CreatedOn", sql.DateTime, new Date())
         .query(
           `INSERT INTO CategoryMaster 
-                (CategoryId, CategoryCode, CategoryName, SortCode, isActive, ShortName, ImageId, BackColor, ForeColor, isKitchenPrint, isDiscountAllowed, isServiceCharge, isDispName, isMemberSalesAllowed, isTaxAllowed, NameInOtherLanguage, CreatedBy, CreatedOn) 
+                (CategoryId, CategoryCode, CategoryName, SortCode, isActive,IsPublished, ShortName, ImageId, BackColor, ForeColor, isKitchenPrint, isDiscountAllowed, isServiceCharge, isDispName, isMemberSalesAllowed, isTaxAllowed, NameInOtherLanguage, CreatedBy, CreatedOn) 
             VALUES 
-            (@CategoryId, @CategoryCode, @CategoryName, @SortCode, @isActive, @ShortName, @ImageId, @BackColor, @ForeColor, @isKitchenPrint, @isDiscountAllowed, @isServiceCharge, @isDispName, @isMemberSalesAllowed, @isTaxAllowed, @NameInOtherLanguage, @CreatedBy, @CreatedOn)`
+            (@CategoryId, @CategoryCode, @CategoryName, @SortCode, @isActive, @IsPublished, @ShortName, @ImageId, @BackColor, @ForeColor, @isKitchenPrint, @isDiscountAllowed, @isServiceCharge, @isDispName, @isMemberSalesAllowed, @isTaxAllowed, @NameInOtherLanguage, @CreatedBy, @CreatedOn)`
         );
     }
 
@@ -884,6 +886,7 @@ app.get("/dishgroup", async (req, res) => {
         C.DishGroupName,
         C.ShortName,
         ISNULL(C.isActive, 0) AS isActive,
+        ISNULL(C.IsPublished, 0) AS IsPublished,
         ISNULL(C.isDiscountAllowed, 0) AS isDiscountAllowed,
         ISNULL(C.isTaxAllowed, 0) AS isTaxAllowed,
         ISNULL(C.isKitchenPrint, 0) AS isKitchenPrint,
@@ -975,6 +978,7 @@ app.post("/dishgroup", upload.single("image"), async (req, res) => {
       DishGroupName,
       SortCode,
       isActive,
+      IsPublished,
       isDiscountAllowed,      
       isTaxAllowed,           
       isKitchenPrint,         
@@ -1029,6 +1033,7 @@ const imageBuffer = fs.readFileSync(req.file.path);
         .input("DishGroupName", sql.VarChar(100), DishGroupName)
         .input("SortCode", sql.Int, SortCode)
         .input("isActive", sql.Bit, isActive == 1)
+        .input("IsPublished", sql.Bit, Number(IsPublished) === 1)
         .input("isDiscountAllowed", sql.Bit, isDiscountAllowed == 1)
         .input("isTaxAllowed", sql.Bit, isTaxAllowed == 1)
         .input("isKitchenPrint", sql.Bit, isKitchenPrint == 1)
@@ -1050,6 +1055,7 @@ const imageBuffer = fs.readFileSync(req.file.path);
                 DishGroupName=@DishGroupName,
                 SortCode=@SortCode,
                 isActive=@isActive,
+                IsPublished=@IsPublished,
                 isDiscountAllowed=@isDiscountAllowed,
                 isTaxAllowed=@isTaxAllowed,
                 isKitchenPrint=@isKitchenPrint,
@@ -1073,6 +1079,7 @@ const imageBuffer = fs.readFileSync(req.file.path);
         .input("DishGroupName", sql.VarChar(100), DishGroupName)
         .input("SortCode", sql.Int, SortCode)
         .input("isActive", sql.Bit, isActive == 1)
+        .input("IsPublished", sql.Bit, Number(IsPublished) === 1)
         .input("isDiscountAllowed", sql.Bit, isDiscountAllowed == 1)
         .input("isTaxAllowed", sql.Bit, isTaxAllowed == 1)
         .input("isKitchenPrint", sql.Bit, isKitchenPrint == 1)
@@ -1090,14 +1097,14 @@ const imageBuffer = fs.readFileSync(req.file.path);
         .input("ImageId", sql.UniqueIdentifier, imageId)
       //  .input("KitchenType", sql.VarChar(50), "")
       //  .input("SubkitchenType", sql.VarChar(50), "")
-       .input("CreatedBy", sql.UniqueIdentifier, uuidv4())
+        .input("CreatedBy", sql.UniqueIdentifier, uuidv4())
         .input("CreatedOn", sql.DateTime, new Date())
         .query(`
           INSERT INTO DishGroupMaster
-          (DishGroupId,DishGroupCode,DishGroupName,SortCode,isActive,ShortName,CategoryId,KitchenSortCode,BackColor,ForeColor,ImageId,isDiscountAllowed,
-          isTaxAllowed,isKitchenPrint,isServiceCharge,isMemberSalesAllowed,CreatedBy, CreatedOn)
+          (DishGroupId,DishGroupCode,DishGroupName,SortCode,isActive,IsPublished,ShortName,CategoryId,KitchenSortCode,BackColor,ForeColor,ImageId,isDiscountAllowed,
+          isTaxAllowed,isKitchenPrint,isServiceCharge,isMemberSalesAllowed,CreatedBy,CreatedOn)
           VALUES
-          (@DishGroupId,@DishGroupCode,@DishGroupName,@SortCode,@isActive,@ShortName,@CategoryId,@KitchenSortCode,@BackColor,@ForeColor,@ImageId,@isDiscountAllowed,
+          (@DishGroupId,@DishGroupCode,@DishGroupName,@SortCode,@isActive,@IsPublished,@ShortName,@CategoryId,@KitchenSortCode,@BackColor,@ForeColor,@ImageId,@isDiscountAllowed,
           @isTaxAllowed,@isKitchenPrint,@isServiceCharge,@isMemberSalesAllowed,@CreatedBy,@CreatedOn)
         `);
     }
@@ -1146,14 +1153,16 @@ if (Modifiers) {
 }
 
 for (let m of mods) {
+  const modId = typeof m === "object" && m !== null ? m.ModifierId : m;
+
   await pool.request()
     .input("DishGroupId", sql.UniqueIdentifier, dgId)
-    .input("ModifierId", sql.UniqueIdentifier, m)
+    .input("ModifierId", sql.UniqueIdentifier, modId)
     .query(`
       INSERT INTO DishGroupModifier
-      (DishGroupId,ModifierId)
+      (DishGroupId, ModifierId)
       VALUES
-      (@DishGroupId,@ModifierId)
+      (@DishGroupId, @ModifierId)
     `);
 }
 
@@ -1308,42 +1317,77 @@ app.post("/dishgroupkitchen", async (req, res) => {
 });
 //===============================================END dishgroup==========================
 //========================start dish================
-// ================= GET =================
 app.get("/dish", async (req, res) => {
   try {
     const pool = await poolPromise;
-    const result = await pool.request().query(`SELECT 
-    D.*,
+    const result = await pool.request().query(`
+      SELECT 
+        D.DishId,
+        D.DishCode,
+        D.Name,
+        D.ShortName,
+        D.Description,
+        D.DishGroupId,
+        D.CurrentCost,
+        D.SordCode,
+        D.UnitCost,
+        D.QuantityOnHand,
+        D.NameInOtherLanguage,
+        D.BrandId,
+        D.MobileTab,
+        D.AvailableTimeFrom,
+        D.AvailableTimeTo,
+        D.isMultiPrice,
+        D.isOpenitem,
+        D.IsSplitDish,
+        D.IsgroupDish,
+        D.IsShowinKiosk,
+        D.IsActive,
+        D.IsPublished,
+        D.IsSoldOut,
+        D.iskitchenPrint,
+        D.isDiscountAllowed,
+        D.IsTaxAllowed,
+        D.IsStockDish,
+        D.isFOC,
+        D.isServiceCharge,
+        D.isFavourite,
+        D.KitchenType,
+        D.SubkitchenType,
+        D.ImageId,
+        DG.DishGroupName
+      FROM DishMaster D
+      LEFT JOIN DishGroupMaster DG ON D.DishGroupId = DG.DishGroupId
+      ORDER BY DG.DishGroupName ASC, D.Name ASC
+    `);
 
-    DG.DishGroupName,
-
-    (
-      SELECT I.ImageData
-      FROM ImageList I
-      WHERE D.ImageId = I.ImageId
-    ) AS ImageData
-
-FROM DishMaster D
-
-LEFT JOIN DishGroupMaster DG
-ON D.DishGroupId = DG.DishGroupId
-
-ORDER BY DG.DishGroupName ASC, D.Name ASC`);
-    const data = result.recordset.map(row => {
-  let imageBase64 = null;
-
-  if (row.ImageData) {
-    imageBase64 = `data:image/jpeg;base64,${row.ImageData.toString("base64")}`;
+    res.json(result.recordset);
+  } catch (err) {
+    res.status(500).send(err.message);
   }
-
-  return {
-    ...row,
-    ImageData: imageBase64
-  };
 });
 
-res.json(data);
+// Dedicated endpoint to fetch binary image on-demand when editing
+app.get("/dishimage/:dishId", async (req, res) => {
+  try {
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input("DishId", sql.UniqueIdentifier, req.params.dishId)
+      .query(`
+        SELECT I.ImageData
+        FROM DishMaster D
+        JOIN ImageList I ON D.ImageId = I.ImageId
+        WHERE D.DishId = @DishId
+      `);
+
+    if (result.recordset.length > 0 && result.recordset[0].ImageData) {
+      const base64 = `data:image/jpeg;base64,${result.recordset[0].ImageData.toString("base64")}`;
+      res.json({ ImageData: base64 });
+    } else {
+      res.json({ ImageData: null });
+    }
   } catch (err) {
+    console.error(err);
     res.status(500).send(err.message);
   }
 });
@@ -1433,6 +1477,8 @@ app.post("/dish", upload.single("image"), async (req, res) => {
         .input("NameInOtherLanguage", sql.NVarChar, d.NameInOtherLanguage || "")
         .input("ImageId", sql.UniqueIdentifier, imageId)
         .input("IsActive", sql.Bit, Number(d.IsActive) === 1)
+        .input("IsSoldOut", sql.Bit, Number(d.IsSoldOut) === 1)
+        .input("IsPublished", sql.Bit, Number(d.IsPublished) === 1)
         .input("iskitchenPrint", sql.Bit, Number(d.iskitchenPrint) === 1)
         .input("KitchenType", sql.Int, Number(d.KitchenType) || 0)
         .input("SubkitchenType", sql.Int, Number(d.SubkitchenType) || 0)
@@ -1460,6 +1506,8 @@ app.post("/dish", upload.single("image"), async (req, res) => {
             NameInOtherLanguage=@NameInOtherLanguage,
             ImageId = COALESCE(@ImageId, ImageId),
             IsActive=@IsActive,
+            IsSoldOut =@IsSoldOut,
+            IsPublished=@IsPublished,
             iskitchenPrint=@iskitchenPrint,
             isDiscountAllowed=@isDiscountAllowed,
             IsTaxAllowed=@IsTaxAllowed,
@@ -1493,6 +1541,9 @@ app.post("/dish", upload.single("image"), async (req, res) => {
         .input("NameInOtherLanguage", sql.NVarChar, d.NameInOtherLanguage || "")
         .input("ImageId", sql.UniqueIdentifier, imageId)
         .input("IsActive", sql.Bit, Number(d.IsActive) === 1)
+        .input("IsSoldOut", sql.Bit, Number(d.IsSoldOut) === 1)
+        .input("IsPublished", sql.Bit, Number(d.IsPublished) === 1)
+
         .input("iskitchenPrint", sql.Bit, Number(d.iskitchenPrint) === 1)
         .input("KitchenType", sql.Int, Number(d.KitchenType) || 0)
         .input("SubkitchenType", sql.Int, Number(d.SubkitchenType) || 0)
@@ -1512,7 +1563,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
           INSERT INTO DishMaster (
             DishId, DishCode, Name, ShortName, Description,
             DishGroupId, CurrentCost, SordCode, UnitCost, QuantityOnHand,
-            NameInOtherLanguage, IsActive, iskitchenPrint,
+            NameInOtherLanguage, IsActive,IsPublished, IsSoldOut,iskitchenPrint,
             isDiscountAllowed, IsTaxAllowed, IsStockDish,
             isFOC, isServiceCharge, isFavourite, isMultiPrice, isOpenitem,IsSplitDish, IsgroupDish,
             ImageId, KitchenType, SubkitchenType,CreatedOn
@@ -1520,7 +1571,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
           VALUES (
             @DishId, @DishCode, @Name, @ShortName, @Description,
             @DishGroupId, @CurrentCost, @SordCode, @UnitCost, @QuantityOnHand,
-            @NameInOtherLanguage, @IsActive, @iskitchenPrint,
+            @NameInOtherLanguage, @IsActive,@IsPublished, @IsSoldOut, @iskitchenPrint,
             @isDiscountAllowed, @IsTaxAllowed, @IsStockDish,
             @isFOC, @isServiceCharge, @isFavourite, @isMultiPrice, @isOpenitem,@IsSplitDish, @IsgroupDish,
             @ImageId, @KitchenType, @SubkitchenType,@CreatedOn
@@ -1569,9 +1620,10 @@ try {
 }
 
     for (let m of mods) {
+      const modId = typeof m === "object" && m !== null ? m.ModifierId : m;
       await pool.request()
         .input("DishId", sql.UniqueIdentifier, dishId)
-        .input("ModifierId", sql.UniqueIdentifier, m)
+        .input("ModifierId", sql.UniqueIdentifier, modId)
         .query(`
           INSERT INTO DishModifier (DishId, ModifierId)
           VALUES (@DishId, @ModifierId)
@@ -1644,7 +1696,7 @@ for (let item of orderItemShares) {
 }
 
 
-    res.send("Saved ✅");
+    res.json({ message: "Saved ✅", DishId: dishId });
 
   } catch (err) {
     console.error("ERROR ❌", err);
@@ -1724,6 +1776,71 @@ app.get("/dishmodifier/:id", async (req, res) => {
 
   } catch (err) {
     console.log(err);
+    res.status(500).send("Error");
+  }
+});
+
+// ===== DishModifierGroup API — Per-dish Modifier Group selection limits =====
+
+// GET: all modifier group configs for a given dish
+app.get("/dishmodifiergroup/:dishId", async (req, res) => {
+  try {
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input("DishId", sql.UniqueIdentifier, req.params.dishId)
+      .query(`
+        SELECT
+          dmg.ModifierGroupId,
+          dmg.MinSelectionCount,
+          dmg.MaxSelectionCount,
+          dmg.MultiselectAllow,
+          dgm.DishGroupName
+        FROM DishModifierGroup dmg
+        JOIN DishGroupMaster dgm ON dgm.DishGroupId = dmg.ModifierGroupId
+        WHERE dmg.DishId = @DishId
+      `);
+    res.json(result.recordset);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error");
+  }
+});
+
+// POST: bulk replace all modifier group configs for a given dish
+// Body: { DishId: string, ModifierGroups: [{ ModifierGroupId, MinSelectionCount, MaxSelectionCount, MultiselectAllow }] }
+app.post("/dishmodifiergroup", async (req, res) => {
+  try {
+    const { DishId, ModifierGroups } = req.body;
+    if (!DishId) return res.status(400).send("DishId required");
+
+    const pool = await poolPromise;
+    const groups = Array.isArray(ModifierGroups) ? ModifierGroups : [];
+
+    // Delete existing mappings for this dish
+    await pool.request()
+      .input("DishId", sql.UniqueIdentifier, DishId)
+      .query("DELETE FROM DishModifierGroup WHERE DishId=@DishId");
+
+    // Insert the new set
+    for (const g of groups) {
+      await pool.request()
+        .input("DishModifierGroupId", sql.UniqueIdentifier, uuidv4())
+        .input("DishId", sql.UniqueIdentifier, DishId)
+        .input("ModifierGroupId", sql.UniqueIdentifier, g.ModifierGroupId)
+        .input("MinSelectionCount", sql.Int, Number(g.MinSelectionCount) || 0)
+        .input("MaxSelectionCount", sql.Int, Number(g.MaxSelectionCount) || 0)
+        .input("MultiselectAllow", sql.Bit, g.MultiselectAllow ? 1 : 0)
+        .query(`
+          INSERT INTO DishModifierGroup
+          (DishModifierGroupId, DishId, ModifierGroupId, MinSelectionCount, MaxSelectionCount, MultiselectAllow)
+          VALUES
+          (@DishModifierGroupId, @DishId, @ModifierGroupId, @MinSelectionCount, @MaxSelectionCount, @MultiselectAllow)
+        `);
+    }
+
+    res.json({ message: "DishModifierGroup saved ✅" });
+  } catch (err) {
+    console.error(err);
     res.status(500).send("Error");
   }
 });

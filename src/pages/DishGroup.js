@@ -47,6 +47,7 @@ CategoryId:"",
 NameInOtherLanguage:"",
 ShowModifierTabOrder:"No",
 isActive:"No",
+IsPublished:"No",
 isDiscountAllowed:"No",
 isTaxAllowed:"No",
 isKitchenprint:"No",
@@ -104,7 +105,7 @@ const handleSubmit = async (e) => {
     return;
   }
 
-    if (!form.CategoryId) {
+  if (!form.CategoryId) {
     alert("Category must be entered. ❗");
     return;
   }
@@ -123,6 +124,7 @@ const handleSubmit = async (e) => {
     formData.append("NameInOtherLanguage", form.NameInOtherLanguage);
 
    formData.append("isActive", form.isActive === "Yes" ? 1 : 0);
+   formData.append("IsPublished", form.IsPublished === "Yes" ? 1 : 0);
    formData.append("isDiscountAllowed", form.isDiscountAllowed === "Yes" ? 1 : 0);
    formData.append("isTaxAllowed", form.isTaxAllowed === "Yes" ? 1 : 0);
    formData.append("isKitchenPrint", form.isKitchenprint === "Yes" ? 1 : 0);
@@ -226,6 +228,7 @@ const handleDelete = async (id, e) => {
     CategoryId: row.CategoryId || "",
     NameInOtherLanguage: row.NameInOtherLanguage || "",
    isActive: row.isActive == 1 || row.isActive === true ? "Yes" : "No",
+   IsPublished: row.IsPublished == 1 || row.IsPublished === true ? "Yes" : "No",
    isDiscountAllowed: row.isDiscountAllowed == 1 || row.isDiscountAllowed === true ? "Yes" : "No",
    isTaxAllowed: row.isTaxAllowed == 1 || row.isTaxAllowed === true ? "Yes" : "No",
    isKitchenprint: row.isKitchenPrint == 1 || row.isKitchenPrint === true ? "Yes" : "No",
@@ -271,6 +274,10 @@ if (row.ImageData) {
           // 🔥 FIX FOR YES/NO
           if (key === "isActive") {
             value = row.isActive ? "yes" : "no";
+          }
+
+          if (key === "IsPublished") {
+            value = row.IsPublished ? "yes" : "no";
           }
 
           return String(value)
@@ -336,6 +343,7 @@ if (row.ImageData) {
       NameInOtherLanguage:"",
       ShowModifierTabOrder:"No",
       isActive:"No",
+      IsPublished:"No",
       isDiscountAllowed:"No",
       isTaxAllowed:"No",
       isKitchenprint:"No",
@@ -545,6 +553,16 @@ Active
 <label>
 <input
 type="checkbox"
+name="IsPublished"
+checked={form.IsPublished==="Yes"}
+onChange={handleChange}
+/>
+Hide in QR
+</label>
+
+<label>
+<input
+type="checkbox"
 name="isDiscountAllowed"
 checked={form.isDiscountAllowed==="Yes"}
 onChange={handleChange}
@@ -645,9 +663,9 @@ Show Modifier Tab Order
             checked={selectedModifiers.includes(m.ModifierId)}
             onChange={(e)=>{
               if(e.target.checked){
-                setSelectedModifiers([...selectedModifiers,m.ModifierId]);
+                setSelectedModifiers([...selectedModifiers, m.ModifierId]);
               }else{
-                setSelectedModifiers(selectedModifiers.filter(id=>id!==m.ModifierId));
+                setSelectedModifiers(selectedModifiers.filter(id => id !== m.ModifierId));
               }
             }}
           />
@@ -800,6 +818,21 @@ Cancel
     />
   )}
 </th>
+<th onClick={() => setActiveFilter("IsPublished")}>
+  Hide in QR
+  {activeFilter === "IsPublished" && (
+    <input
+      className="dg-filter-checkbox"
+      onClick={(e)=>e.stopPropagation()}
+      type="text"
+      placeholder="Y/N"
+      value={filters.IsPublished || ""}
+      onChange={(e)=>
+        setFilters({...filters, IsPublished: e.target.value})
+      }
+    />
+  )}
+</th>
 <th>Kitchen Print</th>
 <th>Discount</th>
 <th>Sort Code</th>
@@ -839,6 +872,16 @@ Cancel
     onChange={(e) => {
       e.stopPropagation();
       handleToggle(row, "isActive", e.target.checked);
+    }}
+  />
+</td>
+<td onClick={(e) => e.stopPropagation()}>
+  <input
+    type="checkbox"
+    checked={!!row.IsPublished}
+    onChange={(e) => {
+      e.stopPropagation();
+      handleToggle(row, "IsPublished", e.target.checked);
     }}
   />
 </td>

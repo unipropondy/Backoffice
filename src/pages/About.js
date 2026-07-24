@@ -49,6 +49,7 @@ CategoryName:"",
 ShortName:"",
 SortCode:"",
 isActive:false,
+IsPublished:false,
 isDiscountAllowed:false,
 isKitchenPrint:false,
 isTaxAllowed:false,
@@ -304,6 +305,7 @@ CategoryName:"",
 ShortName:"",
 SortCode:"",
 isActive:false,
+IsPublished:false,
 isDiscountAllowed:false,
 isKitchenPrint:false,
 isTaxAllowed:false,
@@ -437,6 +439,7 @@ return(
     ShortName:"",
     SortCode:"",
     isActive:false,
+    IsPublished:false,
     isDiscountAllowed:false,
     isKitchenPrint:false,
     isTaxAllowed:false,
@@ -532,6 +535,10 @@ return(
 <label>
 <input type="checkbox" name="isActive" checked={form.isActive} onChange={handleChange}/>
 Active
+</label>
+<label>
+<input type="checkbox" name="IsPublished" checked={form.IsPublished} onChange={handleChange}/>
+Hide in QR
 </label>
 
 <label>
@@ -965,6 +972,23 @@ Cancel
     </select>
   )}
 </th>
+<th onClick={() => setActiveFilter("IsPublished")}>
+  Hide in QR
+
+  {activeFilter === "IsPublished" && (
+    <select
+      onClick={(e) => e.stopPropagation()}
+      value={filters.IsPublished || ""}
+      onChange={(e) =>
+        setFilters({ ...filters, IsPublished: e.target.value })
+      }
+    >
+      <option value="">All</option>
+      <option value="true">Yes</option>
+      <option value="false">No</option>
+    </select>
+  )}
+</th>
 <th>Discount</th>
 <th>Kitchen</th>
 <th>Tax</th>
@@ -1003,6 +1027,13 @@ Cancel
   type="checkbox"
   checked={row.isActive}
   onChange={() => toggleField(row, "isActive")}
+/>
+</td>
+<td onClick={(e) => e.stopPropagation()}>
+  <input
+  type="checkbox"
+  checked={row.IsPublished}
+  onChange={() => toggleField(row, "IsPublished")}
 />
 </td>
 <td onClick={(e) => e.stopPropagation()}>
