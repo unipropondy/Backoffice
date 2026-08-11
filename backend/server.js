@@ -18,7 +18,14 @@ const corsOptions = {
     callback(null, true);
   },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+    "X-User-Id",
+    "x-user-id"
+  ],
   credentials: true,
   optionsSuccessStatus: 200
 };
@@ -27,6 +34,30 @@ app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
+
+app.use((req, res, next) => {
+  const userId = req.headers['x-user-id'] || req.headers['X-User-Id'];
+  const method = (req.method || '').toUpperCase();
+
+  if (typeof userId === 'string' && userId.trim() && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
+    req.body = req.body || {};
+
+    if (typeof req.body === 'object' && !Array.isArray(req.body)) {
+      const now = new Date();
+
+      if (method === 'POST') {
+        req.body.CreatedBy = req.body.CreatedBy || userId;
+        req.body.CreatedOn = req.body.CreatedOn || now;
+      }
+
+      req.body.ModifiedBy = req.body.ModifiedBy || userId;
+      req.body.ModifiedOn = req.body.ModifiedOn || now;
+      req.userId = userId;
+    }
+  }
+
+  next();
+});
 
 const inventoryRoutes = require("./routes/inventory");
 

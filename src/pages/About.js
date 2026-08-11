@@ -907,6 +907,7 @@ Cancel
 
 )}
 
+<div className="table-responsive">
 <table className="cat-table">
 
 <thead>
@@ -1088,6 +1089,7 @@ Cancel
 </tbody>
 
 </table>
+</div>
 
 <div className="pagination">
 

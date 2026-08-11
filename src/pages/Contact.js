@@ -360,7 +360,6 @@ const handleSelectAll = async (checked) => {
 </th>
 <th>
   <div className="active-header">
-    
     <input
       type="checkbox"
       checked={
@@ -369,18 +368,6 @@ const handleSelectAll = async (checked) => {
       }
       onChange={(e) => handleSelectAll(e.target.checked)}
     />
-
-    <select
-      value={filters.active || ""}
-      onChange={(e) =>
-        setFilters({ ...filters, active: e.target.value })
-      }
-    >
-      <option value="">All</option>
-      <option value="Yes">Checked</option>
-      <option value="No">Unchecked</option>
-    </select>
-
   </div>
 </th>
 
