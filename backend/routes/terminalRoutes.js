@@ -1,18 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { sql, poolPromise } = require("../db");
-const os = require("os");
-
-// ================= GET SERVER COMPUTER NAME =================
-router.get("/computer-name", (req, res) => {
-  try {
-    const hostname = os.hostname();
-    res.json({ computerName: hostname });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch computer name" });
-  }
-});
-
+ 
 // ================= GET ALL TERMINALS =================
 router.get("/", async (req, res) => {
   try {
