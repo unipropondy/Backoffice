@@ -1,7 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const { sql, poolPromise } = require("../db");
- 
+const os = require("os");
+
+// ================= GET SERVER COMPUTER NAME =================
+router.get("/computer-name", (req, res) => {
+  try {
+    const hostname = os.hostname();
+    res.json({ computerName: hostname });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch computer name" });
+  }
+});
+
 // ================= GET ALL TERMINALS =================
 router.get("/", async (req, res) => {
   try {
@@ -13,7 +24,7 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
- 
+
 // ================= GET DRAWER PORTS =================
 router.get("/drawer-ports", async (req, res) => {
   try {
@@ -26,7 +37,7 @@ router.get("/drawer-ports", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch drawer ports" });
   }
 });
- 
+
 // ================= GET TERMINAL TYPES =================
 router.get("/terminal-types", async (req, res) => {
   try {
@@ -42,7 +53,7 @@ router.get("/terminal-types", async (req, res) => {
     res.json(["ORDER", "PAYMENT", "KOT"]);
   }
 });
- 
+
 // ================= GET LANGUAGES =================
 router.get("/languages", async (req, res) => {
   try {
@@ -58,7 +69,7 @@ router.get("/languages", async (req, res) => {
     res.json(["ENGLISH", "CHINESE", "TAMIL"]);
   }
 });
- 
+
 // ================= GET DISPLAY PORTS =================
 router.get("/display-ports", async (req, res) => {
   try {
@@ -76,7 +87,7 @@ router.get("/display-ports", async (req, res) => {
     res.json(["COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "USB"]);
   }
 });
- 
+
 // ================= GET DISPLAY TYPES =================
 router.get("/display-types", async (req, res) => {
   try {
@@ -92,7 +103,7 @@ router.get("/display-types", async (req, res) => {
     res.json(["PartnerTech", "RetailPos", "PosiFlex", "Others"]);
   }
 });
- 
+
 // ================= GET CAMERA PORTS =================
 router.get("/camera-ports", async (req, res) => {
   try {
@@ -108,7 +119,7 @@ router.get("/camera-ports", async (req, res) => {
     res.json(["COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "USB"]);
   }
 });
- 
+
 // ================= GET SECOND DISPLAY PORTS =================
 router.get("/second-display-ports", async (req, res) => {
   try {
@@ -124,7 +135,7 @@ router.get("/second-display-ports", async (req, res) => {
     res.json(["COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "USB"]);
   }
 });
- 
+
 // ================= GET PRINT TYPES =================
 router.get("/print-types", async (req, res) => {
   try {
@@ -140,7 +151,7 @@ router.get("/print-types", async (req, res) => {
     res.json(["NORMAL", "OPOS"]);
   }
 });
- 
+
 // ================= GET NETS PORTS =================
 router.get("/nets-ports", async (req, res) => {
   try {
@@ -156,7 +167,7 @@ router.get("/nets-ports", async (req, res) => {
     res.json(["COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "USB"]);
   }
 });
- 
+
 // ================= GET IDLE TIME =================
 router.get("/idle-time", async (req, res) => {
   try {
@@ -173,7 +184,7 @@ router.get("/idle-time", async (req, res) => {
     res.json({ idleTime: 60000 });
   }
 });
- 
+
 // ================= INSERT TERMINAL =================
 router.post("/", async (req, res) => {
   try {
@@ -209,11 +220,11 @@ router.post("/", async (req, res) => {
       CashMachinePort,
       isVoiceEnabled,
     } = req.body;
- 
+
     if (!TerminalCode || !TerminalCode.toString().trim()) {
       return res.status(400).json({ error: "Terminal Code is required." });
     }
- 
+
     const pool = await poolPromise;
     await pool.request()
       .input("TerminalCode", sql.VarChar, TerminalCode)
@@ -261,14 +272,14 @@ router.post("/", async (req, res) => {
           @isVoiceEnabled, NEWID(), GETDATE()
         )
       `);
- 
+
     res.json({ success: true, message: "Terminal created successfully" });
   } catch (err) {
     console.error("POST Terminal Error:", err);
     res.status(500).json({ error: "Failed to create terminal." });
   }
 });
- 
+
 // ================= UPDATE TERMINAL =================
 router.put("/:code", async (req, res) => {
   try {
@@ -305,7 +316,7 @@ router.put("/:code", async (req, res) => {
       CashMachinePort,
       isVoiceEnabled,
     } = req.body;
- 
+
     const pool = await poolPromise;
     const result = await pool.request()
       .input("ParamCode", sql.VarChar, code)
@@ -374,18 +385,18 @@ router.put("/:code", async (req, res) => {
             ModifyDate = GETDATE()
         WHERE RTRIM(TerminalCode) = RTRIM(@ParamCode)
       `);
- 
+
     if (result.rowsAffected[0] === 0) {
       return res.status(404).json({ error: "Terminal not found." });
     }
- 
+
     res.json({ success: true, message: "Terminal updated successfully" });
   } catch (err) {
     console.error("PUT Terminal Error:", err);
     res.status(500).json({ error: "Failed to update terminal." });
   }
 });
- 
+
 // ================= DELETE TERMINAL =================
 router.delete("/:code", async (req, res) => {
   try {
@@ -395,18 +406,17 @@ router.delete("/:code", async (req, res) => {
     const result = await pool.request()
       .input("TerminalCode", sql.VarChar, cleanCode)
       .query("DELETE FROM dbo.TerminalMaster WHERE RTRIM(TerminalCode) = RTRIM(@TerminalCode)");
- 
+
     if (result.rowsAffected[0] === 0) {
       return res.status(404).json({ error: "Terminal not found." });
     }
- 
+
     res.json({ success: true, message: "Terminal deleted successfully" });
   } catch (err) {
     console.error("DELETE Terminal Error:", err);
     res.status(500).json({ error: "Failed to delete terminal." });
   }
 });
- 
+
 module.exports = router;
- 
- 
+
