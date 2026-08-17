@@ -34,15 +34,44 @@
 .active-header {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  width: 100%;
+  padding: 0 10px;
 }
 
 .active-header select {
-  width: 70px;
-  padding: 2px 6px;
-  font-size: 12px;
-  border-radius: 6px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 90px;
+  height: 28px;
+  padding: 0 26px 0 16px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  color: #1e1e1e;
+  border: 0;
+  border-radius: 12px;
+  background: #f3f0f1;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  text-align: center;
+  text-align-last: center;
+  background-image: linear-gradient(45deg, transparent 50%, #2d2d2d 50%),
+    linear-gradient(135deg, #2d2d2d 50%, transparent 50%);
+  background-position: calc(100% - 12px) calc(50% - 2px), calc(100% - 8px) calc(50% - 2px);
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.kitchen_table thead th:nth-child(3) {
+  position: relative;
+}
+
+.kitchen_table thead th:nth-child(3) .g-sort-icon {
+  display: none !important;
 }
 
 .active-header input[type="checkbox"] {
