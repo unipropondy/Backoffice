@@ -210,7 +210,41 @@
   border-radius: 14px;
   box-shadow: var(--terminal-shadow-sm);
   border: 1px solid var(--terminal-border-light);
-  overflow: hidden;
+
+  max-height: 420px;
+  overflow-y: scroll;
+  overflow-x: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--terminal-primary-orange) var(--terminal-bg-sand);
+}
+
+/* Sticky table header */
+.terminal-table thead tr th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #efeae3;
+}
+
+/* Custom scrollbar – thin orange accent */
+.table-responsive-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-responsive-container::-webkit-scrollbar-track {
+  background: var(--terminal-bg-sand);
+  border-radius: 0 14px 14px 0;
+}
+
+.table-responsive-container::-webkit-scrollbar-thumb {
+  background: var(--terminal-primary-orange);
+  border-radius: 6px;
+  opacity: 0.7;
+}
+
+.table-responsive-container::-webkit-scrollbar-thumb:hover {
+  background: var(--terminal-primary-hover);
 }
  
 .terminal-table {
@@ -672,6 +706,33 @@
   color: var(--terminal-primary-orange);
   background-color: rgba(255, 127, 39, 0.08);
 }
+
+/* Computer Name auto-fetch button */
+.computer-fetch-btn {
+  font-size: 16px;
+  min-width: 36px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.computer-fetch-btn:hover:not(:disabled) {
+  border-color: var(--terminal-primary-orange);
+  color: var(--terminal-primary-orange);
+  background-color: rgba(255, 127, 39, 0.08);
+  transform: scale(1.08);
+}
+
+.computer-fetch-btn.fetching {
+  cursor: wait;
+  opacity: 0.7;
+  animation: fetchPulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes fetchPulse {
+  from { box-shadow: 0 0 0 0 rgba(255, 127, 39, 0.2); }
+  to   { box-shadow: 0 0 0 5px rgba(255, 127, 39, 0); }
+}
+
  
 /* Checkbox Controls */
 .modern-checkbox-label {

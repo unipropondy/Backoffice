@@ -98,6 +98,7 @@ export default function Terminal({ sidebarOpen }) {
   const [showHelpSearch, setShowHelpSearch] = useState(false);
   const [helpSearchText, setHelpSearchText] = useState("");
   const [hoveredHelpRow, setHoveredHelpRow] = useState(null);
+  const [fetchingComputerName, setFetchingComputerName] = useState(false);
   const [drawerPorts, setDrawerPorts] = useState([
     "USB", "LPT1", "LPT2", "LPT3", "COM1", "COM2", "COM3", "COM4",
     "COM5", "COM6", "COM7", "COM8", "COM9", "E20", "RP"
@@ -285,6 +286,21 @@ export default function Terminal({ sidebarOpen }) {
     fetchTerminals();
     setHelpSearchText("");
     setShowHelpSearch(true);
+  };
+
+  const fetchComputerName = async () => {
+    try {
+      setFetchingComputerName(true);
+      const res = await axios.get(`${BASE_URL}/api/terminal/computer-name`);
+      if (res.data && res.data.computerName) {
+        setFormData((prev) => ({ ...prev, ComputerName: res.data.computerName }));
+      }
+    } catch (err) {
+      console.error("Error fetching computer name:", err);
+      alert("Could not retrieve computer name from server.");
+    } finally {
+      setFetchingComputerName(false);
+    }
   };
 
   useEffect(() => {
@@ -630,7 +646,15 @@ export default function Terminal({ sidebarOpen }) {
                         onChange={handleInputChange}
                         placeholder="POS-DESKTOP-01"
                       />
-                      <span className="inline-icon-badge" title="Computer Workstation">💻</span>
+                      <button
+                        type="button"
+                        className={`terminal-icon-btn computer-fetch-btn${fetchingComputerName ? " fetching" : ""}`}
+                        title="Click to auto-fill computer name"
+                        onClick={fetchComputerName}
+                        disabled={fetchingComputerName}
+                      >
+                        {fetchingComputerName ? "⏳" : "💻"}
+                      </button>
                     </div>
                   </div>
 
