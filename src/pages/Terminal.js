@@ -649,7 +649,7 @@ export default function Terminal({ sidebarOpen }) {
                       <button
                         type="button"
                         className="terminal-icon-btn fetch-pc-btn"
-                        title="Click to auto-fill with this machine's computer name"
+                        data-tooltip="Auto-fill computer name"
                         onClick={fetchComputerName}
                         disabled={fetchingComputerName}
                       >

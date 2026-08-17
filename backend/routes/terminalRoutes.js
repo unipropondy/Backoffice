@@ -6,7 +6,12 @@ const os = require("os");
 // ================= GET SERVER COMPUTER NAME =================
 router.get("/computer-name", (req, res) => {
   try {
-    const hostname = os.hostname();
+    // process.env.COMPUTERNAME = real Windows PC name (e.g. DESKTOP-OAOFV5P)
+    // os.hostname() may return Docker container ID when running in a container
+    const hostname =
+      process.env.COMPUTERNAME ||
+      process.env.HOSTNAME ||
+      os.hostname();
     res.json({ computerName: hostname });
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch computer name" });
