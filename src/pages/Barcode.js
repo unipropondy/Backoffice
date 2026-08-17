@@ -169,16 +169,16 @@ function Barcode() {
                     key={i}
                     onClick={() => {
                       setEditId(item.Id);
- 
+
                       setForm({
-                        DishId: item.DishId,
+                        DishId: item.DishId || "",
                         dishCode: item.DishCode || "",
-                        dishName: item.Description,
+                        dishName: item.DishName || item.Description || "",
                         dishGroup: item.DishGroupName || "",
                         price: item.Price || "",
                         BarCode: item.BarCode
                       });
- 
+
                       setMode("form");
                     }}
                   >
