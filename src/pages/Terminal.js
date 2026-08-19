@@ -291,8 +291,10 @@ export default function Terminal({ sidebarOpen }) {
   const fetchComputerName = async () => {
     try {
       setFetchingComputerName(true);
-      const res = await axios.get(`${BASE_URL}/api/terminal/computer-name`);
-      if (res.data && res.data.computerName) {
+      const res = await axios.get(
+      "http://127.0.0.1:5050/computer-name"
+    );
+          if (res.data && res.data.computerName) {
         setFormData((prev) => ({ ...prev, ComputerName: res.data.computerName }));
       }
     } catch (err) {
