@@ -15,6 +15,7 @@ import { BASE_URL } from "../config/api";
     Description: "",
     DishGroupId: "",
     CurrentCost: "",
+    TakeawayCharge: "",
     SordCode: "",
     UnitCost: "",
     QuantityOnHand: "",
@@ -192,6 +193,7 @@ import { BASE_URL } from "../config/api";
 
     // 🔥 number fix
     formData.set("CurrentCost", Number(dish.CurrentCost) || 0);
+    formData.set("TakeawayCharge", Number(dish.TakeawayCharge) || 0);
     formData.set("UnitCost", Number(dish.UnitCost) || 0);
     formData.set("QuantityOnHand", Number(dish.QuantityOnHand) || 0);
     formData.set("SordCode", Number(dish.SordCode) || 0);
@@ -634,6 +636,20 @@ const totalRows = filteredData.length;
               )}
             </th>
 
+            {/* Takeaway Charge */}
+            <th onClick={() => setActiveFilter("TakeawayCharge")}>
+              Takeaway
+              {activeFilter === "TakeawayCharge" && (
+                <input
+                  onClick={(e) => e.stopPropagation()}
+                  value={filters.TakeawayCharge || ""}
+                  onChange={(e) =>
+                    setFilters({ ...filters, TakeawayCharge: e.target.value })
+                  }
+                />
+              )}
+            </th>
+
             {/* Sort Code */}
             <th onClick={() => setActiveFilter("SordCode")}>
               Sort Code
@@ -858,6 +874,7 @@ const totalRows = filteredData.length;
                   <td>{d.Description}</td>
                  <td>{getGroupName(d.DishGroupId)}</td>
                   <td>{d.CurrentCost}</td>
+                  <td>{d.TakeawayCharge}</td>
                   <td>{d.SordCode}</td>
                   <td>{d.UnitCost}</td>
                   <td>{d.QuantityOnHand}</td>
@@ -1013,6 +1030,11 @@ const totalRows = filteredData.length;
                Price <span className="required">*</span>
                 </label>
                 <input name="CurrentCost" value={dish.CurrentCost} onChange={handleChange} />
+              </div>
+
+              <div className="dish-form-row1">
+                <label>Takeaway Charge</label>
+                <input name="TakeawayCharge" value={dish.TakeawayCharge} onChange={handleChange} />
               </div>
 
               <div className="dish-form-row1">
