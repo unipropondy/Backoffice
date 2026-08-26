@@ -18,7 +18,7 @@ const corsOptions = {
     callback(null, true);
   },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "X-User-Id"],
   credentials: true,
   optionsSuccessStatus: 200
 };
