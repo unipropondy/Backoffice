@@ -11,10 +11,17 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient(); // 🔥 create client
 
+// Routes that should NOT get the X-User-Id header (no user logged in yet)
+const PUBLIC_ROUTES = ['/api/login', '/api/check-target-password'];
+
+const isPublicRoute = (url = '') =>
+  PUBLIC_ROUTES.some((route) => url.includes(route));
+
 axios.interceptors.request.use((config) => {
   const userId = getLoggedInUserId();
 
-  if (userId && config && typeof config === 'object') {
+  // Skip audit injection for public/unauthenticated routes
+  if (userId && config && typeof config === 'object' && !isPublicRoute(config.url)) {
     if (config.data instanceof FormData) {
       config.data = applyAuditToFormData(config.data, config.method, userId);
     } else if (config.data && typeof config.data === 'string') {
@@ -42,8 +49,10 @@ const originalFetch = window.fetch.bind(window);
 window.fetch = async (input, init = {}) => {
   const userId = getLoggedInUserId();
   const method = (init.method || 'GET').toUpperCase();
+  const url = typeof input === 'string' ? input : input?.url || '';
 
-  if (userId && ['POST', 'PUT', 'PATCH'].includes(method)) {
+  // Skip audit injection for public/unauthenticated routes
+  if (userId && ['POST', 'PUT', 'PATCH'].includes(method) && !isPublicRoute(url)) {
     const headers = new Headers(init.headers || {});
     headers.set('X-User-Id', userId);
 
