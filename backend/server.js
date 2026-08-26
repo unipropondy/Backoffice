@@ -1382,6 +1382,7 @@ app.get("/dish", async (req, res) => {
         D.IsStockDish,
         D.isFOC,
         D.isServiceCharge,
+        D.TakeawayCharge,
         D.isFavourite,
         D.KitchenType,
         D.SubkitchenType,
@@ -1518,6 +1519,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
         .input("IsStockDish", sql.Bit, Number(d.IsStockDish) === 1)
         .input("isFOC", sql.Bit, Number(d.isFOC) === 1)
         .input("isServiceCharge", sql.Bit, Number(d.isServiceCharge) === 1)
+        .input("TakeawayCharge", sql.Decimal(18,2), Number(d.TakeawayCharge) || 0)
         .input("isFavourite", sql.Bit, Number(d.isFavourite) === 1)
         .input("isMultiPrice", sql.Bit, Number(d.isMultiPrice) === 1)
         .input("isOpenitem", sql.Bit, Number(d.isOpenitem) === 1)
@@ -1545,6 +1547,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
             IsStockDish=@IsStockDish,
             isFOC=@isFOC,
             isServiceCharge=@isServiceCharge,
+            TakeawayCharge=@TakeawayCharge,
             isFavourite=@isFavourite,
             isMultiPrice=@isMultiPrice,
             isOpenitem=@isOpenitem,
@@ -1583,6 +1586,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
         .input("IsStockDish", sql.Bit, Number(d.IsStockDish) === 1)
         .input("isFOC", sql.Bit, Number(d.isFOC) === 1)
         .input("isServiceCharge", sql.Bit, Number(d.isServiceCharge) === 1)
+        .input("TakeawayCharge", sql.Decimal(18,2), Number(d.TakeawayCharge) || 0)
         .input("isFavourite", sql.Bit, Number(d.isFavourite) === 1)
         .input("isMultiPrice", sql.Bit, Number(d.isMultiPrice) === 1)
         .input("isOpenitem", sql.Bit, Number(d.isOpenitem) === 1)
@@ -1596,7 +1600,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
             DishGroupId, CurrentCost, SordCode, UnitCost, QuantityOnHand,
             NameInOtherLanguage, IsActive,IsPublished, IsSoldOut,iskitchenPrint,
             isDiscountAllowed, IsTaxAllowed, IsStockDish,
-            isFOC, isServiceCharge, isFavourite, isMultiPrice, isOpenitem,IsSplitDish, IsgroupDish,
+            isFOC, isServiceCharge, TakeawayCharge, isFavourite, isMultiPrice, isOpenitem,IsSplitDish, IsgroupDish,
             ImageId, KitchenType, SubkitchenType,CreatedOn
           )
           VALUES (
@@ -1604,7 +1608,7 @@ app.post("/dish", upload.single("image"), async (req, res) => {
             @DishGroupId, @CurrentCost, @SordCode, @UnitCost, @QuantityOnHand,
             @NameInOtherLanguage, @IsActive,@IsPublished, @IsSoldOut, @iskitchenPrint,
             @isDiscountAllowed, @IsTaxAllowed, @IsStockDish,
-            @isFOC, @isServiceCharge, @isFavourite, @isMultiPrice, @isOpenitem,@IsSplitDish, @IsgroupDish,
+            @isFOC, @isServiceCharge, @TakeawayCharge, @isFavourite, @isMultiPrice, @isOpenitem,@IsSplitDish, @IsgroupDish,
             @ImageId, @KitchenType, @SubkitchenType,@CreatedOn
           )
         `);
