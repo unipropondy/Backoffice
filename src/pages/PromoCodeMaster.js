@@ -96,13 +96,20 @@ export default function PromoCodeMaster() {
       return;
     }
 
+    const payload = {
+      ...formData,
+      DiscountValue: Number(formData.DiscountValue) || 0,
+      MaxUsage: Number(formData.MaxUsage) || 0,
+      UsedCount: Number(formData.UsedCount) || 0,
+    };
+
     try {
 
       if (formData.PromoId) {
 
         await axios.put(
           `${BASE_URL}/api/promocode/${formData.PromoId}`,
-          formData
+          payload
         );
 
         alert("Updated Successfully");
@@ -111,7 +118,7 @@ export default function PromoCodeMaster() {
 
         await axios.post(
           `${BASE_URL}/api/promocode`,
-          formData
+          payload
         );
 
         alert("Saved Successfully");
