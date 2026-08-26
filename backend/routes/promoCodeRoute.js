@@ -14,12 +14,28 @@ router.get("/", async (req, res) => {
       ORDER BY CreatedDate DESC
     `);
 
+    const data = result.recordset.map(row => {
+      let promoImage = null;
+
+      if (row.PromoImage) {
+        promoImage =
+          `data:image/jpeg;base64,${row.PromoImage.toString("base64")}`;
+      }
+
+      return {
+        ...row,
+        PromoImage: promoImage
+      };
+    });
+
     res.json({
       success: true,
-      data: result.recordset,
+      data: data,
     });
+
   } catch (err) {
-    console.error(err);
+    console.error("GET PROMO ERROR:", err);
+
     res.status(500).json({
       success: false,
       message: err.message,
@@ -34,7 +50,7 @@ router.get("/:id", async (req, res) => {
     const pool = await poolPromise;
 
     const result = await pool.request()
-       .input("PromoId", sql.UniqueIdentifier, req.params.id)
+      .input("PromoId", sql.UniqueIdentifier, req.params.id)
       .query(`
        SELECT *
         FROM PromoCodeMaster
@@ -61,35 +77,46 @@ router.post("/", async (req, res) => {
 
   try {
 
-   const {
-  PromoCode,
-  PromoName,
-  DiscountType,
-  DiscountValue,
-  MaxUsage,
-  UsedCount,
-  IsActive
-} = req.body;
+    const {
+      PromoCode,
+      PromoName,
+      DiscountType,
+      DiscountValue,
+      MaxUsage,
+      UsedCount,
+      PromoImage,
+      IsActive
+    } = req.body;
 
-const PromoId = uuidv4();
+    const PromoId = uuidv4();
 
-const pool = await poolPromise;
+    const pool = await poolPromise;
+
+    let promoImageBuffer = null;
+
+    if (PromoImage) {
+      const base64Data = PromoImage.includes(",")
+        ? PromoImage.split(",")[1]
+        : PromoImage;
+
+      promoImageBuffer = Buffer.from(base64Data, "base64");
+    }
 
 
- const existingPromo = await pool.request()
-  .input("PromoCode", sql.NVarChar, PromoCode)
-  .query(`
+    const existingPromo = await pool.request()
+      .input("PromoCode", sql.NVarChar, PromoCode)
+      .query(`
     SELECT PromoId
     FROM PromoCodeMaster
     WHERE PromoCode = @PromoCode
   `);
 
-if (existingPromo.recordset.length > 0) {
-  return res.status(400).json({
-    success: false,
-    message: "Promo Code already exists."
-  });
-}
+    if (existingPromo.recordset.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Promo Code already exists."
+      });
+    }
 
     await pool.request()
       .input("PromoId", sql.UniqueIdentifier, PromoId)
@@ -99,8 +126,9 @@ if (existingPromo.recordset.length > 0) {
       .input("DiscountValue", sql.Decimal(18, 2), DiscountValue || 0)
       .input("MaxUsage", sql.Int, MaxUsage || 0)
       .input("UsedCount", sql.Int, UsedCount || 0)
+      .input("PromoImage", sql.VarBinary(sql.MAX), promoImageBuffer)
       .input("IsActive", sql.Bit, IsActive ?? true)
-   
+
       .query(`
       INSERT INTO PromoCodeMaster
       (
@@ -111,6 +139,7 @@ if (existingPromo.recordset.length > 0) {
         DiscountValue,
         MaxUsage,
         UsedCount,
+        PromoImage,
         IsActive
       )
     VALUES
@@ -122,6 +151,7 @@ if (existingPromo.recordset.length > 0) {
         @DiscountValue,
         @MaxUsage,
         @UsedCount,
+        @PromoImage,
         @IsActive
       )
       
@@ -150,33 +180,44 @@ router.put("/:id", async (req, res) => {
   try {
 
     const {
-  PromoCode,
-  PromoName,
-  DiscountType,
-  DiscountValue,
-  MaxUsage,
-  UsedCount,
-  IsActive
-} = req.body;
+      PromoCode,
+      PromoName,
+      DiscountType,
+      DiscountValue,
+      MaxUsage,
+      UsedCount,
+      PromoImage,
+      IsActive
+    } = req.body;
 
     const pool = await poolPromise;
 
+    let promoImageBuffer = null;
+
+    if (PromoImage) {
+      const base64Data = PromoImage.includes(",")
+        ? PromoImage.split(",")[1]
+        : PromoImage;
+
+      promoImageBuffer = Buffer.from(base64Data, "base64");
+    }
+
     const existingPromo = await pool.request()
-  .input("PromoCode", sql.NVarChar, PromoCode)
-  .input("PromoId", sql.UniqueIdentifier, req.params.id)
-  .query(`
+      .input("PromoCode", sql.NVarChar, PromoCode)
+      .input("PromoId", sql.UniqueIdentifier, req.params.id)
+      .query(`
     SELECT PromoId
     FROM PromoCodeMaster
     WHERE PromoCode = @PromoCode
       AND PromoId <> @PromoId
   `);
 
-if (existingPromo.recordset.length > 0) {
-  return res.status(400).json({
-    success: false,
-    message: "Promo Code already exists."
-  });
-}
+    if (existingPromo.recordset.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Promo Code already exists."
+      });
+    }
 
     await pool.request()
 
@@ -187,6 +228,7 @@ if (existingPromo.recordset.length > 0) {
       .input("DiscountValue", sql.Decimal(18, 2), DiscountValue)
       .input("MaxUsage", sql.Int, MaxUsage)
       .input("UsedCount", sql.Int, UsedCount || 0)
+      .input("PromoImage", sql.VarBinary(sql.MAX), promoImageBuffer)
       .input("IsActive", sql.Bit, IsActive ?? true)
 
       .query(`
@@ -201,6 +243,7 @@ if (existingPromo.recordset.length > 0) {
       DiscountValue=@DiscountValue,
       MaxUsage=@MaxUsage,
       UsedCount=@UsedCount,
+      PromoImage=@PromoImage,
       IsActive=@IsActive
 
       WHERE PromoId=@PromoId
@@ -208,15 +251,15 @@ if (existingPromo.recordset.length > 0) {
       `);
 
     res.json({
-      success:true,
-      message:"Updated Successfully"
+      success: true,
+      message: "Updated Successfully"
     });
 
-  } catch(err){
+  } catch (err) {
 
     res.status(500).json({
-      success:false,
-      message:err.message
+      success: false,
+      message: err.message
     });
 
   }
@@ -239,15 +282,15 @@ router.delete("/:id", async (req, res) => {
       `);
 
     res.json({
-      success:true,
-      message:"Deleted Successfully"
+      success: true,
+      message: "Deleted Successfully"
     });
 
-  } catch(err){
+  } catch (err) {
 
     res.status(500).json({
-      success:false,
-      message:err.message
+      success: false,
+      message: err.message
     });
 
   }
