@@ -1052,6 +1052,16 @@ const totalRows = filteredData.length;
                 <input name="QuantityOnHand" value={dish.QuantityOnHand} onChange={handleChange} />
               </div>
 
+              <div className="dish-form-row1">
+                <label>Available Time From</label>
+                <input type="time" name="AvailableTimeFrom" value={dish.AvailableTimeFrom || ""} onChange={handleChange} />
+              </div>
+
+              <div className="dish-form-row1">
+                <label>Available Time To</label>
+                <input type="time" name="AvailableTimeTo" value={dish.AvailableTimeTo || ""} onChange={handleChange} />
+              </div>
+
               {/* <div className="dish-form-row1">
                 <label>Other Language</label>
                 <input name="NameInOtherLanguage" value={dish.NameInOtherLanguage} onChange={handleChange} />

@@ -52,7 +52,9 @@ isDiscountAllowed:"No",
 isTaxAllowed:"No",
 isKitchenprint:"No",
 isServiceCharge:"No",
-isMemberSalesAllowed:"No"
+isMemberSalesAllowed:"No",
+AvailableTimeFrom:"",
+AvailableTimeTo:""
 });
 
 // ✅ API GET
@@ -130,6 +132,8 @@ const handleSubmit = async (e) => {
    formData.append("isKitchenPrint", form.isKitchenprint === "Yes" ? 1 : 0);
    formData.append("isServiceCharge", form.isServiceCharge === "Yes" ? 1 : 0);
    formData.append("isMemberSalesAllowed", form.isMemberSalesAllowed === "Yes" ? 1 : 0);
+   formData.append("AvailableTimeFrom", form.AvailableTimeFrom || "");
+   formData.append("AvailableTimeTo", form.AvailableTimeTo || "");
 
     formData.append("BackColor", bgColor);
     formData.append("ForeColor", textColor);
@@ -235,6 +239,8 @@ const handleDelete = async (id, e) => {
    isServiceCharge: row.isServiceCharge == 1 || row.isServiceCharge === true ? "Yes" : "No",
    isMemberSalesAllowed: row.isMemberSalesAllowed == 1 || row.isMemberSalesAllowed === true ? "Yes" : "No",
    ShowModifierTabOrder: row.ShowModifierTabOrder == 1 || row.ShowModifierTabOrder === true ? "Yes" : "No",
+   AvailableTimeFrom: row.AvailableTimeFrom || "",
+   AvailableTimeTo: row.AvailableTimeTo || "",
   });
 
  setImage(null); // clear first
@@ -348,7 +354,9 @@ if (row.ImageData) {
       isTaxAllowed:"No",
       isKitchenprint:"No",
       isServiceCharge:"No",
-      isMemberSalesAllowed:"No"
+      isMemberSalesAllowed:"No",
+      AvailableTimeFrom:"",
+      AvailableTimeTo:""
     });
    setSelectedKitchens([]);   // ✅ RESET
 setSelectedModifiers([]);  // ✅ RESET
@@ -485,6 +493,26 @@ setSelectedModifiers([]);  // ✅ RESET
       name="KitchenSortCode"
       placeholder="Kitchen Sort Code"
       value={form.KitchenSortCode}
+      onChange={handleChange}
+      />
+      </div>
+
+      <div className="dg-field">
+      <label>Available Time From</label>
+      <input
+      type="time"
+      name="AvailableTimeFrom"
+      value={form.AvailableTimeFrom || ""}
+      onChange={handleChange}
+      />
+      </div>
+
+      <div className="dg-field">
+      <label>Available Time To</label>
+      <input
+      type="time"
+      name="AvailableTimeTo"
+      value={form.AvailableTimeTo || ""}
       onChange={handleChange}
       />
       </div>
