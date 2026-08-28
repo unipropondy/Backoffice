@@ -186,8 +186,8 @@ import { BASE_URL } from "../config/api";
     Object.keys(dish).forEach((key) => {
   if (typeof dish[key] === "boolean") {
     formData.append(key, dish[key] ? 1 : 0);
-  } else if (dish[key] !== null && dish[key] !== "") {
-    formData.append(key, dish[key]);
+  } else {
+    formData.append(key, dish[key] ?? "");
   }
 });
 
