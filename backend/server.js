@@ -1338,8 +1338,6 @@ app.get("/dish", async (req, res) => {
         D.NameInOtherLanguage,
         D.BrandId,
         D.MobileTab,
-        D.AvailableTimeFrom,
-        D.AvailableTimeTo,
         D.isMultiPrice,
         D.isOpenitem,
         D.IsSplitDish,
