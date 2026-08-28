@@ -473,6 +473,10 @@ app.get("/category", async (req, res) => {
 // ---------------- CREATE / UPDATE CATEGORY ----------------
 app.post("/category", upload.single("image"), async (req, res) => {
   try {
+    console.log("=== START /category POST ===");
+    console.log("Body:", req.body);
+    console.log("File:", req.file ? req.file.filename : "No file uploaded");
+
     const {
       CategoryId,
       CategoryCode,
@@ -503,12 +507,24 @@ app.post("/category", upload.single("image"), async (req, res) => {
       typeof ForeColor === "string" && ForeColor.startsWith("#")
         ? ForeColor
         : "#ffffff";
+
     const pool = await poolPromise;
     let catId = CategoryId;
 
-    if (!catId || catId === "") {
+    if (!catId || catId === "" || catId === "null" || catId === "undefined") {
       catId = uuidv4();
     }
+
+    const parseBit = (val) => {
+      if (val === true || val === 'true' || val === 1 || val === '1') return true;
+      return false;
+    };
+
+    const safeSortCode = parseInt(SortCode, 10) || 0;
+    const safeCategoryCode = (CategoryCode || "").substring(0, 20);
+    const safeCategoryName = (CategoryName || "").substring(0, 100);
+    const safeShortName = (ShortName || "").substring(0, 50);
+    const safeNameInOtherLanguage = (NameInOtherLanguage || "").substring(0, 100);
 
     let imageId = null;
     let imageName = null;
@@ -517,39 +533,42 @@ app.post("/category", upload.single("image"), async (req, res) => {
       imageId = uuidv4();
       imageName = req.file.filename;
       const imageBuffer = fs.readFileSync(req.file.path);
+      console.log("Inserting image into ImageList...");
       await pool
         .request()
         .input("ImageId", sql.UniqueIdentifier, imageId)
         .input("ImageName", sql.VarChar(100), imageName)
         .input("ImageData", sql.VarBinary(sql.MAX), imageBuffer)
         .query("INSERT INTO ImageList (ImageId, ImageName,ImageData) VALUES (@ImageId, @ImageName,@ImageData)");
+      console.log("Image inserted successfully");
     }
 
     // Check if updating or creating
+    console.log("Checking if Category exists:", catId);
     const exists = await pool
       .request()
       .input("CategoryId", sql.UniqueIdentifier, catId)
       .query("SELECT CategoryId FROM CategoryMaster WHERE CategoryId=@CategoryId");
 
     if (exists.recordset.length > 0) {
-
+      console.log("Category exists. Updating...");
       let request = pool.request()
         .input("CategoryId", sql.UniqueIdentifier, catId)
-        .input("CategoryCode", sql.VarChar(20), (CategoryCode || "").substring(0, 20))
-        .input("CategoryName", sql.VarChar(100), (CategoryName || "").substring(0, 100))
-        .input("SortCode", sql.Int, SortCode)
-        .input("isActive", sql.Bit, Number(isActive) === 1)
-        .input("IsPublished", sql.Bit, Number(IsPublished) === 1)
-        .input("ShortName", sql.VarChar(50), (ShortName || "").substring(0, 50))
+        .input("CategoryCode", sql.VarChar(20), safeCategoryCode)
+        .input("CategoryName", sql.VarChar(100), safeCategoryName)
+        .input("SortCode", sql.Int, safeSortCode)
+        .input("isActive", sql.Bit, parseBit(isActive))
+        .input("IsPublished", sql.Bit, parseBit(IsPublished))
+        .input("ShortName", sql.VarChar(50), safeShortName)
         .input("BackColor", sql.NVarChar(50), safeBackColor)
         .input("ForeColor", sql.NVarChar(50), safeForeColor)
-        .input("isKitchenPrint", sql.Bit, Number(isKitchenPrint) === 1)
-        .input("isDiscountAllowed", sql.Bit, Number(isDiscountAllowed) === 1)
-        .input("isServiceCharge", sql.Bit, Number(isServiceCharge) === 1)
-        .input("isDispName", sql.Bit, Number(isDispName) === 1)
-        .input("isMemberSalesAllowed", sql.Bit, Number(isMemberSalesAllowed) === 1)
-        .input("isTaxAllowed", sql.Bit, Number(isTaxAllowed) === 1)
-        .input("NameInOtherLanguage", sql.VarChar(100), NameInOtherLanguage);
+        .input("isKitchenPrint", sql.Bit, parseBit(isKitchenPrint))
+        .input("isDiscountAllowed", sql.Bit, parseBit(isDiscountAllowed))
+        .input("isServiceCharge", sql.Bit, parseBit(isServiceCharge))
+        .input("isDispName", sql.Bit, parseBit(isDispName))
+        .input("isMemberSalesAllowed", sql.Bit, parseBit(isMemberSalesAllowed))
+        .input("isTaxAllowed", sql.Bit, parseBit(isTaxAllowed))
+        .input("NameInOtherLanguage", sql.VarChar(100), safeNameInOtherLanguage);
 
       // ⭐ only add ImageId if new image uploaded
       request.input("ImageId", sql.UniqueIdentifier, imageId || null);
@@ -574,27 +593,28 @@ isTaxAllowed=@isTaxAllowed,
 NameInOtherLanguage=@NameInOtherLanguage
 WHERE CategoryId=@CategoryId
 `);
+      console.log("Category updated successfully");
     } else {
-      // Insert
+      console.log("Category does not exist. Inserting...");
       await pool
         .request()
         .input("CategoryId", sql.UniqueIdentifier, catId)
-        .input("CategoryCode", sql.VarChar(20), CategoryCode)
-        .input("CategoryName", sql.VarChar(100), CategoryName)
-        .input("SortCode", sql.Int, SortCode)
-        .input("isActive", sql.Bit, isActive ?? false)
-        .input("IsPublished", sql.Bit, IsPublished ?? false)
-        .input("ShortName", sql.VarChar(50), ShortName)
-        .input("ImageId", sql.UniqueIdentifier, imageId)
+        .input("CategoryCode", sql.VarChar(20), safeCategoryCode)
+        .input("CategoryName", sql.VarChar(100), safeCategoryName)
+        .input("SortCode", sql.Int, safeSortCode)
+        .input("isActive", sql.Bit, parseBit(isActive))
+        .input("IsPublished", sql.Bit, parseBit(IsPublished))
+        .input("ShortName", sql.VarChar(50), safeShortName)
+        .input("ImageId", sql.UniqueIdentifier, imageId || null)
         .input("BackColor", sql.NVarChar(50), safeBackColor)
         .input("ForeColor", sql.NVarChar(50), safeForeColor)
-        .input("isKitchenPrint", sql.Bit, isKitchenPrint ?? false)
-        .input("isDiscountAllowed", sql.Bit, isDiscountAllowed ?? false)
-        .input("isServiceCharge", sql.Bit, isServiceCharge ?? false)
-        .input("isDispName", sql.Bit, isDispName ?? false)
-        .input("isMemberSalesAllowed", sql.Bit, isMemberSalesAllowed ?? false)
-        .input("isTaxAllowed", sql.Bit, isTaxAllowed ?? false)
-        .input("NameInOtherLanguage", sql.VarChar(100), NameInOtherLanguage)
+        .input("isKitchenPrint", sql.Bit, parseBit(isKitchenPrint))
+        .input("isDiscountAllowed", sql.Bit, parseBit(isDiscountAllowed))
+        .input("isServiceCharge", sql.Bit, parseBit(isServiceCharge))
+        .input("isDispName", sql.Bit, parseBit(isDispName))
+        .input("isMemberSalesAllowed", sql.Bit, parseBit(isMemberSalesAllowed))
+        .input("isTaxAllowed", sql.Bit, parseBit(isTaxAllowed))
+        .input("NameInOtherLanguage", sql.VarChar(100), safeNameInOtherLanguage)
         .input("CreatedBy", sql.UniqueIdentifier, uuidv4())
         .input("CreatedOn", sql.DateTime, new Date())
         .query(
@@ -603,15 +623,28 @@ WHERE CategoryId=@CategoryId
             VALUES 
             (@CategoryId, @CategoryCode, @CategoryName, @SortCode, @isActive, @IsPublished, @ShortName, @ImageId, @BackColor, @ForeColor, @isKitchenPrint, @isDiscountAllowed, @isServiceCharge, @isDispName, @isMemberSalesAllowed, @isTaxAllowed, @NameInOtherLanguage, @CreatedBy, @CreatedOn)`
         );
+      console.log("Category inserted successfully");
     }
 
-    // Save Modifiers
+    // Safely parse Modifiers
+    let safeModifiers = [];
+    if (Modifiers && Modifiers !== "null" && Modifiers !== "undefined") {
+      try {
+        safeModifiers = typeof Modifiers === "string" ? JSON.parse(Modifiers) : Modifiers;
+        if (!Array.isArray(safeModifiers)) safeModifiers = [];
+      } catch (e) {
+        console.warn("Failed to parse Modifiers:", Modifiers);
+        safeModifiers = [];
+      }
+    }
+
+    console.log("Processing Modifiers:", safeModifiers);
     await pool.request()
       .input("CategoryId", sql.UniqueIdentifier, catId)
       .query("DELETE FROM CategoryModifier WHERE CategoryId=@CategoryId");
-    if (Modifiers && Array.isArray(JSON.parse(Modifiers))) {
-      const mods = JSON.parse(Modifiers);
-      for (let modId of mods) {
+    
+    for (let modId of safeModifiers) {
+      if (modId) {
         await pool
           .request()
           .input("CategoryId", sql.UniqueIdentifier, catId)
@@ -619,28 +652,31 @@ WHERE CategoryId=@CategoryId
           .query("INSERT INTO CategoryModifier (CategoryId, ModifierId) VALUES (@CategoryId, @ModifierId)");
       }
     }
+    console.log("Modifiers processed successfully");
 
-    // Save KitchenTypes
+    // Safely parse KitchenTypes
+    let safeKitchenTypes = [];
+    if (KitchenTypes && KitchenTypes !== "null" && KitchenTypes !== "undefined") {
+      try {
+        safeKitchenTypes = typeof KitchenTypes === "string" ? JSON.parse(KitchenTypes) : KitchenTypes;
+        if (!Array.isArray(safeKitchenTypes)) safeKitchenTypes = [];
+      } catch (e) {
+        console.warn("Failed to parse KitchenTypes:", KitchenTypes);
+        safeKitchenTypes = [];
+      }
+    }
 
+    console.log("Processing KitchenTypes:", safeKitchenTypes);
     await pool.request()
       .input("CategoryId", sql.UniqueIdentifier, catId)
       .query("DELETE FROM CategoryKitchenType WHERE CategoryId=@CategoryId");
 
-    let kitchens = [];
-
-    if (KitchenTypes) {
-      kitchens = typeof KitchenTypes === "string"
-        ? JSON.parse(KitchenTypes)
-        : KitchenTypes;
-    }
-
-    if (Array.isArray(kitchens)) {
-      for (let kt of kitchens) {
-
+    for (let kt of safeKitchenTypes) {
+      if (kt && kt.KitchenTypeCode) {
         await pool.request()
           .input("CategoryId", sql.UniqueIdentifier, catId)
           .input("KitchenTypeCode", sql.Int, kt.KitchenTypeCode)
-          .input("KitchenTypeName", sql.VarChar(100), kt.KitchenTypeName)
+          .input("KitchenTypeName", sql.VarChar(100), kt.KitchenTypeName || "")
           .query(`
 IF NOT EXISTS (
 SELECT 1 FROM CategoryKitchenType
@@ -652,31 +688,32 @@ INSERT INTO CategoryKitchenType
 VALUES
 (@CategoryId,@KitchenTypeCode,@KitchenTypeName)
 `);
-
       }
     }
-
+    console.log("KitchenTypes processed successfully");
+    console.log("=== END /category POST ===");
     res.json({ message: "Category saved successfully", CategoryId: catId });
   } catch (err) {
-    console.error("FULL ERROR:", err.message);
+    console.error("FULL ERROR:", err);
 
     // ✅ Truncation error
-    if (err.message.includes("String or binary data would be truncated")) {
+    if (err.message && err.message.includes("String or binary data would be truncated")) {
       return res.status(400).json({
         message: "Category Name or Short Name is too long (max limit exceeded)"
       });
     }
 
     // ✅ Image / multer error
-    if (err.message.includes("Field value too long")) {
+    if (err.message && err.message.includes("Field value too long")) {
       return res.status(400).json({
         message: "Image size is too large. Please upload smaller file"
       });
     }
 
-    // ✅ Default error
+    // ✅ Send the actual error message in development response for debugging
     res.status(500).json({
-      message: "Category save failed. Please try again"
+      message: "Category save failed. Please try again",
+      error: err.message
     });
   }
 });
