@@ -255,14 +255,17 @@ else{
 const data = new FormData();
 
 Object.keys(form).forEach((key)=>{
-data.append(key,form[key]);
+  if (typeof form[key] === "boolean") {
+    data.append(key, form[key] ? 1 : 0);   // 🔥 send 1/0 not true/false
+  } else {
+    data.append(key, form[key] ?? "");
+  }
 });
 
 data.append("BackColor", bgColor ? bgColor.toString() : "#000000");
 data.append("ForeColor", textColor ? textColor.toString() : "#ffffff");
 data.append("isDispName",displayName);
-data.append("AvailableTimeFrom", form.AvailableTimeFrom || "");
-data.append("AvailableTimeTo", form.AvailableTimeTo || "");
+// AvailableTimeFrom/To already included via form loop above — no duplicate append
 
 data.append(
 "KitchenTypes",
@@ -317,7 +320,9 @@ isKitchenPrint:false,
 isTaxAllowed:false,
 NameInOtherLanguage:false,
 isServiceCharge:false,
-isMemberSalesAllowed:false
+isMemberSalesAllowed:false,
+AvailableTimeFrom:"",
+AvailableTimeTo:""
 });
 
 setImage(null);
