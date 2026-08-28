@@ -55,9 +55,7 @@ isKitchenPrint:false,
 isTaxAllowed:false,
 NameInOtherLanguage:false,
 isServiceCharge:false,
-isMemberSalesAllowed:false,
-AvailableTimeFrom:"",
-AvailableTimeTo:""
+isMemberSalesAllowed:false
 });
 
 useEffect(()=>{
@@ -213,8 +211,6 @@ Object.keys(form).forEach((key) => {
 data.append("BackColor", bgColor ? bgColor.toString() : "#000000");
 data.append("ForeColor", textColor ? textColor.toString() : "#ffffff");
 data.append("isDispName",displayName);
-data.append("AvailableTimeFrom", form.AvailableTimeFrom || "");
-data.append("AvailableTimeTo", form.AvailableTimeTo || "");
 
 data.append(
   "Modifiers",
@@ -261,8 +257,6 @@ data.append(key,form[key]);
 data.append("BackColor", bgColor ? bgColor.toString() : "#000000");
 data.append("ForeColor", textColor ? textColor.toString() : "#ffffff");
 data.append("isDispName",displayName);
-data.append("AvailableTimeFrom", form.AvailableTimeFrom || "");
-data.append("AvailableTimeTo", form.AvailableTimeTo || "");
 
 data.append(
 "KitchenTypes",
@@ -451,9 +445,7 @@ return(
     isTaxAllowed:false,
     NameInOtherLanguage:false,
     isServiceCharge:false,
-    isMemberSalesAllowed:false,
-    AvailableTimeFrom:"",
-    AvailableTimeTo:""
+    isMemberSalesAllowed:false
   });
 
   setSelectedModifiers([]);
@@ -534,16 +526,6 @@ return(
     <div className="cat-form-row">
       <label>Sort Code</label>
       <input type="text" name="SortCode" value={form.SortCode} onChange={handleChange} />
-    </div>
-
-    <div className="cat-form-row">
-      <label>Available Time From</label>
-      <input type="time" name="AvailableTimeFrom" value={form.AvailableTimeFrom || ""} onChange={handleChange} />
-    </div>
-
-    <div className="cat-form-row">
-      <label>Available Time To</label>
-      <input type="time" name="AvailableTimeTo" value={form.AvailableTimeTo || ""} onChange={handleChange} />
     </div>
 
   </div>   {/* 🔥 CLOSE */}
