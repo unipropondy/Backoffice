@@ -87,27 +87,43 @@ router.post("/", async (req, res) => {
     }
 
     const pool = await poolPromise;
+    const newId = uuidv4();
 
-    // Try insert with DishId; if column doesn't exist, insert without it
+    // Try insert with Id + DishId; if Id column is auto-generated, try without it
     try {
       await pool.request()
+        .input("Id", sql.UniqueIdentifier, newId)
         .input("DishId", sql.UniqueIdentifier, DishId)
         .input("BarCode", sql.VarChar(100), BarCode)
         .input("Description", sql.VarChar(200), Description || "")
         .query(`
-          INSERT INTO dbo.BarCodeMaster (DishId, BarCode, Description)
-          VALUES (@DishId, @BarCode, @Description)
+          INSERT INTO dbo.BarCodeMaster (Id, DishId, BarCode, Description)
+          VALUES (@Id, @DishId, @BarCode, @Description)
         `);
     } catch (insertErr) {
-      // Fallback: insert without DishId (old schema)
-      console.warn("⚠️ DishId column may not exist, trying without it:", insertErr.message);
-      await pool.request()
-        .input("BarCode", sql.VarChar(100), BarCode)
-        .input("Description", sql.VarChar(200), Description || "")
-        .query(`
-          INSERT INTO dbo.BarCodeMaster (BarCode, Description)
-          VALUES (@BarCode, @Description)
-        `);
+      // Fallback: insert without explicit Id (if DB auto-generates it)
+      console.warn("⚠️ Id+DishId insert failed, trying without Id:", insertErr.message);
+      try {
+        await pool.request()
+          .input("DishId", sql.UniqueIdentifier, DishId)
+          .input("BarCode", sql.VarChar(100), BarCode)
+          .input("Description", sql.VarChar(200), Description || "")
+          .query(`
+            INSERT INTO dbo.BarCodeMaster (DishId, BarCode, Description)
+            VALUES (@DishId, @BarCode, @Description)
+          `);
+      } catch (insertErr2) {
+        // Fallback: insert without DishId (old schema)
+        console.warn("⚠️ DishId column may not exist, trying without it:", insertErr2.message);
+        await pool.request()
+          .input("Id", sql.UniqueIdentifier, newId)
+          .input("BarCode", sql.VarChar(100), BarCode)
+          .input("Description", sql.VarChar(200), Description || "")
+          .query(`
+            INSERT INTO dbo.BarCodeMaster (Id, BarCode, Description)
+            VALUES (@Id, @BarCode, @Description)
+          `);
+      }
     }
 
     res.json({ message: "Saved ✅" });
