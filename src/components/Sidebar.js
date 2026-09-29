@@ -184,7 +184,7 @@ function Sidebar({ open, setOpen }) {
 
 
             <NavLink className={({ isActive }) => `sid-menu ${isActive ? 'active' : ''}`} to="/DayEndReport">
-              <FaChartBar className="sid-icon" /> Slt.. Report
+              <FaChartBar className="sid-icon" /> Day End Report
             </NavLink>
           </div>
         )}
@@ -251,6 +251,12 @@ function Sidebar({ open, setOpen }) {
             </NavLink>
             <NavLink className={({ isActive }) => `sid-menu ${isActive ? 'active' : ''}`} to="/ServiceMaster">
               <FaBarcode className="sid-icon" /> Server Master
+            </NavLink>
+            <NavLink className={({ isActive }) => `sid-menu ${isActive ? 'active' : ''}`} to="/MemberMaster">
+              <FaUsers className="sid-icon" /> Member Master
+            </NavLink>
+            <NavLink className={({ isActive }) => `sid-menu ${isActive ? 'active' : ''}`} to="/WaiterOrders">
+              <FaUserShield className="sid-icon" /> Waiter Orders
             </NavLink>
           </div>
         )}

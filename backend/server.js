@@ -166,6 +166,12 @@ const dishOrderItemShareRoutes = require("./routes/dishOrderItemShareRoutes");
 
 app.use("/dishorderitemshare", dishOrderItemShareRoutes);
 
+const memberMasterRoutes = require("./routes/memberMasterRoutes");
+app.use("/api/member", memberMasterRoutes);
+
+const waiterOrdersRoutes = require("./routes/waiterOrdersRoutes");
+app.use("/api/waiter-orders", waiterOrdersRoutes);
+
 
 app.post("/api/check-target-password", async (req, res) => {
   try {

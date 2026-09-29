@@ -1,7 +1,7 @@
 
 
-export const BASE_URL ="https://backoffice-production-351f.up.railway.app";
+export const BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:3000'
+    : "https://backoffice-production-351f.up.railway.app";
 
-
-
-// export const BASE_URL = "http://localhost:3000";
+export const API_BASE_URL = BASE_URL;
